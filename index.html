@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ff6600">
+<title>Caja Weones - Empanadas</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-serif;padding-bottom:80px}
+.header{background:#ff6600;padding:12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.header h1{font-size:18px;line-height:1.2}
+.header span{font-size:13px;color:#ffd4b3}
+.container{padding:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}
+.producto{background:#1a1a1a;border:2px solid #333;border-radius:12px;padding:15px;text-align:center;cursor:pointer;user-select:none}
+.producto:active{transform:scale(0.95)}
+.producto.activo{border-color:#ff6600;background:#2a1500}
+.producto h3{font-size:14px;margin-bottom:5px}
+.producto.precio{color:#ff6600;font-weight:bold;font-size:16px}
+.producto.stock{font-size:11px;color:#888;margin-top:4px}
+.producto.sin-stock{opacity:0.3;pointer-events:none}
+.total-box{background:#1a1a1a;border:2px solid #ff6600;border-radius:12px;padding:15px;margin:15px 0}
+.total-box h2{color:#ff6600;font-size:14px;margin-bottom:8px}
+.total-box.monto{font-size:32px;font-weight:bold}
+.input-group{margin:12px 0}
+.input-group label{display:block;font-size:13px;color:#aaa;margin-bottom:6px}
+.input-group input,.input-group select{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:10px;color:#fff;font-size:18px}
+.input-group input:focus,.input-group select:focus{outline:none;border-color:#ff6600}
+.btn{width:100%;padding:16px;background:#ff6600;color:#000;border:none;border-radius:12px;font-size:18px;font-weight:bold;cursor:pointer;margin:8px 0}
+.btn:active{transform:scale(0.98)}
+.btn-secundario{background:#333;color:#fff}
+.btn-costo{background:#aa00ff;color:#fff}
+.btn-eliminar{background:#ff3333;color:#fff;font-size:14px;padding:8px;margin-top:8px}
+.btn-wsp{background:#25D366;color:#fff}
+.btn-backup{background:#0088ff;color:#fff}
+.tabs{position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;display:flex;border-top:2px solid #333}
+.tab{flex:1;padding:14px;text-align:center;cursor:pointer;font-size:13px;font-weight:bold}
+.tab.activo{background:#ff6600;color:#000}
+.oculto{display:none}
+.tabla{width:100%;font-size:13px}
+.tabla td{padding:8px 4px;border-bottom:1px solid #222}
+.tabla input{width:60px;padding:6px;background:#0a0a0a;border:1px solid #333;border-radius:6px;color:#fff;text-align:center}
+.vuelto{font-size:24px;color:#00ff00;font-weight:bold;text-align:center;margin:10px 0}
+.alerta{background:#ff3333;color:#fff;padding:10px;border-radius:8px;margin:10px 0;font-size:13px;text-align:center}
+.historial-item{background:#1a1a1a;border-left:4px solid #ff6600;padding:10px;margin:8px 0;border-radius:8px;font-size:13px;position:relative}
+.historial-item.fecha{color:#888;font-size:11px}
+.historial-item.metodo{color:#ff6600;font-weight:bold}
+.historial-item.wsp{color:#25D366;font-size:12px;margin-top:4px}
+.historial-item.costo{border-left-color:#aa00ff}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>LOS WEONES DE LAS<br>EMPANADAS</h1>
+    <span>Buin - Caja Registradora</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div id="tab-vender">
+    <h3 style="color:#ff6600;margin-bottom:10px">PRODUCTOS</h3>
+    <div class="grid" id="productos-grid"></div>
+
+    <div class="total-box">
+      <h2>TOTAL A PAGAR</h2>
+      <div class="monto" id="total">$0</div>
+      <div id="vuelto" class="vuelto oculto"></div>
+    </div>
+
+    <div class="input-group">
+      <label>MÉTODO DE PAGO</label>
+      <select id="metodo-pago">
+        <option value="efectivo">Efectivo</option>
+        <option value="transferencia">Transferencia</option>
+      </select>
+    </div>
+
+    <div class="input-group" id="grupo-pago">
+      <label>PAGO DEL CLIENTE</label>
+      <input type="number" id="pago" placeholder="0" inputmode="numeric">
+    </div>
+
+    <div class="input-group">
+      <label>WHATSAPP CLIENTE - Opcional</label>
+      <input type="tel" id="wsp" placeholder="+56912345678" inputmode="tel">
+    </div>
+
+    <button class="btn" id="btn-vender">VENDER Y MANDAR WHATSAPP</button>
+    <button class="btn btn-costo" id="btn-costo">COSTO $2000 - LIQUIDAR EMPANADAS</button>
+    <button class="btn btn-secundario" id="btn-anular">ANULAR PEDIDO</button>
+    <div id="alerta" class="alerta oculto"></div>
+  </div>
+
+  <div id="tab-stock" class="oculto">
+    <h3 style="color:#ff6600;margin-bottom:10px">GESTIÓN DE STOCK</h3>
+    <table class="tabla" id="tabla-stock"></table>
+    <button class="btn" id="btn-guardar-stock">GUARDAR STOCK INICIAL</button>
+  </div>
+
+  <div id="tab-resumen" class="oculto">
+    <h3 style="color:#ff6600;margin-bottom:10px">RESUMEN DEL DÍA</h3>
+    <button class="btn" id="btn-ver-stock" style="background:#0088ff;margin-bottom:15px">VER DESGLOSE DE STOCK</button>
+    <div id="desglose-stock" class="oculto"></div>
+
+    <div class="total-box">
+      <h2>TOTAL VENDIDO</h2>
+      <div class="monto" id="total-dia">$0</div>
+    </div>
+    <div class="total-box">
+      <h2>DESGLOSE DE VENTAS</h2>
+      <div style="font-size:16px;margin-top:8px;line-height:1.8">
+        <div>💵 Efectivo: <span id="total-efectivo">$0</span></div>
+        <div>💳 Transferencia: <span id="total-transfer">$0</span></div>
+        <div style="margin-top:10px;border-top:1px solid #333;padding-top:10px">
+          <div>🥟 Empanadas: <span id="total-empanadas">0 und - $0</span></div>
+          <div>🥫 Bebidas 591: <span id="total-591">0 und - $0</span></div>
+          <div>🥫 Latas: <span id="total-latas">0 und - $0</span></div>
+          <div>💧 Cachantun: <span id="total-cachantun">0 und - $0</span></div>
+          <div style="color:#aa00ff">🏷️ COSTO: <span id="total-costo">0 und - $0</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="total-box">
+      <h2>N° DE VENTAS</h2>
+      <div class="monto" id="num-ventas">0</div>
+    </div>
+
+    <h3 style="color:#ff6600;margin:15px 0 10px">RESPALDOS Y REPORTES</h3>
+    <button class="btn btn-backup" id="btn-respaldar">📤 RESPALDAR DATOS</button>
+    <button class="btn btn-backup" id="btn-cargar">📥 CARGAR RESPALDO</button>
+    <input type="file" id="input-cargar" accept=".json" style="display:none">
+    <button class="btn btn-wsp" id="btn-wsp-resumen">💬 MANDAR RESUMEN POR WHATSAPP</button>
+
+    <h3 style="color:#ff6600;margin:15px 0 10px">HISTORIAL DE VENTAS</h3>
+    <div id="historial-lista"></div>
+
+    <button class="btn btn-secundario" id="btn-cerrar-dia">CERRAR DÍA Y REINICIAR</button>
+  </div>
+
+</div>
+
+<div class="tabs">
+  <div class="tab activo" data-tab="vender">VENDER</div>
+  <div class="tab" data-tab="stock">STOCK</div>
+  <div class="tab" data-tab="resumen">RESUMEN</div>
+</div>
+
+<script>
+var PRODUCTOS = [
+  {id:1,nombre:"Empanada de pino 🥟",precio:2500,tipo:"empanada"},
+  {id:2,nombre:"Empanada pollo queso 🥟",precio:2500,tipo:"empanada"},
+  {id:3,nombre:"Coca cola lata 🥫",precio:1000,tipo:"lata"},
+  {id:4,nombre:"Kem piña lata 🥫",precio:1000,tipo:"lata"},
+  {id:5,nombre:"Bilz lata 🥫",precio:1000,tipo:"lata"},
+  {id:6,nombre:"Cachantun sin gas 500 💧",precio:1000,tipo:"cachantun"},
+  {id:7,nombre:"Score morada lata 🥫",precio:1000,tipo:"lata"},
+  {id:8,nombre:"Coca cola 591 🥫",precio:1500,tipo:"591"},
+  {id:9,nombre:"Sprite lata 🥫",precio:1000,tipo:"lata"},
+  {id:10,nombre:"Crush lata 🥫",precio:1000,tipo:"lata"}
+];
+
+var carrito = {};
+var stock = JSON.parse(localStorage.getItem('stock')||'{}');
+var ventas = JSON.parse(localStorage.getItem('ventas')||'[]');
+
+function mostrarAlerta(msg,ok){
+  if(ok===undefined) ok=false;
+  var a = document.getElementById('alerta');
+  a.textContent = msg;
+  a.style.background = ok?'#00aa00':'#ff3333';
+  a.classList.remove('oculto');
+  setTimeout(function(){a.classList.add('oculto')},2000);
+}
+
+function init(){
+  if(Object.keys(stock).length===0){
+    for(var i=0;i<PRODUCTOS.length;i++){
+      stock[PRODUCTOS[i].id]=0;
+    }
+  }
+  renderProductos();
+  renderStock();
+  actualizarTotal();
+  actualizarResumen();
+  document.getElementById('metodo-pago').onchange = cambiarMetodoPago;
+  cambiarMetodoPago();
+}
+
+function cambiarMetodoPago(){
+  var metodo = document.getElementById('metodo-pago').value;
+  var grupoPago = document.getElementById('grupo-pago');
+  if(metodo==='transferencia'){
+    grupoPago.classList.add('oculto');
+    document.getElementById('pago').value = '';
+  }else{
+    grupoPago.classList.remove('oculto');
+  }
+  actualizarTotal();
+}
+
+function renderProductos(){
+  var grid = document.getElementById('productos-grid');
+  grid.innerHTML = '';
+  for(var i=0;i<PRODUCTOS.length;i++){
+    var p = PRODUCTOS[i];
+    var stockTotal = stock[p.id]||0;
+    var enCarrito = carrito[p.id]||0;
+    var stockDisponible = stockTotal - enCarrito;
+    var div = document.createElement('div');
+    div.className = 'producto' + (stockDisponible===0?' sin-stock':'') + (enCarrito>0?' activo':'');
+
+    if(enCarrito > 0){
+      div.innerHTML = '<h3>' + p.nombre + '</h3>' +
+        '<div class="precio">$' + p.precio.toLocaleString('es-CL') + '</div>' +
+        '<div class="stock">Stock: ' + stockDisponible + '</div>' +
+        '<div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">' +
+          '<button onclick="quitarProducto(' + p.id + ');event.stopPropagation()">-</button>' +
+          '<span style="font-size:18px;font-weight:bold;min-width:30px;text-align:center">' + enCarrito + '</span>' +
+          '<button onclick="agregarProducto(' + p.id + ');event.stopPropagation()">+</button>' +
+        '</div>';
+    }else{
+      div.innerHTML = '<h3>' + p.nombre + '</h3><div class="precio">$' + p.precio.toLocaleString('es-CL') + '</div><div class="stock">Stock: ' + stockDisponible + '</div>';
+      div.onclick = (function(id){
+        return function(){ agregarProducto(id); };
+      })(p.id);
+    }
+    grid.appendChild(div);
+  }
+}
+
+function agregarProducto(id){
+  var stockDisponible = stock[id] - (carrito[id]||0);
+  if(stockDisponible<=0){mostrarAlerta('Sin stock');return}
+  carrito[id] = (carrito[id]||0)+1;
+  renderProductos();
+  actualizarTotal();
+}
+
+function quitarProducto(id){
+  if(!carrito[id] || carrito[id]<=0) return;
+  carrito[id]--;
+  if(carrito[id]===0) delete carrito[id];
+  renderProductos();
+  actualizarTotal();
+}
+
+function actualizarTotal(){
+  var total = 0;
+  for(var id in carrito){
+    var p = null;
+    for(var i=0;i<PRODUCTOS.length;i++){
+      if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
+    }
+    total += p.precio * carrito[id];
+  }
+  document.getElementById('total').textContent = '$'+total.toLocaleString('es-CL');
+
+  var metodo = document.getElementById('metodo-pago').value;
+  var vueltoDiv = document.getElementById('vuelto');
+  if(metodo==='efectivo'){
+    var pago = parseInt(document.getElementById('pago').value)||0;
+    if(pago>0 && pago>=total){
+      vueltoDiv.textContent = 'Vuelto: $'+(pago-total).toLocaleString('es-CL');
+      vueltoDiv.classList.remove('oculto');
+    }else{
+      vueltoDiv.classList.add('oculto');
+    }
+  }else{
+    vueltoDiv.classList.add('oculto');
+  }
+}
+
+function renderStock(){
+  var tabla = document.getElementById('tabla-stock');
+  tabla.innerHTML = '';
+  for(var i=0;i<PRODUCTOS.length;i++){
+    var p = PRODUCTOS[i];
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + p.nombre + '</td><input type="number" value="' + stock[p.id] + '" id="stock-' + p.id + '" inputmode="numeric"></td>';
+    tabla.appendChild(tr);
+  }
+}
+
+function guardarStock(){
+  for(var i=0;i<PRODUCTOS.length;i++){
+    var p = PRODUCTOS[i];
+    stock[p.id] = parseInt(document.getElementById('stock-'+p.id).value)||0;
+  }
+  localStorage.setItem('stock',JSON.stringify(stock));
+  renderProductos();
+  mostrarAlerta('Stock guardado',true);
+  cambiarTab('vender');
+}
+
+function vender(){
+  if(Object.keys(carrito).length===0){mostrarAlerta('Carrito vacío');return}
+
+  for(var id in carrito){
+    if(stock[id] < carrito[id]){
+      mostrarAlerta('Stock insuficiente');
+      return;
+    }
+  }
+
+  for(var id in carrito){
+    stock[id] = stock[id] - carrito[id];
+  }
+
+  var metodo = document.getElementById('metodo-pago').value;
+  var total = 0;
+  for(var id in carrito){
+    var p = null;
+    for(var i=0;i<PRODUCTOS.length;i++){
+      if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
+    }
+    total += p.precio * carrito[id];
+  }
+
+  var pago = total;
+  var vuelto = 0;
+
+  if(metodo==='efectivo'){
+    pago = parseInt(document.getElementById('pago').value)||0;
+    if(pago<total){mostrarAlerta('Pago insuficiente');return}
+    vuelto = pago-total;
+  }
+
+  var wsp = document.getElementById('wsp').value.trim();
+  if(wsp && wsp.indexOf('+56')!==0){
+    mostrarAlerta('Usa formato +56912345678');
+    return;
+  }
+
+  var venta = {
+    carrito:JSON.parse(JSON.stringify(carrito)),
+    total:total,
+    pago:pago,
+    vuelto:vuelto,
+    metodo:metodo,
+    whatsapp:wsp||null,
+    fecha:new Date().toISOString(),
+    tipo:'venta'
+  };
+  ventas.push(venta);
+  localStorage.setItem('ventas',JSON.stringify(ventas));
+  localStorage.setItem('stock',JSON.stringify(stock));
+
+  if(wsp){
+    var msg = 'LOS WEONES DE LAS EMPANADAS%0A%0A';
+    for(var id in carrito){
+      var p = null;
+      for(var i=0;i<PRODUCTOS.length;i++){
+        if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
+      }
+      msg += carrito[id] + 'x ' + p.nombre + ' - $' + (p.precio*carrito[id]).toLocaleString('es-CL') + '%0A';
+    }
+    msg += '%0A*TOTAL: $' + total.toLocaleString('es-CL') + '*%0A';
+    msg += 'Pago: ' + (metodo==='transferencia'?'Transferencia':'Efectivo $'+pago.toLocaleString('es-CL')) + '%0A';
+    if(metodo==='efectivo') msg += 'Vuelto: $' + vuelto.toLocaleString('es-CL') + '%0A';
+    msg += '%0AGracias por tu compra! o si quieres puedes visitarnos en https://www.emporiodonnino.store y realizar directo sus pedidos 🥟';
+    window.open('https://wa.me/' + wsp.replace(/[^0-9]/g,'') + '?text=' + msg,'_blank');
+  }
+
+  mostrarAlerta('Venta guardada!',true);
+
+  setTimeout(function(){
+    carrito = {};
+    document.getElementById('pago').value = '';
+    document.getElementById('wsp').value = '';
+    document.getElementById('metodo-pago').value = 'efectivo';
+    cambiarMetodoPago();
+    renderProductos();
+    actualizarTotal();
+    actualizarResumen();
+  },1000);
+}
+
+function venderCosto(){
+  if(Object.keys(carrito).length===0){mostrarAlerta('Carrito vacío');return}
+
+  var soloEmpanadas = true;
+  var cantidadEmpanadas = 0;
+  for(var id in carrito){
+    var p = null;
+    for(var i=0;i<PRODUCTOS.length;i++){
+      if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
+    }
+    if(p.tipo!== 'empanada'){
+      soloEmpanadas = false;
+      break;
+    }
+    if(stock[id] < carrito[id]){
+      mostrarAlerta('Stock insuficiente');
+      return;
+    }
+    cantidadEmpanadas += carrito[id];
+  }
+
+  if(!soloEmpanadas){
+    mostrarAlerta('COSTO solo para empanadas');
+    return;
+  }
+
+  if(cantidadEmpanadas === 0){
+    mostrarAlerta('Agrega empanadas al carrito');
+    return;
+  }
+
+  for(var id in carrito){
+    stock[id] = stock[id] - carrito[id];
+  }
+
+  var total = cantidadEmpanadas * 2000;
+  var metodo = document.getElementById('metodo-pago').value;
+
+  var pago = total;
+  var vuelto = 0;
+
+  if(metodo==='efectivo'){
+    pago = parseInt(document.getElementById('pago').value)||0;
+    if(pago<total){mostrarAlerta('Pago insuficiente');return}
+    vuelto = pago-total;
+  }
+
+  var wsp = document.getElementById('wsp').value.trim();
+
+  var venta = {
+    carrito:JSON.parse(JSON.stringify(carrito)),
+    total:total,
+    pago:pago,
+    vuelto:vuelto,
+    metodo:metodo,
+    whatsapp:wsp||null,
+    fecha:new Date().toISOString(),
+    tipo:'costo'
+  };
+  ventas.push(venta);
+  localStorage.setItem('ventas',JSON.stringify(ventas));
+  localStorage.setItem('stock',JSON.stringify(stock));
+
+  if(wsp){
+    var msg = 'LOS WEONES DE LAS EMPANADAS - LIQUIDACIÓN%0A%0A';
+    for(var id in carrito){
+      var p = null;
+      for(var i=0;i<PRODUCTOS.length;i++){
+        if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
+      }
+      msg += carrito[id] + 'x ' + p.nombre + ' - $2.000 c/u%0A';
+    }
+    msg += '%0A*TOTAL COSTO: $' + total.toLocaleString('es-CL') + '*%0A';
+    msg += '%0AGracias! 🥟';
+    window.open('https://wa.me/' + wsp.replace(/[^0-9]/g,'') + '?text=' + msg,'_blank');
+  }
+
+  mostrarAlerta('Liquidación guardada!',true);
+
+  setTimeout(function(){
+    carrito = {};
+    document.getElementById('pago').value = '';
+    document.getElementById('wsp').value = '';
+    document.getElementById('metodo-pago').value = 'efectivo';
+    cambiarMetodoPago();
+    renderProductos();
+    actualizarTotal();
+    actualizarResumen();
+  },1000);
+}
+
+function anularPedido(){
+  if(Object.keys(carrito).length===0){
+    mostrarAlerta('No hay nada en el carrito');
+    return;
+  }
+  if(!confirm('¿Seguro que quieres anular el pedido?'))return;
+
+  carrito = {};
+  document.getElementById('pago').value = '';
+  document.getElementById('wsp').value = '';
+  document.getElementById('metodo-pago').value = 'efectivo';
+  cambiarMetodoPago();
+  renderProductos();
+  actualizarTotal();
+  mostrarAlerta('Pedido anulado',true);
+}
+
+function eliminarVenta(index){
+  if(!confirm('¿Eliminar esta venta? Se devolverá el stock.'))return;
+
+  var venta = ventas[index];
+
+  for(var id in venta.carrito){
+    stock[id] = (stock[id]||0) + venta.carrito[id];
+  }
+
+  ventas.splice(index, 1);
+
+  localStorage.setItem('ventas',JSON.stringify(ventas));
+  localStorage.setItem('stock',JSON.stringify(stock));
+
+  renderProductos();
+  actualizarResumen();
+  mostrarAlerta('Venta eliminada y stock devuelto',true);
+}
+
+function actualizarResumen(){
+  var totalDia = 0;
+  var totalEfectivo = 0;
+  var totalTransfer = 0;
+  for(var i=0;i<ventas.length;i++){
+    totalDia += ventas[i].total;
+    if(ventas[i].metodo==='efectivo') totalEfectivo += ventas[i].total;
+    if(ventas[i].metodo==='transferencia') totalTransfer += ventas[i].total;
+  }
+
+  var empanadas = {cant:0,total:0};
+  var bebidas591 = {cant:0,total:0};
+  var latas = {cant:0,total:0};
+  var cachantun = {cant:0,total:0};
+  var costo = {cant:0,total:0};
+
+  for(var i=0;i<ventas.length;i++){
+    var v = ventas[i];
+    for(var id in v.carrito){
+      var p = null;
+      for(var j=0;j<PRODUCTOS.length;j++){
+        if(PRODUCTOS[j].id==id){p=PRODUCTOS[j];break;}
+      }
+      var cant = v.carrito[id];
+      var subtotal = v.tipo==='costo'? 2000 * cant : p.precio * cant;
+
+      if(v.tipo==='costo'){
+        costo.cant += cant;
+        costo.total += subtotal;
+      }else if(p.tipo==='empanada'){
+        empanadas.cant += cant;
+        empanadas.total += subtotal;
+      }else if(p.tipo==='591'){
+        bebidas591.cant += cant;
+        bebidas591.total += subtotal;
+      }else if(p.tipo==='lata'){
+        latas.cant += cant;
+        latas.total += subtotal;
+      }else if(p.tipo==='cachantun'){
+        cachantun.cant += cant;
+        cachantun.total += subtotal;
+      }
+    }
+  }
+
+  document.getElementById('total-dia').textContent = '$'+totalDia.toLocaleString('es-CL');
+  document.getElementById('total-efectivo').textContent = '$'+totalEfectivo.toLocaleString('es-CL');
+  document.getElementById('total-transfer').textContent = '$'+totalTransfer.toLocaleString('es-CL');
+  document.getElementById('num-ventas').textContent = ventas.length;
+
+  document.getElementById('total-empanadas').textContent = empanadas.cant + ' und - $' + empanadas.total.toLocaleString('es-CL');
+  document.getElementById('total-591').textContent = bebidas591.cant + ' und - $' + bebidas591.total.toLocaleString('es-CL');
+  document.getElementById('total-latas').textContent = latas.cant + ' und - $' + latas.total.toLocaleString('es-CL');
+  document.getElementById('total-cachantun').textContent = cachantun.cant + ' und - $' + cachantun.total.toLocaleString('es-CL');
+  document.getElementById('total-costo').textContent = costo.cant + ' und - $' + costo.total.toLocaleString('es-CL');
+
+  var lista = document.getElementById('historial-lista');
+  lista.innerHTML = '';
+  for(var i=ventas.length-1;i>=0;i--){
+    var v = ventas[i];
+    var fecha = new Date(v.fecha);
+    var div = document.createElement('div');
+    div.className = 'historial-item' + (v.tipo==='costo'?' costo':'');
+    var detalle = '';
+    for(var id in v.carrito){
+      var p = null;
+      for(var j=0;j<PRODUCTOS.length;j++){
+        if(PRODUCTOS[j].id==id){p=PRODUCTOS[j];break;}
+      }
+      var precio = v.tipo==='costo'? 2000 : p.precio;
+      detalle += v.carrito[id] + 'x ' + p.nombre + ' @ $' + precio.toLocaleString('es-CL') + ', ';
+    }
+    detalle = detalle.slice(0,-2);
+    var wspHtml = v.whatsapp?'<div class="wsp">📱 WhatsApp: ' + v.whatsapp + '</div>':'';
+    div.innerHTML = '<div class="fecha">' + fecha.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}) + ' - <span class="metodo">' + v.metodo.toUpperCase() + (v.tipo==='costo'?' - COSTO':'') + '</span></div><div>' + detalle + '</div><div style="font-weight:bold;color:#ff6600;margin-top:4px">$' + v.total.toLocaleString('es-CL') + '</div>' + wspHtml + '<button class="btn btn-eliminar" onclick="eliminarVenta(' + i + ')">ELIMINAR VENTA</button>';
+    lista.appendChild(div);
+  }
+}
+
+function cerrarDia(){
+  if(!confirm('¿Cerrar día? Se borran todas las ventas pero se mantiene el stock.'))return;
+  ventas = [];
+  localStorage.setItem('ventas','[]');
+  actualizarResumen();
+  mostrarAlerta('Día cerrado',true);
+}
+
+function respaldarDatos(){
+  var respaldo = {
+    fecha: new Date().toISOString(),
+    stock: stock,
+    ventas: ventas
+  };
+  var dataStr = JSON.stringify(respaldo, null, 2);
+  var dataBlob = new Blob([dataStr], {type: 'application/json'});
+  var fecha = new Date().toISOString().split('T')[0];
+  var url = URL.createObjectURL(dataBlob);
+  var link = document.createElement('a');
+  link.href = url;
+  link.download = 'respaldo_empanadas_' + fecha + '.json';
+  link.click();
+  URL.revokeObjectURL(url);
+  mostrarAlerta('Respaldo descargado',true);
+}
+
+function cargarRespaldo(){
+  document.getElementById('input-cargar').click();
+}
+
+document.getElementById('input-cargar').onchange = function(e){
+  var file = e.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(event){
+    try{
+      var respaldo = JSON.parse(event.target.result);
+      if(!respaldo.stock ||!respaldo.ventas){
+        mostrarAlerta('Archivo de respaldo inválido');
+        return;
+      }
+      if(!confirm('¿Cargar respaldo? Se reemplazará todo el stock y ventas actuales.'))return;
+      stock = respaldo.stock;
+      ventas = respaldo.ventas;
+      localStorage.setItem('stock',JSON.stringify(stock));
+      localStorage.setItem('ventas',JSON.stringify(ventas));
+      renderProductos();
+      renderStock();
+      actualizarResumen();
+      mostrarAlerta('Respaldo cargado exitosamente',true);
+    }catch(err){
+      mostrarAlerta('Error al leer el archivo');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+};
+
+function mandarResumenWSP(){
+  var totalDia = 0;
+  var totalEfectivo = 0;
+  var totalTransfer = 0;
+  for(var i=0;i<ventas.length;i++){
+    totalDia += ventas[i].total;
+    if(ventas[i].metodo==='efectivo') totalEfectivo += ventas[i].total;
+    if(ventas[i].metodo==='transferencia') totalTransfer += ventas[i].total;
+  }
+
+  var empanadas = {cant:0,total:0};
+  var bebidas591 = {cant:0,total:0};
+  var latas = {cant:0,total:0};
+  var cachantun = {cant:0,total:0};
+  var costo = {cant:0,total:0};
+
+  for(var i=0;i<ventas.length;i++){
+    var v = ventas[i];
+    for(var id in v.carrito){
+      var p = null;
+      for(var j=0;j<PRODUCTOS.length;j++){
+        if(PRODUCTOS[j].id==id){p=PRODUCTOS[j];break;}
+      }
+      var cant = v.carrito[id];
+      var subtotal = v.tipo==='costo'? 2000 * cant : p.precio * cant;
+
+      if(v.tipo==='costo'){
+        costo.cant += cant;
+        costo.total += subtotal;
+      }else if(p.tipo==='empanada'){
+        empanadas.cant += cant;
+        empanadas.total += subtotal;
+      }else if(p.tipo==='591'){
+        bebidas591.cant += cant;
+        bebidas591.total += subtotal;
+      }else if(p.tipo==='lata'){
+        latas.cant += cant;
+        latas.total += subtotal;
+      }else if(p.tipo==='cachantun'){
+        cachantun.cant += cant;
+        cachantun.total += subtotal;
+      }
+    }
+  }
+
+  var fecha = new Date().toLocaleDateString('es-CL');
+  var msg = '*RESUMEN LOS WEONES DE LAS EMPANADAS*%0A';
+  msg += '📅 ' + fecha + '%0A%0A';
+  msg += '*TOTAL VENDIDO: $' + totalDia.toLocaleString('es-CL') + '*%0A%0A';
+  msg += '💵 Efectivo: $' + totalEfectivo.toLocaleString('es-CL') + '%0A';
+  msg += '💳 Transferencia: $' + totalTransfer.toLocaleString('es-CL') + '%0A%0A';
+  msg += '*DESGLOSE:*%0A';
+  msg += '🥟 Empanadas: ' + empanadas.cant + ' und - $' + empanadas.total.toLocaleString('es-CL') + '%0A';
+  msg += '🥫 Bebidas 591: ' + bebidas591.cant + ' und - $' + bebidas591.total.toLocaleString('es-CL') + '%0A';
+  msg += '🥫 Latas: ' + latas.cant + ' und - $' + latas.total.toLocaleString('es-CL') + '%0A';
+  msg += '💧 Cachantun: ' + cachantun.cant + ' und - $' + cachantun.total.toLocaleString('es-CL') + '%0A';
+  if(costo.cant > 0) msg += '🏷️ COSTO: ' + costo.cant + ' und - $' + costo.total.toLocaleString('es-CL') + '%0A';
+  msg += '%0A📊 N° de ventas: ' + ventas.length + '%0A%0A';
+  msg += 'Generado desde Caja Weones';
+
+  window.open('https://wa.me/?text=' + msg,'_blank');
+}
+
+function cambiarTab(tab){
+  var tabs = document.querySelectorAll('.tab');
+  for(var i=0;i<tabs.length;i++){
+    tabs[i].classList.remove('activo');
+  }
+  document.querySelector('[data-tab="' + tab + '"]').classList.add('activo');
+  document.getElementById('tab-vender').classList.add('oculto');
+  document.getElementById('tab-stock').classList.add('oculto');
+  document.getElementById('tab-resumen').classList.add('oculto');
+  document.getElementById('tab-'+tab).classList.remove('oculto');
+  if(tab==='resumen') actualizarResumen();
+}
+
+document.getElementById('btn-ver-stock').onclick = function(){
+  var div = document.getElementById('desglose-stock');
+  div.classList.toggle('oculto');
+  if(!div.classList.contains('oculto')){
+    var html = '<div class="total-box"><h2>STOCK ACTUAL</h2>';
+    for(var i=0;i<PRODUCTOS.length;i++){
+      var p = PRODUCTOS[i];
+      var vendido = 0;
+      for(var j=0;j<ventas.length;j++){
+        vendido += ventas[j].carrito[p.id]||0;
+      }
+      var enCarrito = carrito[p.id]||0;
+      var disponible = stock[p.id] - enCarrito;
+      html += '<div style="font-size:14px;margin:8px 0;padding-bottom:8px;border-bottom:1px solid #333"><b>' + p.nombre + '</b><br>En bodega: ' + stock[p.id] + ' | Vendido hoy: ' + vendido + '<br>En carrito: ' + enCarrito + ' | Disponible: ' + disponible + '</div>';
+    }
+    html += '</div>';
+    div.innerHTML = html;
+  }
+};
+
+var tabs = document.querySelectorAll('.tab');
+for(var i=0;i<tabs.length;i++){
+  tabs[i].onclick = (function(t){
+    return function(){ cambiarTab(t.dataset.tab); };
+  })(tabs[i]);
+}
+document.getElementById('pago').oninput = actualizarTotal;
+document.getElementById('btn-vender').onclick = vender;
+document.getElementById('btn-costo').onclick = venderCosto;
+document.getElementById('btn-anular').onclick = anularPedido;
+document.getElementById('btn-guardar-stock').onclick = guardarStock;
+document.getElementById('btn-cerrar-dia').onclick = cerrarDia;
+document.getElementById('btn-respaldar').onclick = respaldarDatos;
+document.getElementById('btn-cargar').onclick = cargarRespaldo;
+document.getElementById('btn-wsp-resumen').onclick = mandarResumenWSP;
+
+init();
+</script>
+
+</body>
+</html>
