@@ -96,9 +96,11 @@ body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-seri
   </div>
 
   <div id="tab-stock" class="oculto">
-    <h3 style="color:#ff6600;margin-bottom:10px">GESTIÓN DE STOCK</h3>
+    <h3 style="color:#ff6600;margin-bottom:10px">GESTIÓN DE STOCK INICIAL</h3>
+    <p style="font-size:12px;color:#888;margin-bottom:10px">Este stock queda fijo. Las ventas descuentan del stock del día.</p>
     <table class="tabla" id="tabla-stock"></table>
-    <button class="btn" id="btn-guardar-stock">GUARDAR STOCK INICIAL</button>
+    <button class="btn" id="btn-guardar-stock">GUARDAR STOCK INICIAL Y REINICIAR DÍA</button>
+    <button class="btn btn-secundario" id="btn-reiniciar-stock">REINICIAR STOCK DEL DÍA</button>
   </div>
 
   <div id="tab-resumen" class="oculto">
@@ -120,7 +122,7 @@ body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-seri
           <div>🥫 Bebidas 591: <span id="total-591">0 und - $0</span></div>
           <div>🥫 Latas: <span id="total-latas">0 und - $0</span></div>
           <div>💧 Cachantun: <span id="total-cachantun">0 und - $0</span></div>
-          <div style="color:#aa00ff">🏷️ COSTO: <span id="total-costo">0 und - $0</span></div>
+          <div style="color:#aa00ff">🏷 COSTO: <span id="total-costo">0 und - $0</span></div>
         </div>
       </div>
     </div>
@@ -164,7 +166,8 @@ var PRODUCTOS = [
 ];
 
 var carrito = {};
-var stock = JSON.parse(localStorage.getItem('stock')||'{}');
+var stockInicial = JSON.parse(localStorage.getItem('stockInicial')||'{}');
+var stockActual = JSON.parse(localStorage.getItem('stockActual')||'{}');
 var ventas = JSON.parse(localStorage.getItem('ventas')||'[]');
 
 function mostrarAlerta(msg,ok){
@@ -177,10 +180,15 @@ function mostrarAlerta(msg,ok){
 }
 
 function init(){
-  if(Object.keys(stock).length===0){
+  // Si no hay stock inicial, lo creamos en 0
+  if(Object.keys(stockInicial).length===0){
     for(var i=0;i<PRODUCTOS.length;i++){
-      stock[PRODUCTOS[i].id]=0;
+      stockInicial[PRODUCTOS[i].id]=0;
     }
+  }
+  // Si no hay stock actual, lo igualamos al inicial
+  if(Object.keys(stockActual).length===0){
+    stockActual = JSON.parse(JSON.stringify(stockInicial));
   }
   renderProductos();
   renderStock();
@@ -207,9 +215,9 @@ function renderProductos(){
   grid.innerHTML = '';
   for(var i=0;i<PRODUCTOS.length;i++){
     var p = PRODUCTOS[i];
-    var stockTotal = stock[p.id]||0;
+    var stockDisp = stockActual[p.id]||0;
     var enCarrito = carrito[p.id]||0;
-    var stockDisponible = stockTotal - enCarrito;
+    var stockDisponible = stockDisp - enCarrito;
     var div = document.createElement('div');
     div.className = 'producto' + (stockDisponible===0?' sin-stock':'') + (enCarrito>0?' activo':'');
 
@@ -218,9 +226,9 @@ function renderProductos(){
         '<div class="precio">$' + p.precio.toLocaleString('es-CL') + '</div>' +
         '<div class="stock">Stock: ' + stockDisponible + '</div>' +
         '<div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">' +
-          '<button onclick="quitarProducto(' + p.id + ');event.stopPropagation()">-</button>' +
+          '<button onclick="quitarProducto(' + p.id + ');event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">-</button>' +
           '<span style="font-size:18px;font-weight:bold;min-width:30px;text-align:center">' + enCarrito + '</span>' +
-          '<button onclick="agregarProducto(' + p.id + ');event.stopPropagation()">+</button>' +
+          '<button onclick="agregarProducto(' + p.id + ');event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">+</button>' +
         '</div>';
     }else{
       div.innerHTML = '<h3>' + p.nombre + '</h3><div class="precio">$' + p.precio.toLocaleString('es-CL') + '</div><div class="stock">Stock: ' + stockDisponible + '</div>';
@@ -233,7 +241,7 @@ function renderProductos(){
 }
 
 function agregarProducto(id){
-  var stockDisponible = stock[id] - (carrito[id]||0);
+  var stockDisponible = (stockActual[id]||0) - (carrito[id]||0);
   if(stockDisponible<=0){mostrarAlerta('Sin stock');return}
   carrito[id] = (carrito[id]||0)+1;
   renderProductos();
@@ -280,7 +288,7 @@ function renderStock(){
   for(var i=0;i<PRODUCTOS.length;i++){
     var p = PRODUCTOS[i];
     var tr = document.createElement('tr');
-    tr.innerHTML = '<td>' + p.nombre + '</td><input type="number" value="' + stock[p.id] + '" id="stock-' + p.id + '" inputmode="numeric"></td>';
+    tr.innerHTML = '<td>' + p.nombre + '</td><td><input type="number" value="' + (stockInicial[p.id]||0) + '" id="stock-' + p.id + '" inputmode="numeric"></td>';
     tabla.appendChild(tr);
   }
 }
@@ -288,26 +296,37 @@ function renderStock(){
 function guardarStock(){
   for(var i=0;i<PRODUCTOS.length;i++){
     var p = PRODUCTOS[i];
-    stock[p.id] = parseInt(document.getElementById('stock-'+p.id).value)||0;
+    stockInicial[p.id] = parseInt(document.getElementById('stock-'+p.id).value)||0;
   }
-  localStorage.setItem('stock',JSON.stringify(stock));
+  // Al guardar stock inicial, reiniciamos el stock actual
+  stockActual = JSON.parse(JSON.stringify(stockInicial));
+  localStorage.setItem('stockInicial',JSON.stringify(stockInicial));
+  localStorage.setItem('stockActual',JSON.stringify(stockActual));
   renderProductos();
-  mostrarAlerta('Stock guardado',true);
+  mostrarAlerta('Stock inicial guardado y día reiniciado',true);
   cambiarTab('vender');
+}
+
+function reiniciarStockDia(){
+  if(!confirm('¿Reiniciar stock del día? Se restaurará al stock inicial guardado.'))return;
+  stockActual = JSON.parse(JSON.stringify(stockInicial));
+  localStorage.setItem('stockActual',JSON.stringify(stockActual));
+  renderProductos();
+  mostrarAlerta('Stock del día reiniciado',true);
 }
 
 function vender(){
   if(Object.keys(carrito).length===0){mostrarAlerta('Carrito vacío');return}
 
   for(var id in carrito){
-    if(stock[id] < carrito[id]){
+    if((stockActual[id]||0) < carrito[id]){
       mostrarAlerta('Stock insuficiente');
       return;
     }
   }
 
   for(var id in carrito){
-    stock[id] = stock[id] - carrito[id];
+    stockActual[id] = (stockActual[id]||0) - carrito[id];
   }
 
   var metodo = document.getElementById('metodo-pago').value;
@@ -347,7 +366,7 @@ function vender(){
   };
   ventas.push(venta);
   localStorage.setItem('ventas',JSON.stringify(ventas));
-  localStorage.setItem('stock',JSON.stringify(stock));
+  localStorage.setItem('stockActual',JSON.stringify(stockActual));
 
   if(wsp){
     var msg = 'LOS WEONES DE LAS EMPANADAS%0A%0A';
@@ -393,7 +412,7 @@ function venderCosto(){
       soloEmpanadas = false;
       break;
     }
-    if(stock[id] < carrito[id]){
+    if((stockActual[id]||0) < carrito[id]){
       mostrarAlerta('Stock insuficiente');
       return;
     }
@@ -411,7 +430,7 @@ function venderCosto(){
   }
 
   for(var id in carrito){
-    stock[id] = stock[id] - carrito[id];
+    stockActual[id] = (stockActual[id]||0) - carrito[id];
   }
 
   var total = cantidadEmpanadas * 2000;
@@ -440,7 +459,7 @@ function venderCosto(){
   };
   ventas.push(venta);
   localStorage.setItem('ventas',JSON.stringify(ventas));
-  localStorage.setItem('stock',JSON.stringify(stock));
+  localStorage.setItem('stockActual',JSON.stringify(stockActual));
 
   if(wsp){
     var msg = 'LOS WEONES DE LAS EMPANADAS - LIQUIDACIÓN%0A%0A';
@@ -493,13 +512,13 @@ function eliminarVenta(index){
   var venta = ventas[index];
 
   for(var id in venta.carrito){
-    stock[id] = (stock[id]||0) + venta.carrito[id];
+    stockActual[id] = (stockActual[id]||0) + venta.carrito[id];
   }
 
   ventas.splice(index, 1);
 
   localStorage.setItem('ventas',JSON.stringify(ventas));
-  localStorage.setItem('stock',JSON.stringify(stock));
+  localStorage.setItem('stockActual',JSON.stringify(stockActual));
 
   renderProductos();
   actualizarResumen();
@@ -586,17 +605,21 @@ function actualizarResumen(){
 }
 
 function cerrarDia(){
-  if(!confirm('¿Cerrar día? Se borran todas las ventas pero se mantiene el stock.'))return;
+  if(!confirm('¿Cerrar día? Se borran todas las ventas y el stock se reinicia al inicial.'))return;
   ventas = [];
+  stockActual = JSON.parse(JSON.stringify(stockInicial));
   localStorage.setItem('ventas','[]');
+  localStorage.setItem('stockActual',JSON.stringify(stockActual));
   actualizarResumen();
+  renderProductos();
   mostrarAlerta('Día cerrado',true);
 }
 
 function respaldarDatos(){
   var respaldo = {
     fecha: new Date().toISOString(),
-    stock: stock,
+    stockInicial: stockInicial,
+    stockActual: stockActual,
     ventas: ventas
   };
   var dataStr = JSON.stringify(respaldo, null, 2);
@@ -622,14 +645,16 @@ document.getElementById('input-cargar').onchange = function(e){
   reader.onload = function(event){
     try{
       var respaldo = JSON.parse(event.target.result);
-      if(!respaldo.stock ||!respaldo.ventas){
+      if(!respaldo.stockInicial ||!respaldo.stockActual ||!respaldo.ventas){
         mostrarAlerta('Archivo de respaldo inválido');
         return;
       }
       if(!confirm('¿Cargar respaldo? Se reemplazará todo el stock y ventas actuales.'))return;
-      stock = respaldo.stock;
+      stockInicial = respaldo.stockInicial;
+      stockActual = respaldo.stockActual;
       ventas = respaldo.ventas;
-      localStorage.setItem('stock',JSON.stringify(stock));
+      localStorage.setItem('stockInicial',JSON.stringify(stockInicial));
+      localStorage.setItem('stockActual',JSON.stringify(stockActual));
       localStorage.setItem('ventas',JSON.stringify(ventas));
       renderProductos();
       renderStock();
@@ -699,7 +724,7 @@ function mandarResumenWSP(){
   msg += '🥫 Bebidas 591: ' + bebidas591.cant + ' und - $' + bebidas591.total.toLocaleString('es-CL') + '%0A';
   msg += '🥫 Latas: ' + latas.cant + ' und - $' + latas.total.toLocaleString('es-CL') + '%0A';
   msg += '💧 Cachantun: ' + cachantun.cant + ' und - $' + cachantun.total.toLocaleString('es-CL') + '%0A';
-  if(costo.cant > 0) msg += '🏷️ COSTO: ' + costo.cant + ' und - $' + costo.total.toLocaleString('es-CL') + '%0A';
+  if(costo.cant > 0) msg += '🏷 COSTO: ' + costo.cant + ' und - $' + costo.total.toLocaleString('es-CL') + '%0A';
   msg += '%0A📊 N° de ventas: ' + ventas.length + '%0A%0A';
   msg += 'Generado desde Caja Weones';
 
@@ -731,8 +756,8 @@ document.getElementById('btn-ver-stock').onclick = function(){
         vendido += ventas[j].carrito[p.id]||0;
       }
       var enCarrito = carrito[p.id]||0;
-      var disponible = stock[p.id] - enCarrito;
-      html += '<div style="font-size:14px;margin:8px 0;padding-bottom:8px;border-bottom:1px solid #333"><b>' + p.nombre + '</b><br>En bodega: ' + stock[p.id] + ' | Vendido hoy: ' + vendido + '<br>En carrito: ' + enCarrito + ' | Disponible: ' + disponible + '</div>';
+      var disponible = (stockActual[p.id]||0) - enCarrito;
+      html += '<div style="font-size:14px;margin:8px 0;padding-bottom:8px;border-bottom:1px solid #333"><b>' + p.nombre + '</b><br>Inicial: ' + (stockInicial[p.id]||0) + ' | Vendido hoy: ' + vendido + '<br>En carrito: ' + enCarrito + ' | Disponible: ' + disponible + '</div>';
     }
     html += '</div>';
     div.innerHTML = html;
@@ -750,6 +775,7 @@ document.getElementById('btn-vender').onclick = vender;
 document.getElementById('btn-costo').onclick = venderCosto;
 document.getElementById('btn-anular').onclick = anularPedido;
 document.getElementById('btn-guardar-stock').onclick = guardarStock;
+document.getElementById('btn-reiniciar-stock').onclick = reiniciarStockDia;
 document.getElementById('btn-cerrar-dia').onclick = cerrarDia;
 document.getElementById('btn-respaldar').onclick = respaldarDatos;
 document.getElementById('btn-cargar').onclick = cargarRespaldo;
