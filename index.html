@@ -20,6 +20,7 @@ body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-seri
 .producto.precio{color:#ff6600;font-weight:bold;font-size:16px}
 .producto.stock{font-size:11px;color:#888;margin-top:4px}
 .producto.sin-stock{opacity:0.3;pointer-events:none}
+.producto.dia-cerrado{opacity:0.3;pointer-events:none}
 .total-box{background:#1a1a1a;border:2px solid #ff6600;border-radius:12px;padding:15px;margin:15px 0}
 .total-box h2{color:#ff6600;font-size:14px;margin-bottom:8px}
 .total-box.monto{font-size:32px;font-weight:bold}
@@ -48,6 +49,7 @@ body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-seri
 .historial-item.metodo{color:#ff6600;font-weight:bold}
 .historial-item.wsp{color:#25D366;font-size:12px;margin-top:4px}
 .historial-item.costo{border-left-color:#aa00ff}
+.aviso-dia{background:#ff3333;color:#fff;padding:12px;border-radius:10px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:14px}
 </style>
 </head>
 <body>
@@ -62,6 +64,7 @@ body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-seri
 <div class="container">
 
   <div id="tab-vender">
+    <div id="aviso-dia-cerrado" class="aviso-dia oculto">DÍA CERRADO - CARGA STOCK INICIAL PARA VENDER</div>
     <h3 style="color:#ff6600;margin-bottom:10px">PRODUCTOS</h3>
     <div class="grid" id="productos-grid"></div>
 
@@ -97,10 +100,9 @@ body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-seri
 
   <div id="tab-stock" class="oculto">
     <h3 style="color:#ff6600;margin-bottom:10px">GESTIÓN DE STOCK INICIAL</h3>
-    <p style="font-size:12px;color:#888;margin-bottom:10px">Este stock queda fijo. Las ventas descuentan del stock del día.</p>
+    <p style="font-size:12px;color:#888;margin-bottom:10px">Este stock queda fijo. Al guardarlo se activa el día y se puede vender.</p>
     <table class="tabla" id="tabla-stock"></table>
-    <button class="btn" id="btn-guardar-stock">GUARDAR STOCK INICIAL Y REINICIAR DÍA</button>
-    <button class="btn btn-secundario" id="btn-reiniciar-stock">REINICIAR STOCK DEL DÍA</button>
+    <button class="btn" id="btn-guardar-stock">GUARDAR STOCK INICIAL Y ACTIVAR DÍA</button>
   </div>
 
   <div id="tab-resumen" class="oculto">
@@ -140,7 +142,7 @@ body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-seri
     <h3 style="color:#ff6600;margin:15px 0 10px">HISTORIAL DE VENTAS</h3>
     <div id="historial-lista"></div>
 
-    <button class="btn btn-secundario" id="btn-cerrar-dia">CERRAR DÍA Y REINICIAR</button>
+    <button class="btn btn-secundario" id="btn-cerrar-dia">CERRAR DÍA</button>
   </div>
 
 </div>
@@ -169,6 +171,7 @@ var carrito = {};
 var stockInicial = JSON.parse(localStorage.getItem('stockInicial')||'{}');
 var stockActual = JSON.parse(localStorage.getItem('stockActual')||'{}');
 var ventas = JSON.parse(localStorage.getItem('ventas')||'[]');
+var diaActivo = localStorage.getItem('diaActivo') === 'true';
 
 function mostrarAlerta(msg,ok){
   if(ok===undefined) ok=false;
@@ -180,22 +183,33 @@ function mostrarAlerta(msg,ok){
 }
 
 function init(){
-  // Si no hay stock inicial, lo creamos en 0
   if(Object.keys(stockInicial).length===0){
     for(var i=0;i<PRODUCTOS.length;i++){
       stockInicial[PRODUCTOS[i].id]=0;
     }
   }
-  // Si no hay stock actual, lo igualamos al inicial
   if(Object.keys(stockActual).length===0){
-    stockActual = JSON.parse(JSON.stringify(stockInicial));
+    for(var i=0;i<PRODUCTOS.length;i++){
+      stockActual[PRODUCTOS[i].id]=0;
+    }
+    diaActivo = false;
   }
   renderProductos();
   renderStock();
   actualizarTotal();
   actualizarResumen();
+  verificarDiaActivo();
   document.getElementById('metodo-pago').onchange = cambiarMetodoPago;
   cambiarMetodoPago();
+}
+
+function verificarDiaActivo(){
+  var aviso = document.getElementById('aviso-dia-cerrado');
+  if(!diaActivo){
+    aviso.classList.remove('oculto');
+  }else{
+    aviso.classList.add('oculto');
+  }
 }
 
 function cambiarMetodoPago(){
@@ -219,9 +233,10 @@ function renderProductos(){
     var enCarrito = carrito[p.id]||0;
     var stockDisponible = stockDisp - enCarrito;
     var div = document.createElement('div');
-    div.className = 'producto' + (stockDisponible===0?' sin-stock':'') + (enCarrito>0?' activo':'');
+    var sinStock = stockDisponible===0 ||!diaActivo;
+    div.className = 'producto' + (sinStock?' sin-stock':'') + (enCarrito>0?' activo':'');
 
-    if(enCarrito > 0){
+    if(enCarrito > 0 && diaActivo){
       div.innerHTML = '<h3>' + p.nombre + '</h3>' +
         '<div class="precio">$' + p.precio.toLocaleString('es-CL') + '</div>' +
         '<div class="stock">Stock: ' + stockDisponible + '</div>' +
@@ -232,15 +247,21 @@ function renderProductos(){
         '</div>';
     }else{
       div.innerHTML = '<h3>' + p.nombre + '</h3><div class="precio">$' + p.precio.toLocaleString('es-CL') + '</div><div class="stock">Stock: ' + stockDisponible + '</div>';
-      div.onclick = (function(id){
-        return function(){ agregarProducto(id); };
-      })(p.id);
+      if(diaActivo){
+        div.onclick = (function(id){
+          return function(){ agregarProducto(id); };
+        })(p.id);
+      }
     }
     grid.appendChild(div);
   }
 }
 
 function agregarProducto(id){
+  if(!diaActivo){
+    mostrarAlerta('Día cerrado. Carga stock inicial para activar');
+    return;
+  }
   var stockDisponible = (stockActual[id]||0) - (carrito[id]||0);
   if(stockDisponible<=0){mostrarAlerta('Sin stock');return}
   carrito[id] = (carrito[id]||0)+1;
@@ -298,24 +319,22 @@ function guardarStock(){
     var p = PRODUCTOS[i];
     stockInicial[p.id] = parseInt(document.getElementById('stock-'+p.id).value)||0;
   }
-  // Al guardar stock inicial, reiniciamos el stock actual
   stockActual = JSON.parse(JSON.stringify(stockInicial));
+  diaActivo = true;
   localStorage.setItem('stockInicial',JSON.stringify(stockInicial));
   localStorage.setItem('stockActual',JSON.stringify(stockActual));
+  localStorage.setItem('diaActivo','true');
   renderProductos();
-  mostrarAlerta('Stock inicial guardado y día reiniciado',true);
+  verificarDiaActivo();
+  mostrarAlerta('Stock inicial guardado. Día activado',true);
   cambiarTab('vender');
 }
 
-function reiniciarStockDia(){
-  if(!confirm('¿Reiniciar stock del día? Se restaurará al stock inicial guardado.'))return;
-  stockActual = JSON.parse(JSON.stringify(stockInicial));
-  localStorage.setItem('stockActual',JSON.stringify(stockActual));
-  renderProductos();
-  mostrarAlerta('Stock del día reiniciado',true);
-}
-
 function vender(){
+  if(!diaActivo){
+    mostrarAlerta('Día cerrado. Carga stock inicial para activar');
+    return;
+  }
   if(Object.keys(carrito).length===0){mostrarAlerta('Carrito vacío');return}
 
   for(var id in carrito){
@@ -399,6 +418,10 @@ function vender(){
 }
 
 function venderCosto(){
+  if(!diaActivo){
+    mostrarAlerta('Día cerrado. Carga stock inicial para activar');
+    return;
+  }
   if(Object.keys(carrito).length===0){mostrarAlerta('Carrito vacío');return}
 
   var soloEmpanadas = true;
@@ -478,7 +501,7 @@ function venderCosto(){
   mostrarAlerta('Liquidación guardada!',true);
 
   setTimeout(function(){
-    carrito = {};
+      carrito = {};
     document.getElementById('pago').value = '';
     document.getElementById('wsp').value = '';
     document.getElementById('metodo-pago').value = 'efectivo';
@@ -605,14 +628,20 @@ function actualizarResumen(){
 }
 
 function cerrarDia(){
-  if(!confirm('¿Cerrar día? Se borran todas las ventas y el stock se reinicia al inicial.'))return;
+  if(!confirm('¿Cerrar día? Se borran todas las ventas y el stock de ventas queda en 0. El stock inicial se mantiene intacto.'))return;
   ventas = [];
-  stockActual = JSON.parse(JSON.stringify(stockInicial));
+  for(var i=0;i<PRODUCTOS.length;i++){
+    stockActual[PRODUCTOS[i].id] = 0;
+  }
+  diaActivo = false;
+  carrito = {};
   localStorage.setItem('ventas','[]');
   localStorage.setItem('stockActual',JSON.stringify(stockActual));
+  localStorage.setItem('diaActivo','false');
   actualizarResumen();
   renderProductos();
-  mostrarAlerta('Día cerrado',true);
+  verificarDiaActivo();
+  mostrarAlerta('Día cerrado. Carga stock inicial para activar ventas',true);
 }
 
 function respaldarDatos(){
@@ -620,7 +649,8 @@ function respaldarDatos(){
     fecha: new Date().toISOString(),
     stockInicial: stockInicial,
     stockActual: stockActual,
-    ventas: ventas
+    ventas: ventas,
+    diaActivo: diaActivo
   };
   var dataStr = JSON.stringify(respaldo, null, 2);
   var dataBlob = new Blob([dataStr], {type: 'application/json'});
@@ -653,12 +683,15 @@ document.getElementById('input-cargar').onchange = function(e){
       stockInicial = respaldo.stockInicial;
       stockActual = respaldo.stockActual;
       ventas = respaldo.ventas;
+      diaActivo = respaldo.diaActivo || false;
       localStorage.setItem('stockInicial',JSON.stringify(stockInicial));
       localStorage.setItem('stockActual',JSON.stringify(stockActual));
       localStorage.setItem('ventas',JSON.stringify(ventas));
+      localStorage.setItem('diaActivo',diaActivo);
       renderProductos();
       renderStock();
       actualizarResumen();
+      verificarDiaActivo();
       mostrarAlerta('Respaldo cargado exitosamente',true);
     }catch(err){
       mostrarAlerta('Error al leer el archivo');
@@ -775,7 +808,6 @@ document.getElementById('btn-vender').onclick = vender;
 document.getElementById('btn-costo').onclick = venderCosto;
 document.getElementById('btn-anular').onclick = anularPedido;
 document.getElementById('btn-guardar-stock').onclick = guardarStock;
-document.getElementById('btn-reiniciar-stock').onclick = reiniciarStockDia;
 document.getElementById('btn-cerrar-dia').onclick = cerrarDia;
 document.getElementById('btn-respaldar').onclick = respaldarDatos;
 document.getElementById('btn-cargar').onclick = cargarRespaldo;
