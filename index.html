@@ -103,6 +103,7 @@ body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-seri
     <p style="font-size:12px;color:#888;margin-bottom:10px">Este stock queda fijo. Al guardarlo se activa el día y se puede vender.</p>
     <table class="tabla" id="tabla-stock"></table>
     <button class="btn" id="btn-guardar-stock">GUARDAR STOCK INICIAL Y ACTIVAR DÍA</button>
+    <button class="btn btn-secundario" id="btn-reiniciar-stock">REINICIAR STOCK DEL DÍA</button>
   </div>
 
   <div id="tab-resumen" class="oculto">
@@ -157,7 +158,9 @@ body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-seri
 var PRODUCTOS = [
   {id:1,nombre:"Empanada de pino 🥟",precio:2500,tipo:"empanada"},
   {id:2,nombre:"Empanada pollo queso 🥟",precio:2500,tipo:"empanada"},
+  {id:11,nombre:"Empanada napolitana 🥟",precio:2500,tipo:"empanada"},
   {id:3,nombre:"Coca cola lata 🥫",precio:1000,tipo:"lata"},
+  {id:12,nombre:"Coca cola zero lata 🥫",precio:1000,tipo:"lata"},
   {id:4,nombre:"Kem piña lata 🥫",precio:1000,tipo:"lata"},
   {id:5,nombre:"Bilz lata 🥫",precio:1000,tipo:"lata"},
   {id:6,nombre:"Cachantun sin gas 500 💧",precio:1000,tipo:"cachantun"},
@@ -194,6 +197,11 @@ function init(){
     }
     diaActivo = false;
   }
+  if(!diaActivo){
+    for(var i=0;i<PRODUCTOS.length;i++){
+      stockActual[PRODUCTOS[i].id]=0;
+    }
+  }
   renderProductos();
   renderStock();
   actualizarTotal();
@@ -229,7 +237,7 @@ function renderProductos(){
   grid.innerHTML = '';
   for(var i=0;i<PRODUCTOS.length;i++){
     var p = PRODUCTOS[i];
-    var stockDisp = stockActual[p.id]||0;
+    var stockDisp = diaActivo? (stockActual[p.id]||0) : 0;
     var enCarrito = carrito[p.id]||0;
     var stockDisponible = stockDisp - enCarrito;
     var div = document.createElement('div');
@@ -328,6 +336,18 @@ function guardarStock(){
   verificarDiaActivo();
   mostrarAlerta('Stock inicial guardado. Día activado',true);
   cambiarTab('vender');
+}
+
+function reiniciarStockDia(){
+  if(!diaActivo){
+    mostrarAlerta('Día cerrado. Carga stock inicial primero');
+    return;
+  }
+  if(!confirm('¿Reiniciar stock del día al inicial? Se perderá el stock actual pero no las ventas.'))return;
+  stockActual = JSON.parse(JSON.stringify(stockInicial));
+  localStorage.setItem('stockActual',JSON.stringify(stockActual));
+  renderProductos();
+  mostrarAlerta('Stock del día reiniciado al inicial',true);
 }
 
 function vender(){
@@ -501,7 +521,7 @@ function venderCosto(){
   mostrarAlerta('Liquidación guardada!',true);
 
   setTimeout(function(){
-      carrito = {};
+    carrito = {};
     document.getElementById('pago').value = '';
     document.getElementById('wsp').value = '';
     document.getElementById('metodo-pago').value = 'efectivo';
@@ -808,6 +828,7 @@ document.getElementById('btn-vender').onclick = vender;
 document.getElementById('btn-costo').onclick = venderCosto;
 document.getElementById('btn-anular').onclick = anularPedido;
 document.getElementById('btn-guardar-stock').onclick = guardarStock;
+document.getElementById('btn-reiniciar-stock').onclick = reiniciarStockDia;
 document.getElementById('btn-cerrar-dia').onclick = cerrarDia;
 document.getElementById('btn-respaldar').onclick = respaldarDatos;
 document.getElementById('btn-cargar').onclick = cargarRespaldo;
