@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#ff6600">
 <title>Caja Weones - Empanadas</title>
+<link rel="manifest" href="manifest.json">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-serif;padding-bottom:80px}
@@ -834,8 +835,11 @@ document.getElementById('btn-respaldar').onclick = respaldarDatos;
 document.getElementById('btn-cargar').onclick = cargarRespaldo;
 document.getElementById('btn-wsp-resumen').onclick = mandarResumenWSP;
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
 init();
 </script>
 
 </body>
-</html>
+</html>,
