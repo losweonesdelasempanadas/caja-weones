@@ -1,7 +1,7 @@
 {
   "name": "Los Weones de las Empanadas",
   "short_name": "Empanadas",
-  "start_url": "/index.html",
+  "start_url": "/caja-weones/",
   "display": "standalone",
   "background_color": "#1a1a1a",
   "theme_color": "#ff6b00",
