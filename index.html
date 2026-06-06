@@ -575,7 +575,7 @@ function actualizarResumen(){
   for(var i=0;i<ventas.length;i++){
     totalDia += ventas[i].total;
     if(ventas[i].metodo==='efectivo') totalEfectivo += ventas[i].total;
-    if(ventas[i].metodo==='transferencia') totalTransfer += ventas[i].total;
+        if(ventas[i].metodo==='transferencia') totalTransfer += ventas[i].total;
   }
 
   var empanadas = {cant:0,total:0};
@@ -717,7 +717,7 @@ document.getElementById('input-cargar').onchange = function(e){
       mostrarAlerta('Error al leer el archivo');
     }
   };
-  reader.readAsText(file);
+    reader.readAsText(file);
   e.target.value = '';
 };
 
