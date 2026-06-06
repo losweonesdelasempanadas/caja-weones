@@ -94,7 +94,7 @@ body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-seri
     </div>
 
     <button class="btn" id="btn-vender">VENDER Y MANDAR WHATSAPP</button>
-    <button class="btn btn-costo" id="btn-costo">COSTO $2000 - LIQUIDAR EMPANADAS</button>
+<button class="btn btn-costo" id="btn-costo" onclick="vender('Liquidación')">COSTO $2000 - LIQUIDAR EMPANADAS</button>
     <button class="btn btn-secundario" id="btn-anular">ANULAR PEDIDO</button>
     <div id="alerta" class="alerta oculto"></div>
   </div>
@@ -351,46 +351,21 @@ function reiniciarStockDia(){
   mostrarAlerta('Stock del día reiniciado al inicial',true);
 }
 
-function vender(){
+function vender(metodo){
   if(!diaActivo){
     mostrarAlerta('Día cerrado. Carga stock inicial para activar');
     return;
   }
-  if(Object.keys(carrito).length===0){mostrarAlerta('Carrito vacío');return}
-if(window.esLiquidacion){
-  let totalLiquidacion = 0;
-  let detalleVenta = [];
-  for(var id in carrito){
-    let p = null;
-    for(var i=0;i<PRODUCTOS.length;i++){
-      if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
-    }
-    if(p && p.tipo=='empanada'){
-      totalLiquidacion += 2000 * carrito[id];
-      detalleVenta.push(carrito[id] + 'x ' + p.nombre);
-    }
+  if(Object.keys(carrito).length===0){mostrarAlerta('Carrito vacío');return
+  if(metodo==='Liquidación'){
+  if(!confirm('⚠️ ATENCIÓN\n\nVas a vender TODO a precio liquidación: $2.000\n¿Confirmar venta?')){
+    return;
   }
-  ventas.push({
-    carrito: {...carrito},
-    detalle: detalleVenta,
-    total: totalLiquidacion,
-    pago: totalLiquidacion,
-    vuelto: 0,
-    metodo: 'efectivo',
-    tipo: 'Liquidación',
-    fecha: new Date().toISOString()
-  });
-  for(var id in carrito){
-    stockActual[id] -= carrito[id];
-  }
-  carrito = {};
-  renderProductos();
-  localStorage.setItem('stockActual',JSON.stringify(stockActual));
-  localStorage.setItem('ventas',JSON.stringify(ventas));
-  mostrarAlerta('LIQUIDACIÓN: ' + detalleVenta.join(', ') + ' = $' + totalLiquidacion.toLocaleString('es-CL'));
-  window.esLiquidacion = false;
-  return;
-}
+
+
+var total = 0;
+for(var id in carrito){
+  var p = productos.find(x=>x.id==id);
        
 
         
@@ -403,27 +378,34 @@ if(window.esLiquidacion){
     }
   }
 
-  for(var id in carrito){
-    stockActual[id] = (stockActual[id]||0) - carrito[id];
-  }
+  
 
-  var metodo = document.getElementById('metodo-pago').value;
+  //var metodo = document.getElementById('metodo-pago').value;
   var total = 0;
+  var totalEmpanadas = 0;
   for(var id in carrito){
     var p = null;
     for(var i=0;i<PRODUCTOS.length;i++){
       if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
+  stockActual[id] -= carrito[id];
+    totalEmpanadas += carrito[id];
+
+    if(metodo==='Liquidación'){
+      total = 2000 * totalEmpanadas;
+      detalleVenta.push(totalEmpanadas + ' x Empanadas Liquidación $2.000');
+      break;
     }
+
     total += p.precio * carrito[id];
   }
 
   var pago = total;
   var vuelto = 0;
 
-  if(metodo==='efectivo'){
-    pago = parseInt(document.getElementById('pago').value)||0;
-    if(pago<total){mostrarAlerta('Pago insuficiente');return}
-    vuelto = pago-total;
+  if(metodo==='efectivo' || metodo==='transferencia'){
+    pago = parseFloat(document.getElementById('pago').value)||0;
+    if(pago<total){mostrarAlerta('Pago insuficiente',true);return;}
+    vuelto = pago - total;
   }
 
   var wsp = document.getElementById('wsp').value.trim();
