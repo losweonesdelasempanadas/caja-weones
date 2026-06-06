@@ -357,7 +357,39 @@ function vender(){
     return;
   }
   if(Object.keys(carrito).length===0){mostrarAlerta('Carrito vacío');return}
+if(window.esLiquidacion){
+        let totalLiquidacion = 0;
+        for(var id in carrito){
+            let p = null;
+            for(var i=0;i<PRODUCTOS.length;i++){
+                if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
+            }
+            if(p && p.tipo=='empanada'){
+                totalLiquidacion += 2000 * carrito[id];
+            }
+        }
+        ventas.push({
+            productos: {...carrito},
+            total: totalLiquidacion,
+            pago: totalLiquidacion,
+            vuelto: 0,
+            tipo: 'Liquidación',
+            fecha: new Date().toISOString()
+        });
+        for(var id in carrito){
+            stockActual[id] -= carrito[id];
+       }
+    carrito = {};
+    renderProductos();
+    localStorage.setItem('stockActual',JSON.stringify(stockActual));
+    localStorage.setItem('ventas',JSON.stringify(ventas));
+    mostrarAlerta('Venta por liquidación: $' + totalLiquidacion);
+    window.esLiquidacion = false;
+    return;
 
+        
+      
+ 
   for(var id in carrito){
     if((stockActual[id]||0) < carrito[id]){
       mostrarAlerta('Stock insuficiente');
@@ -443,10 +475,12 @@ function venderCosto(){
     mostrarAlerta('Día cerrado. Carga stock inicial para activar');
     return;
   }
-  if(Object.keys(carrito).length===0){mostrarAlerta('Carrito vacío');return}
+  if(Object.keys(carrito).length===0){
+    mostrarAlerta('Carrito vacío');
+    return;
+  }
 
   var soloEmpanadas = true;
-  var cantidadEmpanadas = 0;
   for(var id in carrito){
     var p = null;
     for(var i=0;i<PRODUCTOS.length;i++){
@@ -456,11 +490,6 @@ function venderCosto(){
       soloEmpanadas = false;
       break;
     }
-    if((stockActual[id]||0) < carrito[id]){
-      mostrarAlerta('Stock insuficiente');
-      return;
-    }
-    cantidadEmpanadas += carrito[id];
   }
 
   if(!soloEmpanadas){
@@ -468,77 +497,9 @@ function venderCosto(){
     return;
   }
 
-  if(cantidadEmpanadas === 0){
-    mostrarAlerta('Agrega empanadas al carrito');
-    return;
-  }
-
- 
-
-  var total = cantidadEmpanadas * 2000;
-  document.getElementById('total').textContent = '$'+total.toLocaleString('es-CL')+' - COSTO';
-  if(!confirm('Liquidar ' + cantidadEmpanadas + ' empanadas a $2000 c/u?\nTotal: $' + total.toLocaleString('es-CL'))){
-    actualizarTotal();
-    return;
-  }
-  for(var id in carrito){
-  stockActual[id] = (stockActual[id]||0) - carrito[id];
+  window.esLiquidacion = true;
+  vender();
 }
-  var metodo = document.getElementById('metodo-pago').value;
-
-  var pago = total;
-  var vuelto = 0;
-
-  if(metodo==='efectivo'){
-    pago = parseInt(document.getElementById('pago').value)||0;
-    if(pago<total){mostrarAlerta('Pago insuficiente');return}
-    vuelto = pago-total;
-  }
-
-  var wsp = document.getElementById('wsp').value.trim();
-
-  var venta = {
-    carrito:JSON.parse(JSON.stringify(carrito)),
-    total:total,
-    pago:pago,
-    vuelto:vuelto,
-    metodo:metodo,
-    whatsapp:wsp||null,
-    fecha:new Date().toISOString(),
-    tipo:'costo'
-  };
-  ventas.push(venta);
-  localStorage.setItem('ventas',JSON.stringify(ventas));
-  localStorage.setItem('stockActual',JSON.stringify(stockActual));
-
-  if(wsp){
-    var msg = 'LOS WEONES DE LAS EMPANADAS - LIQUIDACIÓN%0A%0A';
-    for(var id in carrito){
-      var p = null;
-      for(var i=0;i<PRODUCTOS.length;i++){
-        if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
-      }
-      msg += carrito[id] + 'x ' + p.nombre + ' - $2.000 c/u%0A';
-    }
-    msg += '%0A*TOTAL COSTO: $' + total.toLocaleString('es-CL') + '*%0A';
-    msg += '%0AGracias! 🥟';
-    window.open('https://wa.me/' + wsp.replace(/[^0-9]/g,'') + '?text=' + msg,'_blank');
-  }
-
-  mostrarAlerta('Liquidación guardada!',true);
-
-  setTimeout(function(){
-    carrito = {};
-    document.getElementById('pago').value = '';
-    document.getElementById('wsp').value = '';
-    document.getElementById('metodo-pago').value = 'efectivo';
-    cambiarMetodoPago();
-    renderProductos();
-    actualizarTotal();
-    actualizarResumen();
-  },1000);
-}
-
 function anularPedido(){
   if(Object.keys(carrito).length===0){
     mostrarAlerta('No hay nada en el carrito');
