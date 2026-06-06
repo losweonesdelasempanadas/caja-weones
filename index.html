@@ -376,16 +376,18 @@ if(window.esLiquidacion){
             tipo: 'Liquidación',
             fecha: new Date().toISOString()
         });
-        for(var id in carrito){
-            stockActual[id] -= carrito[id];
-       }
-    carrito = {};
-    renderProductos();
-    localStorage.setItem('stockActual',JSON.stringify(stockActual));
-    localStorage.setItem('ventas',JSON.stringify(ventas));
-    mostrarAlerta('Venta por liquidación: $' + totalLiquidacion);
-    window.esLiquidacion = false;
-    return;
+  for(var id in carrito){
+  stockActual[id] -= carrito[id];
+}
+carrito = {};
+renderProductos();
+localStorage.setItem('stockActual',JSON.stringify(stockActual));
+localStorage.setItem('ventas',JSON.stringify(ventas));
+mostrarAlerta('Venta por liquidación: $' + totalLiquidacion);
+window.esLiquidacion = false;
+return;
+}
+       
 
         
       
