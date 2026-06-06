@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#ff6600">
 <title>Caja Weones - Empanadas</title>
-<link rel="manifest" href="manifest.json">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-serif;padding-bottom:80px}
@@ -576,7 +575,7 @@ function actualizarResumen(){
   for(var i=0;i<ventas.length;i++){
     totalDia += ventas[i].total;
     if(ventas[i].metodo==='efectivo') totalEfectivo += ventas[i].total;
-        if(ventas[i].metodo==='transferencia') totalTransfer += ventas[i].total;
+    if(ventas[i].metodo==='transferencia') totalTransfer += ventas[i].total;
   }
 
   var empanadas = {cant:0,total:0};
@@ -718,7 +717,7 @@ document.getElementById('input-cargar').onchange = function(e){
       mostrarAlerta('Error al leer el archivo');
     }
   };
-    reader.readAsText(file);
+  reader.readAsText(file);
   e.target.value = '';
 };
 
@@ -835,9 +834,6 @@ document.getElementById('btn-respaldar').onclick = respaldarDatos;
 document.getElementById('btn-cargar').onclick = cargarRespaldo;
 document.getElementById('btn-wsp-resumen').onclick = mandarResumenWSP;
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
 init();
 </script>
 
