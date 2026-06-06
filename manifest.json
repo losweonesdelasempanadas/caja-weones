@@ -1,0 +1,22 @@
+{
+  "name": "Los Weones de las Empanadas",
+  "short_name": "Empanadas",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#ff6b00",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/4253/4253498.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/4253/4253498.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
