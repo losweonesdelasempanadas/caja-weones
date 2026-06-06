@@ -473,11 +473,17 @@ function venderCosto(){
     return;
   }
 
-  for(var id in carrito){
-    stockActual[id] = (stockActual[id]||0) - carrito[id];
-  }
+ 
 
   var total = cantidadEmpanadas * 2000;
+  document.getElementById('total').textContent = '$'+total.toLocaleString('es-CL')+' - COSTO';
+  if(!confirm('Liquidar ' + cantidadEmpanadas + ' empanadas a $2000 c/u?\nTotal: $' + total.toLocaleString('es-CL'))){
+    actualizarTotal();
+    return;
+  }
+  for(var id in carrito){
+  stockActual[id] = (stockActual[id]||0) - carrito[id];
+}
   var metodo = document.getElementById('metodo-pago').value;
 
   var pago = total;
