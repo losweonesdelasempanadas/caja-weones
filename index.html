@@ -1,217 +1,216 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#ff6600">
-<title>Caja Weones - Empanadas</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-serif;padding-bottom:80px}
-.header{background:#ff6600;padding:12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
-.header h1{font-size:18px;line-height:1.2}
-.header span{font-size:13px;color:#ffd4b3}
-.header .user{margin-left:auto;font-size:13px;font-weight:bold;background:#000;padding:6px 12px;border-radius:8px}
-.container{padding:12px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}
-.producto{background:#1a1a1a;border:2px solid #333;border-radius:12px;padding:10px;text-align:center;cursor:pointer;user-select:none;position:relative}
-.producto:active{transform:scale(0.95)}
-.producto.activo{border-color:#ff6600;background:#2a1500}
-.producto img{width:100%;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px}
-.producto-icono{
-  font-size:90px;
-  line-height:1;
-  text-align:center;
-  margin:10px 0;
-  filter:drop-shadow(0 6px 12px rgba(255,107,53,0.4));
-  transition:transform 0.2s;
-}
-.producto:hover .producto-icono{
-  transform:scale(1.1) rotate(-5deg);
-}
-.producto h3{font-size:13px;margin-bottom:5px;line-height:1.2}
-.producto .precio{color:#ff6600;font-weight:bold;font-size:16px}
-.producto.stock{font-size:11px;color:#888;margin-top:4px}
-.producto.sin-stock{opacity:0.3;pointer-events:none}
-.producto.dia-cerrado{opacity:0.3;pointer-events:none}
-.total-box{background:#1a1a1a;border:2px solid #ff6600;border-radius:12px;padding:15px;margin:15px 0}
-.total-box h2{color:#ff6600;font-size:14px;margin-bottom:8px}
-.total-box.monto{font-size:32px;font-weight:bold}
-.input-group{margin:12px 0}
-.input-group label{display:block;font-size:13px;color:#aaa;margin-bottom:6px}
-.input-group input,.input-group select{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:10px;color:#fff;font-size:18px}
-.input-group input:focus,.input-group select:focus{outline:none;border-color:#ff6600}
-.btn{width:100%;padding:10px;background:#ff6600;color:#000;border:none;border-radius:12px;font-size:14px;font-weight:bold;cursor:pointer;margin:6px 0}
-.btn:active{transform:scale(0.98)}
-.btn-secundario{background:#333;color:#fff}
-.btn-costo{background:#aa00ff;color:#fff}
-.btn-eliminar{background:#ff3333;color:#fff;font-size:14px;padding:8px;margin-top:8px}
-.btn-wsp{background:#25D366;color:#fff}
-.btn-backup{background:#0088ff;color:#fff}
-.btn-logout{background:#ff3333;color:#fff;font-size:12px;padding:8px}
-.tabs{position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;display:flex;border-top:2px solid #333}
-.tab{flex:1;padding:14px;text-align:center;cursor:pointer;font-size:13px;font-weight:bold}
-.tab.activo{background:#ff6600;color:#000}
-.oculto{display:none}
-.tabla{width:100%;font-size:13px}
-.tabla td{padding:8px 4px;border-bottom:1px solid #222}
-.tabla input{width:60px;padding:6px;background:#0a0a0a;border:1px solid #333;border-radius:6px;color:#fff;text-align:center}
-.vuelto{font-size:24px;color:#00ff00;font-weight:bold;text-align:center;margin:10px 0}
-.alerta{background:#ff3333;color:#fff;padding:10px;border-radius:8px;margin:10px 0;font-size:13px;text-align:center}
-.historial-item{background:#1a1a1a;border-left:4px solid #ff6600;padding:10px;margin:8px 0;border-radius:8px;font-size:13px;position:relative}
-.historial-item.fecha{color:#888;font-size:11px}
-.historial-item.metodo{color:#ff6600;font-weight:bold}
-.historial-item.wsp{color:#25D366;font-size:12px;margin-top:4px}
-.historial-item.costo{border-left-color:#aa00ff}
-.historial-item.folio{color:#0088ff;font-weight:bold;font-size:14px}
-.historial-item.vendedor{color:#ffaa00;font-size:11px}
-.aviso-dia{background:#ff3333;color:#fff;padding:12px;border-radius:10px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:14px}
-.banner-liquidacion{background:#aa00ff;color:#fff;padding:10px;border-radius:8px;margin:10px 0;font-size:13px;text-align:center;font-weight:bold}
-.mensaje-venta{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#10b981;color:#fff;padding:12px 20px;border-radius:8px;z-index:9999;font-weight:bold;box-shadow:0 4px 6px rgba(0,0,0,0.3);display:none}
-.login-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-box{background:#1a1a1a;border:2px solid #ff6600;border-radius:12px;padding:30px;width:100%;max-width:400px}
-.login-box h1{color:#ff6600;text-align:center;margin-bottom:20px;font-size:24px}
-.login-box h2{color:#fff;text-align:center;margin-bottom:30px;font-size:16px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Los Weones de las Empanadas - CAJA V2.0</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh;overflow-x:hidden}
+   .container{max-width:500px;margin:0 auto}
+   .header{background:linear-gradient(135deg,#1a 0%,#2d2d2d 100%);padding:20px;border-radius:16px;margin-bottom:15px;border:1px solid #ff6600;text-align:center;position:relative}
+   .header h1{font-size:24px;color:#ff6600;margin-bottom:5px;text-shadow:0 0 20px rgba(255,102,0,0.5)}
+   .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:15px}
+   .tab{padding:14px 8px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:13px;font-weight:bold;cursor:pointer;transition:all 0.3s;text-align:center}
+   .tab.activo{background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);color:#000;border-color:#ff6600;box-shadow:0 4px 15px rgba(255,102,0,0.4)}
+   .pantalla{display:none}.pantalla.activa{display:block}
+   .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+   .producto{background:linear-gradient(135deg,#1a1a1a 0%,#252525 100%);border:2px solid #333;border-radius:14px;padding:16px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+   .producto:active{transform:scale(0.95)}.producto.activo{border-color:#ff6600;background:linear-gradient(135deg,#2d1a00 0%,#3d2400 100%);box-shadow:0 0 20px rgba(255,102,0,0.3)}
+   .producto.sin-stock{opacity:.4;cursor:not-allowed}.producto-icono{font-size:40px;margin-bottom:8px;text-align:center}
+   .producto h3{font-size:14px;color:#ff6600;margin-bottom:6px;font-weight:600;line-height:1.2}
+   .producto.precio{font-size:18px;color:#fff;font-weight:bold;margin-bottom:4px}
+   .producto.stock{font-size:11px;color:#888}
+   .total-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:20px;border-radius:16px;margin-bottom:15px;border:2px solid #ff6600}
+   .total-box h2{font-size:14px;color:#888;margin-bottom:8px;text-transform:uppercase}
+   .total-box.monto{font-size:36px;color:#ff6600;font-weight:bold;text-shadow:0 0 20px rgba(255,102,0,0.5)}
+   .total-box.vuelto{font-size:16px;color:#00ff00;margin-top:8px;font-weight:600}
+   .input-grupo{margin-bottom:15px}.input-grupo label{display:block;color:#ff6600;font-size:13px;margin-bottom:6px;font-weight:600}
+   .input-grupo input,.input-grupo select{width:100%;padding:14px;background:#1a1a;border:2px solid #333;border-radius:12px;color:#fff;font-size:16px;outline:0;transition:all 0.3s}
+   .input-grupo input:focus,.input-grupo select:focus{border-color:#ff6600;box-shadow:0 0 15px rgba(255,102,0,0.2)}
+   .input-grupo select option{background:#1a1a1a;color:#fff}
+   .btn{width:100%;padding:16px;background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);border:none;border-radius:14px;color:#000;font-size:16px;font-weight:bold;cursor:pointer;transition:all 0.2s;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 15px rgba(255,102,0,0.3)}
+   .btn:active{transform:scale(0.98)}.btn-anular{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;box-shadow:0 4px 15px rgba(255,51,0.3)}
+   .btn-costo{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;box-shadow:0 4px 15px rgba(0,170,0,0.3)}
+   .btn-eliminar{background:linear-gradient(135deg,#aa0000 0%,#cc0000 100%);color:#fff;padding:8px;font-size:12px;margin-top:8px}
+   .banner-liquidacion{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:16px;box-shadow:0 4px 15px rgba(0,170,0,0.4);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+   .aviso-cerrado{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:14px;box-shadow:0 4px 15px rgba(255,51,0.4)}
+   .stock-tabla{width:100%;background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:15px}
+   .stock-tabla th{background:#2d2d2d;padding:12px;text-align:left;font-size:12px;color:#ff6600;text-transform:uppercase}
+   .stock-tabla td{padding:12px;border-top:1px solid #333;font-size:14px}
+   .stock-tabla input{width:80px;padding:8px;background:#0a0a0a;border:1px solid #333;border-radius:8px;color:#fff;text-align:center}
+   .resumen-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+   .resumen-item{background:#1a1a1a;padding:14px;border-radius:12px;border:1px solid #333}
+   .resumen-item h3{font-size:11px;color:#888;margin-bottom:6px;text-transform:uppercase}
+   .resumen-item.valor{font-size:20px;color:#ff6600;font-weight:bold}
+   .resumen-item.destacado{grid-column:span 2;background:linear-gradient(135deg,#1a1a1a 0%,#2d1a00 100%);border-color:#ff6600}
+   .resumen-item.destacado.valor{font-size:28px}
+   .historial-item{background:#1a1a1a;padding:14px;border-radius:12px;margin-bottom:10px;border-left:4px solid #ff6600}
+   .historial-item.costo{border-left-color:#00aa00}.historial-item.fecha{font-size:11px;color:#888;margin-bottom:6px}
+   .historial-item.folio{font-size:11px;color:#ff6600;font-weight:bold;margin-bottom:4px}
+   .historial-item.vendedor{font-size:11px;color:#00aaff;margin-bottom:4px}
+   .historial-item.metodo{color:#ff6600;font-weight:600}.historial-item.wsp{font-size:12px;color:#00ff00;margin-top:4px}
+   .alerta{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff3333;color:#fff;padding:14px 24px;border-radius:12px;font-weight:bold;z-index:1000;box-shadow:0 8px 25px rgba(0,0,0,0.5);animation:slideDown 0.3s}
+    @keyframes slideDown{from{transform:translateX(-50%) translateY(-100px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+   .oculto{display:none!important}.login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center}
+   .login-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:40px;border-radius:20px;border:2px solid #ff6600;max-width:400px;width:90%;text-align:center}
+   .login-box h1{color:#ff6600;margin-bottom:20px;font-size:28px}
+   .mensaje-venta{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:30px 50px;border-radius:20px;font-size:24px;font-weight:bold;z-index:1001;box-shadow:0 10px 40px rgba(0,170,0,0.5);animation:popIn 0.3s}
+    @keyframes popIn{from{transform:translate(-50%,-50%) scale(0.5);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+  </style>
 </head>
 <body>
-
-<div id="loginScreen" class="login-screen">
-  <div class="login-box">
-    <h1>LOS WEONES DE LAS<br>EMPANADAS</h1>
-    <h2>Iniciar Sesión</h2>
-    <div class="input-group">
-      <label>Usuario</label>
-      <select id="loginUser">
-        <option value="Marcelo">Marcelo</option>
-        <option value="Nataly">Nataly</option>
-      </select>
+  <div id="loginScreen" class="login-screen">
+    <div class="login-box">
+      <h1>🥟 LOS WEONES 🥟</h1>
+      <div class="input-grupo">
+        <label>USUARIO</label>
+        <select id="loginUser">
+          <option value="">Selecciona tu nombre</option>
+          <option value="Marcelo">Marcelo</option>
+          <option value="Nataly">Nataly</option>
+          <option value="Invitado">Invitado</option>
+        </select>
+      </div>
+      <div class="input-grupo">
+        <label>CLAVE</label>
+        <input type="password" id="loginPass" placeholder="Ingresa la clave" inputmode="numeric">
+      </div>
+      <button class="btn" onclick="Auth.login(document.getElementById('loginUser').value, document.getElementById('loginPass').value)">ENTRAR</button>
     </div>
-    <div class="input-group">
-      <label>Clave Admin</label>
-      <input type="password" id="loginPass" placeholder="****" inputmode="numeric">
-    </div>
-    <button class="btn" onclick="login()">INGRESAR</button>
-    <div id="loginAlerta" class="alerta oculto"></div>
   </div>
-</div>
 
-<div id="mensajeVenta" class="mensaje-venta">✅ Venta guardada</div>
-
-<div class="header">
-  <div>
-    <h1>LOS WEONES DE LAS<br>EMPANADAS</h1>
-    <span>Buin - Caja Registradora</span>
-  </div>
-  <div class="user" id="userDisplay">-</div>
-</div>
-
-<div class="container">
-
-  <div id="tab-vender">
-    <div id="aviso-dia-cerrado" class="aviso-dia oculto">DÍA CERRADO - CARGA STOCK INICIAL PARA VENDER</div>
-    <div id="bannerLiquidacion" class="banner-liquidacion oculto">🔥 LIQUIDACIÓN ACTIVA: Empanadas a $2.000 🔥</div>
-    <h3 style="color:#ff6600;margin-bottom:10px">PRODUCTOS</h3>
-    <div class="grid" id="productos-grid"></div>
-
-    <div class="total-box">
-      <h2>TOTAL A PAGAR</h2>
-      <div class="monto" id="total">$0</div>
-      <div id="vuelto" class="vuelto oculto"></div>
+  <div class="container">
+    <div class="header">
+      <div style="position:absolute;top:10px;right:10px;font-size:12px;color:#888">
+        <span id="userDisplay"></span>
+        <button onclick="Auth.logout()" style="background:none;border:none;color:#ff6600;font-size:12px;cursor:pointer;margin-left:10px">Salir</button>
+      </div>
+      <h1>🥟 LOS WEONES DE LAS EMPANADAS 🥟</h1>
+      <div style="font-size:12px;color:#888">CAJA RÁPIDA V2.0 - REFACTOR</div>
     </div>
 
-    <div class="input-group">
-      <label>MÉTODO DE PAGO</label>
-      <select id="metodo-pago">
-        <option value="efectivo">Efectivo</option>
-        <option value="transferencia">Transferencia</option>
-      </select>
+    <div class="tabs">
+      <button class="tab activo" onclick="App.cambiarTab('vender')">VENDER</button>
+      <button class="tab" onclick="App.cambiarTab('stock')">STOCK</button>
+      <button class="tab" onclick="App.cambiarTab('resumen')">RESUMEN</button>
+      <button class="tab" onclick="App.cambiarTab('respaldo')">RESPALDO</button>
     </div>
 
-    <div class="input-group" id="grupo-pago">
-      <label>PAGO DEL CLIENTE</label>
-      <input type="number" id="pago" placeholder="0" inputmode="numeric">
-    </div>
-
-    <div class="input-group">
-      <label>WHATSAPP CLIENTE - Opcional</label>
-      <input type="tel" id="wsp" placeholder="+56912345678" inputmode="tel">
-    </div>
-
-    <button class="btn" id="btn-vender">VENDER Y MANDAR WHATSAPP</button>
-    <button class="btn btn-costo" id="btn-costo">COSTO $2000 - LIQUIDAR EMPANADAS</button>
-    <button class="btn btn-secundario" id="btn-anular">ANULAR PEDIDO</button>
     <div id="alerta" class="alerta oculto"></div>
-  </div>
+    <div id="mensajeVenta" class="mensaje-venta oculto">✅ VENTA GUARDADA</div>
 
-  <div id="tab-stock" class="oculto">
-    <h3 style="color:#ff6600;margin-bottom:10px">GESTIÓN DE STOCK INICIAL</h3>
-    <p style="font-size:12px;color:#888;margin-bottom:10px">Este stock queda fijo. Al guardarlo se activa el día y se puede vender.</p>
-    <table class="tabla" id="tabla-stock"></table>
-    <button class="btn" id="btn-guardar-stock">GUARDAR STOCK INICIAL Y ACTIVAR DÍA</button>
-    <button class="btn btn-secundario" id="btn-reiniciar-stock">REINICIAR STOCK DEL DÍA</button>
-  </div>
-
-  <div id="tab-resumen" class="oculto">
-    <h3 style="color:#ff6600;margin-bottom:10px">RESUMEN DEL DÍA</h3>
-    <button class="btn" id="btn-ver-stock" style="background:#0088ff;margin-bottom:15px">VER DESGLOSE DE STOCK</button>
-    <div id="desglose-stock" class="oculto"></div>
-
-    <div class="total-box" style="border-color:#f97316;">
-      <h2 style="color:#f97316;">💵 CAJA INICIAL DEL DÍA</h2>
-      <input type="number" id="cajaInicial" placeholder="Ej: 20000" oninput="actualizarResumen()" style="width:100%;padding:12px;margin-top:8px;font-size:18px;border-radius:6px;border:none;background:#0a0a0a;color:#fff;">
+    <div id="vender" class="pantalla activa">
+      <div id="bannerLiquidacion" class="banner-liquidacion oculto">🔥 MODO LIQUIDACIÓN ACTIVO - EMPANADAS A $2.000 🔥</div>
+      <div id="aviso-dia-cerrado" class="aviso-cerrado oculto">⚠️ DÍA CERRADO - Carga stock inicial para activar ventas ⚠️</div>
+      <div id="productos-grid" class="productos-grid"></div>
+      <div class="total-box">
+        <h2>TOTAL A PAGAR</h2>
+        <div class="monto" id="total">$0</div>
+        <div class="vuelto oculto" id="vuelto"></div>
+      </div>
+      <div class="input-grupo">
+        <label>MÉTODO DE PAGO</label>
+        <select id="metodo-pago">
+          <option value="efectivo">💵 Efectivo</option>
+          <option value="transferencia">💳 Transferencia</option>
+        </select>
+      </div>
+      <div class="input-grupo" id="grupo-pago">
+        <label>PAGO CON</label>
+        <input type="number" id="pago" placeholder="0" inputmode="numeric">
+      </div>
+      <div class="input-grupo">
+        <label>WHATSAPP CLIENTE (opcional)</label>
+        <input type="tel" id="wsp" placeholder="+56912345678" inputmode="tel">
+      </div>
+      <button class="btn" onclick="Ventas.ejecutar()">VENDER</button>
+      <button class="btn btn-anular" style="margin-top:10px" onclick="Ventas.anular()">ANULAR PEDIDO</button>
+      <button class="btn btn-costo" style="margin-top:10px" onclick="Ventas.liquidar()">COSTO $2.000</button>
     </div>
 
-    <div class="total-box">
-      <h2>TOTAL VENDIDO</h2>
-      <div class="monto" id="total-dia">$0</div>
+    <div id="stock" class="pantalla">
+      <div class="input-grupo">
+        <label>💰 CAJA INICIAL DEL DÍA</label>
+        <input type="number" id="cajaInicial" placeholder="0" inputmode="numeric">
+      </div>
+      <table class="stock-tabla">
+        <thead><tr><th>Producto</th><th>Stock Inicial</th></tr></thead>
+        <tbody id="tabla-stock"></tbody>
+      </table>
+      <button class="btn" onclick="StockGestion.guardar()">GUARDAR STOCK INICIAL</button>
+      <button class="btn btn-anular" style="margin-top:10px" onclick="StockGestion.reiniciar()">REINICIAR STOCK DEL DÍA</button>
+      <button class="btn btn-anular" style="margin-top:10px" onclick="StockGestion.cerrarDia()">CERRAR DÍA</button>
+      <button class="btn" style="margin-top:10px" onclick="StockGestion.verDesglose()">VER DESGLOSE STOCK</button>
+      <div id="desglose-stock" class="oculto" style="margin-top:15px"></div>
     </div>
-        <div class="total-box">
-      <h2>DESGLOSE DE VENTAS</h2>
-      <div style="font-size:16px;margin-top:8px;line-height:1.8">
-        <div>💵 Efectivo ventas: <span id="total-efectivo">$0</span></div>
-        <div>💳 Transferencia: <span id="total-transfer">$0</span></div>
-        <div>💰 Caja inicial: <span id="mostrar-caja-inicial">$0</span></div>
-        <div style="margin-top:10px;border-top:2px solid #ff6600;padding-top:10px">
-          <div style="color:#10b981;font-size:18px;font-weight:bold;">💸 TOTAL EN CAJA: <span id="total-caja">$0</span></div>
+
+    <div id="resumen" class="pantalla">
+      <div class="resumen-grid">
+        <div class="resumen-item destacado">
+          <h3>💸 TOTAL EN CAJA</h3>
+          <div class="valor" id="total-caja">$0</div>
+          <div style="font-size:11px;color:#888;margin-top:4px">Inicial: <span id="mostrar-caja-inicial">$0</span></div>
         </div>
-        <div style="margin-top:10px;border-top:1px solid #333;padding-top:10px">
-          <div>🥟 Empanadas: <span id="total-empanadas">0 und - $0</span></div>
-          <div>🍶 Bebidas 591: <span id="total-591">0 und - $0</span></div>
-          <div>🥫 Latas: <span id="total-latas">0 und - $0</span></div>
-          <div>💧 Cachantun: <span id="total-cachantun">0 und - $0</span></div>
-          <div style="color:#aa00ff">🏷 COSTO: <span id="total-costo">0 und - $0</span></div>
+        <div class="resumen-item destacado">
+          <h3>💰 TOTAL VENDIDO</h3>
+          <div class="valor" id="total-dia">$0</div>
         </div>
+        <div class="resumen-item"><h3>💵 Efectivo</h3><div class="valor" id="total-efectivo">$0</div></div>
+        <div class="resumen-item"><h3>💳 Transfer</h3><div class="valor" id="total-transfer">$0</div></div>
+        <div class="resumen-item"><h3>📊 N° Ventas</h3><div class="valor" id="num-ventas">0</div></div>
+        <div class="resumen-item"><h3>🥟 Empanadas</h3><div class="valor" id="total-empanadas">0</div></div>
+        <div class="resumen-item"><h3>🍶 Bebidas 591</h3><div class="valor" id="total-591">0</div></div>
+        <div class="resumen-item"><h3>🥫 Latas</h3><div class="valor" id="total-latas">0</div></div>
+        <div class="resumen-item"><h3>💧 Cachantun</h3><div class="valor" id="total-cachantun">0</div></div>
+        <div class="resumen-item"><h3>🏷 Costo</h3><div class="valor" id="total-costo">0</div></div>
+      </div>
+      <button class="btn" onclick="Resumen.mandarWSP()">MANDAR RESUMEN A WSP</button>
+      <h2 style="color:#ff6600;margin:20px 0 10px;font-size:16px">HISTORIAL DE VENTAS</h2>
+      <div id="historial-lista"></div>
+    </div>
+
+    <div id="respaldo" class="pantalla">
+      <div class="total-box">
+        <h2>💾 RESPALDO DE DATOS</h2>
+        <p style="color:#888;font-size:13px;margin-bottom:15px">Descarga un respaldo JSON de todas las ventas y stock</p>
+        <button class="btn" onclick="Respaldo.descargar()">DESCARGAR RESPALDO</button>
+      </div>
+      <div class="total-box" style="margin-top:15px">
+        <h2>📂 CARGAR RESPALDO</h2>
+        <p style="color:#888;font-size:13px;margin-bottom:15px">Restaura datos desde un archivo JSON</p>
+        <input type="file" id="archivo" accept=".json" style="margin-bottom:10px">
+        <button class="btn" onclick="Respaldo.cargar()">CARGAR RESPALDO</button>
       </div>
     </div>
-    <div class="total-box">
-      <h2>N° DE VENTAS</h2>
-      <div class="monto" id="num-ventas">0</div>
-    </div>
-
-    <h3 style="color:#ff6600;margin:15px 0 10px">RESPALDOS Y REPORTES</h3>
-    <button class="btn btn-backup" id="btn-respaldar">📤 RESPALDAR DATOS</button>
-    <button class="btn btn-backup" id="btn-cargar">📥 CARGAR RESPALDO</button>
-    <input type="file" id="input-cargar" accept=".json" style="display:none">
-    <button class="btn btn-wsp" id="btn-wsp-resumen">💬 MANDAR RESUMEN POR WHATSAPP</button>
-
-    <h3 style="color:#ff6600;margin:15px 0 10px">HISTORIAL DE VENTAS</h3>
-    <div id="historial-lista"></div>
-
-    <button class="btn btn-secundario" id="btn-cerrar-dia">CERRAR DÍA</button>
-    <button class="btn btn-logout" onclick="logout()">CERRAR SESIÓN</button>
   </div>
 
-</div>
-
-<div class="tabs">
-  <div class="tab activo" data-tab="vender">VENDER</div>
-  <div class="tab" data-tab="stock">STOCK</div>
-  <div class="tab" data-tab="resumen">RESUMEN</div>
-</div>
-
 <script>
-var PRODUCTOS = [
+const CLAVE_HASH = 'MTk3MQ==';
+const VERSION_APP = '2.0-refactor';
+const FOLIO_PREFIX = 'LWE-';
+
+const DB = {
+  get: (key, def = null) => JSON.parse(localStorage.getItem(key) || JSON.stringify(def)),
+  set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
+  getStockInicial: () => DB.get('stockInicial', {}),
+  getStockActual: () => DB.get('stockActual', {}),
+  getVentas: () => DB.get('ventas', []),
+  getUsuario: () => localStorage.getItem('usuarioActual'),
+  getFolio: () => parseInt(localStorage.getItem('folioActual') || '1'),
+  getCajaInicial: () => parseInt(localStorage.getItem('cajaInicial') || '0'),
+  getDiaActivo: () => localStorage.getItem('diaActivo') === 'true',
+  setStockInicial: (val) => DB.set('stockInicial', val),
+  setStockActual: (val) => DB.set('stockActual', val),
+  setVentas: (val) => DB.set('ventas', val),
+  setUsuario: (val) => localStorage.setItem('usuarioActual', val),
+  setFolio: (val) => localStorage.setItem('folioActual', val),
+  setCajaInicial: (val) => localStorage.setItem('cajaInicial', val),
+  setDiaActivo: (val) => localStorage.setItem('diaActivo', val)
+};
+
+const PRODUCTOS = [
   {id:1,nombre:"Empanada de pino",precio:2500,tipo:"empanada",icono:"🥟"},
   {id:2,nombre:"Empanada pollo queso",precio:2500,tipo:"empanada",icono:"🥟"},
   {id:11,nombre:"Empanada napolitana",precio:2500,tipo:"empanada",icono:"🥟"},
@@ -225,729 +224,661 @@ var PRODUCTOS = [
   {id:9,nombre:"Sprite lata",precio:1000,tipo:"lata",icono:"🥫"},
   {id:10,nombre:"Crush lata",precio:1000,tipo:"lata",icono:"🥫"}
 ];
-var carrito = {};
-var stockInicial = JSON.parse(localStorage.getItem('stockInicial')||'{}');
-var stockActual = JSON.parse(localStorage.getItem('stockActual')||'{}');
-var ventas = JSON.parse(localStorage.getItem('ventas')||'[]');
-var diaActivo = localStorage.getItem('diaActivo') === 'true';
-var liquidacionActiva = false;
-var usuarioActual = localStorage.getItem('usuarioActual') || null;
-var folioActual = parseInt(localStorage.getItem('folioActual')||'1');
 
-function login(){
-  var user = document.getElementById('loginUser').value;
-  var pass = document.getElementById('loginPass').value.trim();
+const buscarProducto = (id) => PRODUCTOS.find(p => p.id == id);
 
-  if(pass!= '1971'){
-    var alerta = document.getElementById('loginAlerta');
-    alerta.textContent = 'Clave incorrecta';
-    alerta.classList.remove('oculto');
-    setTimeout(function(){alerta.classList.add('oculto')},2000);
-    return;
-  }
+let estado = {
+  carrito: {},
+  stockInicial: DB.getStockInicial(),
+  stockActual: DB.getStockActual(),
+  ventas: DB.getVentas(),
+  diaActivo: DB.getDiaActivo(),
+  liquidacionIds: [],
+  usuarioActual: DB.getUsuario(),
+  folioActual: DB.getFolio()
+};
 
-  usuarioActual = user;
-  localStorage.setItem('usuarioActual', user);
-
-  var loginDiv = document.getElementById('loginScreen');
-  loginDiv.style.display = 'none';
-  loginDiv.classList.add('oculto');
-
-  document.getElementById('userDisplay').textContent = '👤 ' + user;
-  document.getElementById('loginPass').value = '';
-  document.body.style.overflow = 'auto';
-
-  init();
-}
-
-function logout(){
-  if(!confirm('¿Cerrar sesión?'))return;
-  localStorage.removeItem('usuarioActual');
-  location.reload();
-}
-
-function verificarLogin(){
-  if(!usuarioActual){
-    document.getElementById('loginScreen').classList.remove('oculto');
-    return false;
-  }
-  document.getElementById('loginScreen').classList.add('oculto');
-  document.getElementById('userDisplay').textContent = '👤 ' + usuarioActual;
-  return true;
-}
-
-function generarFolio(){
-  var folio = 'LWE-' + String(folioActual).padStart(6, '0');
-  folioActual++;
-  localStorage.setItem('folioActual', folioActual);
-  return folio;
-}
-
-function mostrarAlerta(msg,ok){
-  if(ok===undefined) ok=false;
-  var a = document.getElementById('alerta');
-  a.textContent = msg;
-  a.style.background = ok?'#00aa00':'#ff3333';
-  a.classList.remove('oculto');
-  setTimeout(function(){a.classList.add('oculto')},2000);
-}
-
-function mostrarVentaGuardada(){
-  var m = document.getElementById('mensajeVenta');
-  m.style.display = 'block';
-  setTimeout(function(){m.style.display = 'none'},2000);
-}
-
-function init(){
-  if(!verificarLogin()) return;
-
-  if(Object.keys(stockInicial).length===0){
-    for(var i=0;i<PRODUCTOS.length;i++){
-      stockInicial[PRODUCTOS[i].id]=0;
+const Auth = {
+  login(user, pass) {
+    if (btoa(pass)!== CLAVE_HASH) {
+      UI.mostrarAlerta('Clave incorrecta');
+      return false;
     }
-  }
-  if(Object.keys(stockActual).length===0){
-    for(var i=0;i<PRODUCTOS.length;i++){
-      stockActual[PRODUCTOS[i].id]=0;
+    estado.usuarioActual = user;
+    DB.setUsuario(user);
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('userDisplay').textContent = '👤 ' + user;
+    document.getElementById('loginPass').value = '';
+    document.body.style.overflow = 'auto';
+    App.init();
+    return true;
+  },
+  logout() {
+    if (!confirm('¿Cerrar sesión?')) return;
+    localStorage.removeItem('usuarioActual');
+    location.reload();
+  },
+  verificar() {
+    if (!estado.usuarioActual) {
+      document.getElementById('loginScreen').classList.remove('oculto');
+      return false;
     }
-    diaActivo = false;
+    document.getElementById('loginScreen').classList.add('oculto');
+    document.getElementById('userDisplay').textContent = '👤 ' + estado.usuarioActual;
+    return true;
   }
-  if(!diaActivo){
-    for(var i=0;i<PRODUCTOS.length;i++){
-      stockActual[PRODUCTOS[i].id]=0;
+};
+
+const UI = {
+  mostrarAlerta(msg, ok = false) {
+    const a = document.getElementById('alerta');
+    a.textContent = msg;
+    a.style.background = ok? '#00aa00' : '#ff3333';
+    a.classList.remove('oculto');
+    setTimeout(() => a.classList.add('oculto'), 2000);
+  },
+  mostrarVentaGuardada() {
+    const m = document.getElementById('mensajeVenta');
+    m.style.display = 'block';
+    setTimeout(() => m.style.display = 'none', 2000);
+  },
+  formatearPrecio(num) {
+    return '$' + (num || 0).toLocaleString('es-CL');
+  }
+};
+
+const Ventas = {
+  generarFolio() {
+    const folio = FOLIO_PREFIX + String(estado.folioActual).padStart(6, '0');
+    estado.folioActual++;
+    DB.setFolio(estado.folioActual);
+    return folio;
+  },
+  calcularTotal() {
+    let total = 0;
+    for (let id in estado.carrito) {
+      const p = buscarProducto(id);
+      const cant = estado.carrito[id];
+      const precio = estado.liquidacionIds.includes(parseInt(id)) && p.tipo === 'empanada'? 2000 : p.precio;
+      total += precio * cant;
     }
-  }
-
-  var cajaGuardada = localStorage.getItem('cajaInicial')||'0';
-  document.getElementById('cajaInicial').value = cajaGuardada;
-
-  renderProductos();
-  renderStock();
-  actualizarTotal();
-  actualizarResumen();
-  verificarDiaActivo();
-  document.getElementById('metodo-pago').onchange = cambiarMetodoPago;
-  cambiarMetodoPago();
-}
-
-function verificarDiaActivo(){
-  var aviso = document.getElementById('aviso-dia-cerrado');
-  if(!diaActivo){
-    aviso.classList.remove('oculto');
-  }else{
-    aviso.classList.add('oculto');
-  }
-}
-
-function cambiarMetodoPago(){
-  var metodo = document.getElementById('metodo-pago').value;
-  var grupoPago = document.getElementById('grupo-pago');
-  if(metodo==='transferencia'){
-    grupoPago.classList.add('oculto');
-    document.getElementById('pago').value = '';
-  }else{
-    grupoPago.classList.remove('oculto');
-  }
-  actualizarTotal();
-}
-function renderProductos(){
-  var grid = document.getElementById('productos-grid');
-  grid.innerHTML = '';
-  for(var i=0;i<PRODUCTOS.length;i++){
-    var p = PRODUCTOS[i];
-    var stockDisp = diaActivo? (stockActual[p.id]||0) : 0;
-    var enCarrito = carrito[p.id]||0;
-    var stockDisponible = stockDisp - enCarrito;
-    var div = document.createElement('div');
-    var sinStock = stockDisponible===0 ||!diaActivo;
-    div.className = 'producto' + (sinStock?' sin-stock':'') + (enCarrito>0?' activo':'');
-
-    if(enCarrito > 0 && diaActivo){
-      div.innerHTML = '<div class="producto-icono">' + p.icono + '</div><h3>' + p.nombre + '</h3>' +
-        '<div class="precio">$' + p.precio.toLocaleString('es-CL') + '</div>' +
-        '<div class="stock">Stock: ' + stockDisponible + '</div>' +
-        '<div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">' +
-          '<button onclick="quitarProducto(' + p.id + ');event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">-</button>' +
-          '<span style="font-size:18px;font-weight:bold;min-width:30px;text-align:center">' + enCarrito + '</span>' +
-          '<button onclick="agregarProducto(' + p.id + ');event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">+</button>' +
-        '</div>';
-    }else{
-      div.innerHTML = '<div class="producto-icono">' + p.icono + '</div><h3>' + p.nombre + '</h3><div class="precio">$' + p.precio.toLocaleString('es-CL') + '</div><div class="stock">Stock: ' + stockDisponible + '</div>';
-      if(diaActivo){
-        div.onclick = (function(id){
-          return function(){ agregarProducto(id); };
-        })(p.id);
+    return total;
+  },
+  calcularVuelto(total) {
+    const metodo = document.getElementById('metodo-pago').value;
+    if (metodo!== 'efectivo') return { pago: total, vuelto: 0 };
+    const pago = parseInt(document.getElementById('pago').value) || 0;
+    const vuelto = pago >= total? pago - total : 0;
+    return { pago, vuelto };
+  },
+  validarStock() {
+    for (let id in estado.carrito) {
+      if ((estado.stockActual[id] || 0) < estado.carrito[id]) {
+        const p = buscarProducto(id);
+        UI.mostrarAlerta(`Stock insuficiente: ${p.nombre}`);
+        return false;
       }
     }
-    grid.appendChild(div);
-  }
-}
-
-function agregarProducto(id){
-  if(!diaActivo){
-    mostrarAlerta('Día cerrado. Carga stock inicial para activar');
-    return;
-  }
-  var stockDisponible = (stockActual[id]||0) - (carrito[id]||0);
-  if(stockDisponible<=0){mostrarAlerta('Sin stock');return}
-  carrito[id] = (carrito[id]||0)+1;
-  renderProductos();
-  actualizarTotal();
-}
-
-function quitarProducto(id){
-  if(!carrito[id] || carrito[id]<=0) return;
-  carrito[id]--;
-  if(carrito[id]===0) delete carrito[id];
-  renderProductos();
-  actualizarTotal();
-}
-
-function actualizarTotal(){
-  var total = 0;
-  var esLiquidacion = liquidacionActiva;
-
-  for(var id in carrito){
-    var p = null;
-    for(var i=0;i<PRODUCTOS.length;i++){
-      if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
-    }
-    if(esLiquidacion && p.tipo==='empanada'){
-      total += 2000 * carrito[id];
-    }else{
-      total += p.precio * carrito[id];
-    }
-  }
-
-  var textoTotal = '$'+total.toLocaleString('es-CL');
-  if(esLiquidacion) textoTotal += ' - LIQUIDACIÓN';
-  document.getElementById('total').textContent = textoTotal;
-
-  var metodo = document.getElementById('metodo-pago').value;
-  var vueltoDiv = document.getElementById('vuelto');
-  if(metodo==='efectivo'){
-    var pago = parseInt(document.getElementById('pago').value)||0;
-    if(pago>0 && pago>=total){
-      vueltoDiv.textContent = 'Vuelto: $'+(pago-total).toLocaleString('es-CL');
-      vueltoDiv.classList.remove('oculto');
-    }else{
-      vueltoDiv.classList.add('oculto');
-    }
-  }else{
-    vueltoDiv.classList.add('oculto');
-  }
-}
-
-function renderStock(){
-  var tabla = document.getElementById('tabla-stock');
-  tabla.innerHTML = '';
-  for(var i=0;i<PRODUCTOS.length;i++){
-    var p = PRODUCTOS[i];
-    var tr = document.createElement('tr');
-    tr.innerHTML = '<td>' + p.icono + ' ' + p.nombre + '</td><td><input type="number" value="' + (stockInicial[p.id]||0) + '" id="stock-' + p.id + '" inputmode="numeric"></td>';
-    tabla.appendChild(tr);
-  }
-}
-
-function guardarStock(){
-  for(var i=0;i<PRODUCTOS.length;i++){
-    var p = PRODUCTOS[i];
-    stockInicial[p.id] = parseInt(document.getElementById('stock-'+p.id).value)||0;
-  }
-  stockActual = JSON.parse(JSON.stringify(stockInicial));
-  diaActivo = true;
-  localStorage.setItem('stockInicial',JSON.stringify(stockInicial));
-  localStorage.setItem('stockActual',JSON.stringify(stockActual));
-  localStorage.setItem('diaActivo','true');
-  renderProductos();
-  verificarDiaActivo();
-  mostrarAlerta('Stock inicial guardado. Día activado',true);
-  cambiarTab('vender');
-}
-
-function reiniciarStockDia(){
-  if(!diaActivo){
-    mostrarAlerta('Día cerrado. Carga stock inicial primero');
-    return;
-  }
-  if(!confirm('¿Reiniciar stock del día al inicial? Se perderá el stock actual pero no las ventas.'))return;
-  stockActual = JSON.parse(JSON.stringify(stockInicial));
-  localStorage.setItem('stockActual',JSON.stringify(stockActual));
-  renderProductos();
-  mostrarAlerta('Stock del día reiniciado al inicial',true);
-}
-
-function vender(){
-  if(!diaActivo){
-    mostrarAlerta('Día cerrado. Carga stock inicial para activar');
-    return;
-  }
-  if(Object.keys(carrito).length===0){mostrarAlerta('Carrito vacío');return}
-
-  for(var id in carrito){
-    if((stockActual[id]||0) < carrito[id]){
-      mostrarAlerta('Stock insuficiente');
+    return true;
+  },
+  ejecutar(tipo = 'venta') {
+    if (!estado.diaActivo) {
+      UI.mostrarAlerta('Día cerrado. Carga stock inicial');
       return;
     }
-  }
-
-  var metodo = document.getElementById('metodo-pago').value;
-  var total = 0;
-  var esLiquidacion = liquidacionActiva;
-
-  for(var id in carrito){
-    var p = null;
-    for(var i=0;i<PRODUCTOS.length;i++){
-      if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
+    if (Object.keys(estado.carrito).length === 0) {
+      UI.mostrarAlerta('Carrito vacío');
+      return;
     }
-    if(esLiquidacion && p.tipo==='empanada'){
-      total += 2000 * carrito[id];
-    }else{
-      total += p.precio * carrito[id];
+    if (!this.validarStock()) return;
+    const total = this.calcularTotal();
+    const { pago, vuelto } = this.calcularVuelto(total);
+    const metodo = document.getElementById('metodo-pago').value;
+    if (metodo === 'efectivo' && pago < total) {
+      UI.mostrarAlerta('Pago insuficiente');
+      return;
     }
-  }
-
-  var pago = total;
-  var vuelto = 0;
-
-  if(metodo==='efectivo'){
-    pago = parseInt(document.getElementById('pago').value)||0;
-    if(pago<total){mostrarAlerta('Pago insuficiente');return}
-    vuelto = pago-total;
-  }
-
-  var wsp = document.getElementById('wsp').value.trim();
-  if(wsp && wsp.indexOf('+56')!==0){
-    mostrarAlerta('Usa formato +56912345678');
-    return;
-  }
-
-  for(var id in carrito){
-    stockActual[id] = (stockActual[id]||0) - carrito[id];
-  }
-
-  var venta = {
-    folio: generarFolio(),
-    vendedor: usuarioActual,
-    carrito:JSON.parse(JSON.stringify(carrito)),
-    total:total,
-    pago:pago,
-    vuelto:vuelto,
-    metodo:metodo,
-    whatsapp:wsp||null,
-    fecha:new Date().toISOString(),
-    tipo:esLiquidacion?'costo':'venta'
-  };
-  ventas.push(venta);
-  localStorage.setItem('ventas',JSON.stringify(ventas));
-  localStorage.setItem('stockActual',JSON.stringify(stockActual));
-
-  if(wsp){
-    var msg = 'LOS WEONES DE LAS EMPANADAS' + (esLiquidacion?' - LIQUIDACIÓN':'') + '%0A%0A';
-    msg += '*Boleta: ' + venta.folio + '*%0A';
-    msg += 'Atendido por: ' + usuarioActual + '%0A%0A';
-    for(var id in carrito){
-      var p = null;
-      for(var i=0;i<PRODUCTOS.length;i++){
-        if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
+    const wsp = document.getElementById('wsp').value.trim();
+    if (wsp &&!wsp.startsWith('+56')) {
+      UI.mostrarAlerta('Usa formato +56912345678');
+      return;
+    }
+    for (let id in estado.carrito) {
+      estado.stockActual[id] = (estado.stockActual[id] || 0) - estado.carrito[id];
+    }
+    const venta = {
+      folio: this.generarFolio(),
+      vendedor: estado.usuarioActual,
+      carrito: JSON.parse(JSON.stringify(estado.carrito)),
+      total, pago, vuelto, metodo,
+      whatsapp: wsp || null,
+      fecha: new Date().toISOString(),
+      tipo: estado.liquidacionIds.length > 0? 'costo' : 'venta',
+      liquidacionIds: [...estado.liquidacionIds]
+    };
+    estado.ventas.push(venta);
+    DB.setVentas(estado.ventas);
+    DB.setStockActual(estado.stockActual);
+    if (wsp) this.mandarWspVenta(venta);
+    UI.mostrarVentaGuardada();
+    this.limpiar();
+    Productos.render();
+    Stock.actualizarTotal();
+    Resumen.actualizar();
+  },
+  liquidar() {
+    if (!estado.diaActivo) {
+      UI.mostrarAlerta('Día cerrado');
+      return;
+    }
+    if (Object.keys(estado.carrito).length === 0) {
+      UI.mostrarAlerta('Agrega empanadas al carrito');
+      return;
+    }
+    let soloEmpanadas = true;
+    for (let id in estado.carrito) {
+      const p = buscarProducto(id);
+      if (p.tipo!== 'empanada') {
+        soloEmpanadas = false;
+        break;
       }
-      var precioUnit = (esLiquidacion && p.tipo==='empanada')? 2000 : p.precio;
-      msg += carrito[id] + 'x ' + p.nombre + ' - $' + (precioUnit*carrito[id]).toLocaleString('es-CL') + '%0A';
     }
-    msg += '%0A*TOTAL: $' + total.toLocaleString('es-CL') + '*%0A';
-    msg += 'Pago: ' + (metodo==='transferencia'?'Transferencia':'Efectivo $'+pago.toLocaleString('es-CL')) + '%0A';
-    if(metodo==='efectivo') msg += 'Vuelto: $' + vuelto.toLocaleString('es-CL') + '%0A';
-    msg += '%0AGracias por tu compra! 🥟';
-    window.open('https://wa.me/' + wsp.replace(/[^0-9]/g,'') + '?text=' + msg,'_blank');
-  }
-
-  mostrarVentaGuardada();
-  liquidacionActiva = false;
-  document.getElementById('bannerLiquidacion').classList.add('oculto');
-
-  setTimeout(function(){
-    carrito = {};
+    if (!soloEmpanadas) {
+      UI.mostrarAlerta('COSTO solo para empanadas');
+      return;
+    }
+    estado.liquidacionIds = Object.keys(estado.carrito).map(id => parseInt(id));
+    document.getElementById('bannerLiquidacion').classList.remove('oculto');
+    Stock.actualizarTotal();
+    UI.mostrarAlerta('Precio liquidación: $2.000', true);
+  },
+  anular() {
+    if (Object.keys(estado.carrito).length === 0) {
+      UI.mostrarAlerta('No hay nada en el carrito');
+      return;
+    }
+    if (!confirm('¿Anular pedido?')) return;
+    this.limpiar();
+    Productos.render();
+    Stock.actualizarTotal();
+    UI.mostrarAlerta('Pedido anulado', true);
+  },
+  limpiar() {
+    estado.carrito = {};
+    estado.liquidacionIds = [];
+    document.getElementById('bannerLiquidacion').classList.add('oculto');
     document.getElementById('pago').value = '';
     document.getElementById('wsp').value = '';
     document.getElementById('metodo-pago').value = 'efectivo';
-    cambiarMetodoPago();
-    renderProductos();
-    actualizarTotal();
-    actualizarResumen();
-  },1000);
-}
-
-function venderCosto(){
-  if(!diaActivo){
-    mostrarAlerta('Día cerrado. Carga stock inicial para activar');
-    return;
+    Stock.cambiarMetodoPago();
+  },
+  eliminar(index) {
+    if (!confirm('¿Eliminar venta? Se devolverá el stock.')) return;
+    const venta = estado.ventas[index];
+    for (let id in venta.carrito) {
+      estado.stockActual[id] = (estado.stockActual[id] || 0) + venta.carrito[id];
+    }
+    estado.ventas.splice(index, 1);
+    DB.setVentas(estado.ventas);
+    DB.setStockActual(estado.stockActual);
+    Productos.render();
+    Resumen.actualizar();
+    UI.mostrarAlerta('Venta eliminada y stock devuelto', true);
+  },
+  mandarWspVenta(venta) {
+    let msg = 'LOS WEONES DE LAS EMPANADAS';
+    msg += venta.tipo === 'costo'? ' - LIQUIDACIÓN' : '';
+    msg += '%0A%0A*Boleta: ' + venta.folio + '*%0A';
+    msg += 'Atendido por: ' + venta.vendedor + '%0A%0A';
+    for (let id in venta.carrito) {
+      const p = buscarProducto(id);
+      const enLiquidacion = venta.liquidacionIds.includes(parseInt(id));
+      const precioUnit = enLiquidacion && p.tipo === 'empanada'? 2000 : p.precio;
+      msg += venta.carrito[id] + 'x ' + p.nombre + ' - $' + (precioUnit * venta.carrito[id]).toLocaleString('es-CL') + '%0A';
+    }
+    msg += '%0A*TOTAL: $' + venta.total.toLocaleString('es-CL') + '*%0A';
+    msg += 'Pago: ' + (venta.metodo === 'transferencia'? 'Transferencia' : 'Efectivo $' + venta.pago.toLocaleString('es-CL')) + '%0A';
+    if (venta.metodo === 'efectivo' && venta.vuelto > 0) {
+      msg += 'Vuelto: $' + venta.vuelto.toLocaleString('es-CL') + '%0A';
+    }
+    msg += '%0AGracias por tu compra! visite nuestra pagina www.emporiodonnino.store 🥟';
+    window.open('https://wa.me/' + venta.whatsapp.replace(/[^0-9]/g, '') + '?text=' + msg, '_blank');
   }
-  if(Object.keys(carrito).length===0){mostrarAlerta('Carrito vacío');return}
+};
 
-  var soloEmpanadas = true;
-  var cantidadEmpanadas = 0;
-  for(var id in carrito){
-    var p = null;
-    for(var i=0;i<PRODUCTOS.length;i++){
-      if(PRODUCTOS[i].id==id){p=PRODUCTOS[i];break;}
+const Stock = {
+  cambiarMetodoPago() {
+    const metodo = document.getElementById('metodo-pago').value;
+    const grupoPago = document.getElementById('grupo-pago');
+    if (metodo === 'transferencia') {
+      grupoPago.classList.add('oculto');
+      document.getElementById('pago').value = '';
+    } else {
+      grupoPago.classList.remove('oculto');
     }
-    if(p.tipo!== 'empanada'){
-      soloEmpanadas = false;
-      break;
+    this.actualizarTotal();
+  },
+  actualizarTotal() {
+    const total = Ventas.calcularTotal();
+    let textoTotal = UI.formatearPrecio(total);
+    if (estado.liquidacionIds.length > 0) textoTotal += ' - LIQUIDACIÓN';
+    document.getElementById('total').textContent = textoTotal;
+    const { vuelto } = Ventas.calcularVuelto(total);
+    const vueltoDiv = document.getElementById('vuelto');
+    if (document.getElementById('metodo-pago').value === 'efectivo' && vuelto > 0) {
+      vueltoDiv.textContent = 'Vuelto: ' + UI.formatearPrecio(vuelto);
+      vueltoDiv.classList.remove('oculto');
+    } else {
+      vueltoDiv.classList.add('oculto');
     }
-    if((stockActual[id]||0) < carrito[id]){
-      mostrarAlerta('Stock insuficiente');
+  },
+  verificarDiaActivo() {
+    const aviso = document.getElementById('aviso-dia-cerrado');
+    if (!estado.diaActivo) {
+      aviso.classList.remove('oculto');
+    } else {
+      aviso.classList.add('oculto');
+    }
+  }
+};
+
+const Productos = {
+  agregar(id) {
+    if (!estado.diaActivo) {
+      UI.mostrarAlerta('Día cerrado. Carga stock inicial');
       return;
     }
-    cantidadEmpanadas += carrito[id];
-  }
-
-  if(!soloEmpanadas){
-    mostrarAlerta('COSTO solo para empanadas');
-    return;
-  }
-
-  if(cantidadEmpanadas === 0){
-    mostrarAlerta('Agrega empanadas al carrito');
-    return;
-  }
-
-  liquidacionActiva = true;
-  document.getElementById('bannerLiquidacion').classList.remove('oculto');
-  actualizarTotal();
-  mostrarAlerta('Precio liquidación activado: $2.000',true);
-}
-
-function anularPedido(){
-  if(Object.keys(carrito).length===0){
-    mostrarAlerta('No hay nada en el carrito');
-    return;
-  }
-  if(!confirm('¿Seguro que quieres anular el pedido?'))return;
-
-  carrito = {};
-  liquidacionActiva = false;
-  document.getElementById('bannerLiquidacion').classList.add('oculto');
-  document.getElementById('pago').value = '';
-  document.getElementById('wsp').value = '';
-  document.getElementById('metodo-pago').value = 'efectivo';
-  cambiarMetodoPago();
-  renderProductos();
-  actualizarTotal();
-  mostrarAlerta('Pedido anulado',true);
-}
-
-function eliminarVenta(index){
-  if(!confirm('¿Eliminar esta venta? Se devolverá el stock.'))return;
-
-  var venta = ventas[index];
-
-  for(var id in venta.carrito){
-    stockActual[id] = (stockActual[id]||0) + venta.carrito[id];
-  }
-
-  ventas.splice(index, 1);
-
-  localStorage.setItem('ventas',JSON.stringify(ventas));
-  localStorage.setItem('stockActual',JSON.stringify(stockActual));
-
-  renderProductos();
-  actualizarResumen();
-  mostrarAlerta('Venta eliminada y stock devuelto',true);
-}
-function actualizarResumen(){
-  var cajaInicial = parseInt(document.getElementById('cajaInicial').value)||0;
-  localStorage.setItem('cajaInicial', cajaInicial);
-
-  var totalDia = 0;
-  var totalEfectivo = 0;
-  var totalTransfer = 0;
-  for(var i=0;i<ventas.length;i++){
-    totalDia += ventas[i].total;
-    if(ventas[i].metodo==='efectivo') totalEfectivo += ventas[i].total;
-    if(ventas[i].metodo==='transferencia') totalTransfer += ventas[i].total;
-  }
-
-  var empanadas = {cant:0,total:0};
-  var bebidas591 = {cant:0,total:0};
-  var latas = {cant:0,total:0};
-  var cachantun = {cant:0,total:0};
-  var costo = {cant:0,total:0};
-
-  for(var i=0;i<ventas.length;i++){
-    var v = ventas[i];
-    for(var id in v.carrito){
-      var p = null;
-      for(var j=0;j<PRODUCTOS.length;j++){
-        if(PRODUCTOS[j].id==id){p=PRODUCTOS[j];break;}
-      }
-      var cant = v.carrito[id];
-      var subtotal = v.tipo==='costo'? 2000 * cant : p.precio * cant;
-
-      if(v.tipo==='costo'){
-        costo.cant += cant;
-        costo.total += subtotal;
-      }else if(p.tipo==='empanada'){
-        empanadas.cant += cant;
-        empanadas.total += subtotal;
-      }else if(p.tipo==='591'){
-        bebidas591.cant += cant;
-        bebidas591.total += subtotal;
-      }else if(p.tipo==='lata'){
-        latas.cant += cant;
-        latas.total += subtotal;
-      }else if(p.tipo==='cachantun'){
-        cachantun.cant += cant;
-        cachantun.total += subtotal;
+    const stockDisp = (estado.stockActual[id] || 0) - (estado.carrito[id] || 0);
+    if (stockDisp <= 0) {
+      UI.mostrarAlerta('Sin stock');
+      return;
+    }
+    estado.carrito[id] = (estado.carrito[id] || 0) + 1;
+    this.renderItem(id);
+    Stock.actualizarTotal();
+  },
+  quitar(id) {
+    if (!estado.carrito[id] || estado.carrito[id] <= 0) return;
+    estado.carrito[id]--;
+    if (estado.carrito[id] === 0) delete estado.carrito[id];
+    this.renderItem(id);
+    Stock.actualizarTotal();
+  },
+  renderItem(id) {
+    const p = buscarProducto(id);
+    const stockDisp = estado.diaActivo? (estado.stockActual[id] || 0) : 0;
+    const enCarrito = estado.carrito[id] || 0;
+    const stockDisponible = stockDisp - enCarrito;
+    const sinStock = stockDisponible === 0 ||!estado.diaActivo;
+    const div = document.querySelector(`[data-producto-id="${id}"]`);
+    if (!div) return;
+    div.className = 'producto' + (sinStock? ' sin-stock' : '') + (enCarrito > 0? ' activo' : '');
+    if (enCarrito > 0 && estado.diaActivo) {
+      div.innerHTML = `
+        <div class="producto-icono">${p.icono}</div>
+        <h3>${p.nombre}</h3>
+        <div class="precio">${UI.formatearPrecio(p.precio)}</div>
+        <div class="stock">Stock: ${stockDisponible}</div>
+        <div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">
+          <button onclick="Productos.quitar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">-</button>
+          <span style="font-size:18px;font-weight:bold;min-width:30px;text-align:center">${enCarrito}</span>
+          <button onclick="Productos.agregar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">+</button>
+        </div>`;
+    } else {
+      div.innerHTML = `
+        <div class="producto-icono">${p.icono}</div>
+        <h3>${p.nombre}</h3>
+        <div class="precio">${UI.formatearPrecio(p.precio)}</div>
+        <div class="stock">Stock: ${stockDisponible}</div>`;
+      if (estado.diaActivo) {
+        div.onclick = () => this.agregar(p.id);
       }
     }
-  }
-
-  var totalCaja = cajaInicial + totalEfectivo;
-
-  document.getElementById('total-dia').textContent = '$'+totalDia.toLocaleString('es-CL');
-  document.getElementById('total-efectivo').textContent = '$'+totalEfectivo.toLocaleString('es-CL');
-  document.getElementById('total-transfer').textContent = '$'+totalTransfer.toLocaleString('es-CL');
-  document.getElementById('mostrar-caja-inicial').textContent = '$'+cajaInicial.toLocaleString('es-CL');
-  document.getElementById('total-caja').textContent = '$'+totalCaja.toLocaleString('es-CL');
-  document.getElementById('num-ventas').textContent = ventas.length;
-
-  document.getElementById('total-empanadas').textContent = empanadas.cant + ' und - $' + empanadas.total.toLocaleString('es-CL');
-  document.getElementById('total-591').textContent = bebidas591.cant + ' und - $' + bebidas591.total.toLocaleString('es-CL');
-  document.getElementById('total-latas').textContent = latas.cant + ' und - $' + latas.total.toLocaleString('es-CL');
-  document.getElementById('total-cachantun').textContent = cachantun.cant + ' und - $' + cachantun.total.toLocaleString('es-CL');
-  document.getElementById('total-costo').textContent = costo.cant + ' und - $' + costo.total.toLocaleString('es-CL');
-
-  var lista = document.getElementById('historial-lista');
-  lista.innerHTML = '';
-  for(var i=ventas.length-1;i>=0;i--){
-    var v = ventas[i];
-    var fecha = new Date(v.fecha);
-    var div = document.createElement('div');
-    div.className = 'historial-item' + (v.tipo==='costo'?' costo':'');
-    var detalle = '';
-    for(var id in v.carrito){
-      var p = null;
-      for(var j=0;j<PRODUCTOS.length;j++){
-        if(PRODUCTOS[j].id==id){p=PRODUCTOS[j];break;}
+  },
+  render() {
+    const grid = document.getElementById('productos-grid');
+    grid.innerHTML = '';
+    PRODUCTOS.forEach(p => {
+      const stockDisp = estado.diaActivo? (estado.stockActual[p.id] || 0) : 0;
+      const enCarrito = estado.carrito[p.id] || 0;
+      const stockDisponible = stockDisp - enCarrito;
+      const sinStock = stockDisponible === 0 ||!estado.diaActivo;
+      const div = document.createElement('div');
+      div.setAttribute('data-producto-id', p.id);
+      div.className = 'producto' + (sinStock?' sin-stock' : '') + (enCarrito > 0?' activo' : '');
+      if (enCarrito > 0 && estado.diaActivo) {
+        div.innerHTML = `
+          <div class="producto-icono">${p.icono}</div>
+          <h3>${p.nombre}</h3>
+          <div class="precio">${UI.formatearPrecio(p.precio)}</div>
+          <div class="stock">Stock: ${stockDisponible}</div>
+          <div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">
+            <button onclick="Productos.quitar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">-</button>
+            <span style="font-size:18px;font-weight:bold;min-width:30px;text-align:center">${enCarrito}</span>
+            <button onclick="Productos.agregar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">+</button>
+          </div>`;
+      } else {
+        div.innerHTML = `
+          <div class="producto-icono">${p.icono}</div>
+          <h3>${p.nombre}</h3>
+          <div class="precio">${UI.formatearPrecio(p.precio)}</div>
+          <div class="stock">Stock: ${stockDisponible}</div>`;
+        if (estado.diaActivo) {
+          div.onclick = () => this.agregar(p.id);
+        }
       }
-      var precio = v.tipo==='costo'? 2000 : p.precio;
-      detalle += v.carrito[id] + 'x ' + p.nombre + ' @ $' + precio.toLocaleString('es-CL') + ', ';
-    }
-    detalle = detalle.slice(0,-2);
-    var wspHtml = v.whatsapp?'<div class="wsp">📱 WhatsApp: ' + v.whatsapp + '</div>':'';
-    var folioHtml = v.folio?'<div class="folio">Boleta: ' + v.folio + '</div>':'';
-    var vendedorHtml = v.vendedor?'<div class="vendedor">Vendedor: ' + v.vendedor + '</div>':'';
-    div.innerHTML = folioHtml + vendedorHtml + '<div class="fecha">' + fecha.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}) + ' - <span class="metodo">' + v.metodo.toUpperCase() + (v.tipo==='costo'?' - COSTO':'') + '</span></div><div>' + detalle + '</div><div style="font-weight:bold;color:#ff6600;margin-top:4px">$' + v.total.toLocaleString('es-CL') + '</div>' + wspHtml + '<button class="btn btn-eliminar" onclick="eliminarVenta(' + i + ')">ELIMINAR VENTA</button>';
-    lista.appendChild(div);
-  }
-}
-
-function cerrarDia(){
-  if(!confirm('¿Cerrar día? Se borran todas las ventas y el stock de ventas queda en 0. El stock inicial se mantiene intacto.'))return;
-  ventas = [];
-  for(var i=0;i<PRODUCTOS.length;i++){
-    stockActual[PRODUCTOS[i].id] = 0;
-  }
-  diaActivo = false;
-  carrito = {};
-  localStorage.setItem('ventas','[]');
-  localStorage.setItem('stockActual',JSON.stringify(stockActual));
-  localStorage.setItem('diaActivo','false');
-  actualizarResumen();
-  renderProductos();
-  verificarDiaActivo();
-  mostrarAlerta('Día cerrado. Carga stock inicial para activar ventas',true);
-}
-
-function respaldarDatos(){
-  var cajaInicial = parseInt(document.getElementById('cajaInicial').value)||0;
-  var respaldo = {
-    fecha: new Date().toISOString(),
-    stockInicial: stockInicial,
-    stockActual: stockActual,
-    ventas: ventas,
-    diaActivo: diaActivo,
-    cajaInicial: cajaInicial,
-    folioActual: folioActual
-  };
-  var dataStr = JSON.stringify(respaldo, null, 2);
-  var dataBlob = new Blob([dataStr], {type: 'application/json'});
-  var fecha = new Date().toISOString().split('T')[0];
-  var url = URL.createObjectURL(dataBlob);
-  var link = document.createElement('a');
-  link.href = url;
-  link.download = 'respaldo_empanadas_' + fecha + '.json';
-  link.click();
-  URL.revokeObjectURL(url);
-  mostrarAlerta('Respaldo descargado',true);
-}
-
-function cargarRespaldo(){
-  document.getElementById('input-cargar').click();
-}
-
-document.getElementById('input-cargar').onchange = function(e){
-  var file = e.target.files[0];
-  if(!file) return;
-  var reader = new FileReader();
-  reader.onload = function(event){
-    try{
-      var respaldo = JSON.parse(event.target.result);
-      if(!respaldo.stockInicial ||!respaldo.stockActual ||!respaldo.ventas){
-        mostrarAlerta('Archivo de respaldo inválido');
-        return;
-      }
-      if(!confirm('¿Cargar respaldo? Se reemplazará todo el stock y ventas actuales.'))return;
-      stockInicial = respaldo.stockInicial;
-      stockActual = respaldo.stockActual;
-      ventas = respaldo.ventas;
-      diaActivo = respaldo.diaActivo || false;
-      if(respaldo.cajaInicial) document.getElementById('cajaInicial').value = respaldo.cajaInicial;
-      if(respaldo.folioActual) folioActual = respaldo.folioActual;
-      localStorage.setItem('stockInicial',JSON.stringify(stockInicial));
-      localStorage.setItem('stockActual',JSON.stringify(stockActual));
-      localStorage.setItem('ventas',JSON.stringify(ventas));
-      localStorage.setItem('diaActivo',diaActivo);
-      localStorage.setItem('cajaInicial',respaldo.cajaInicial||'0');
-      localStorage.setItem('folioActual',folioActual);
-      renderProductos();
-      renderStock();
-      actualizarResumen();
-      verificarDiaActivo();
-      mostrarAlerta('Respaldo cargado exitosamente',true);
-    }catch(err){
-      mostrarAlerta('Error al leer el archivo');
-    }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-};
-
-function mandarResumenWSP(){
-  var cajaInicial = parseInt(document.getElementById('cajaInicial').value)||0;
-  var totalDia = 0;
-  var totalEfectivo = 0;
-  var totalTransfer = 0;
-  for(var i=0;i<ventas.length;i++){
-    totalDia += ventas[i].total;
-    if(ventas[i].metodo==='efectivo') totalEfectivo += ventas[i].total;
-    if(ventas[i].metodo==='transferencia') totalTransfer += ventas[i].total;
-  }
-
-  var empanadas = {cant:0,total:0};
-  var bebidas591 = {cant:0,total:0};
-  var latas = {cant:0,total:0};
-  var cachantun = {cant:0,total:0};
-  var costo = {cant:0,total:0};
-
-  for(var i=0;i<ventas.length;i++){
-    var v = ventas[i];
-    for(var id in v.carrito){
-      var p = null;
-      for(var j=0;j<PRODUCTOS.length;j++){
-        if(PRODUCTOS[j].id==id){p=PRODUCTOS[j];break;}
-      }
-      var cant = v.carrito[id];
-      var subtotal = v.tipo==='costo'? 2000 * cant : p.precio * cant;
-
-      if(v.tipo==='costo'){
-        costo.cant += cant;
-        costo.total += subtotal;
-      }else if(p.tipo==='empanada'){
-        empanadas.cant += cant;
-        empanadas.total += subtotal;
-      }else if(p.tipo==='591'){
-        bebidas591.cant += cant;
-        bebidas591.total += subtotal;
-      }else if(p.tipo==='lata'){
-        latas.cant += cant;
-        latas.total += subtotal;
-      }else if(p.tipo==='cachantun'){
-        cachantun.cant += cant;
-        cachantun.total += subtotal;
-      }
-    }
-  }
-
-  var totalCaja = cajaInicial + totalEfectivo;
-  var fecha = new Date().toLocaleDateString('es-CL');
-  var msg = '*📊 RESUMEN LOS WEONES DE LAS EMPANADAS*%0A';
-  msg += '📅 ' + fecha + '%0A';
-  msg += '👤 Generado por: ' + usuarioActual + '%0A%0A';
-  msg += '*💸 TOTAL EN CAJA: $' + totalCaja.toLocaleString('es-CL') + '*%0A';
-  msg += '├ 💰 Caja inicial: $' + cajaInicial.toLocaleString('es-CL') + '%0A';
-  msg += '└ 💵 Efectivo ventas: $' + totalEfectivo.toLocaleString('es-CL') + '%0A%0A';
-  msg += '*💰 TOTAL VENDIDO: $' + totalDia.toLocaleString('es-CL') + '*%0A';
-  msg += '├ 💳 Transferencia: $' + totalTransfer.toLocaleString('es-CL') + '%0A';
-  msg += '└ 📊 N° de ventas: ' + ventas.length + '%0A%0A';
-  msg += '*📦 DESGLOSE POR PRODUCTO:*%0A';
-  msg += '├ 🥟 Empanadas: ' + empanadas.cant + ' und - $' + empanadas.total.toLocaleString('es-CL') + '%0A';
-  msg += '├ 🍶 Bebidas 591: ' + bebidas591.cant + ' und - $' + bebidas591.total.toLocaleString('es-CL') + '%0A';
-  msg += '├ 🥫 Latas: ' + latas.cant + ' und - $' + latas.total.toLocaleString('es-CL') + '%0A';
-  msg += '└ 💧 Cachantun: ' + cachantun.cant + ' und - $' + cachantun.total.toLocaleString('es-CL') + '%0A';
-  if(costo.cant > 0) msg += '%0A🏷 *LIQUIDACIÓN*: ' + costo.cant + ' und - $' + costo.total.toLocaleString('es-CL') + '%0A';
-  msg += '%0A_Generado desde Caja Weones_ 🥟';
-
-  window.open('https://wa.me/?text=' + msg,'_blank');
-}
-
-function cambiarTab(tab){
-  var tabs = document.querySelectorAll('.tab');
-  for(var i=0;i<tabs.length;i++){
-    tabs[i].classList.remove('activo');
-  }
-  document.querySelector('[data-tab="' + tab + '"]').classList.add('activo');
-  document.getElementById('tab-vender').classList.add('oculto');
-  document.getElementById('tab-stock').classList.add('oculto');
-  document.getElementById('tab-resumen').classList.add('oculto');
-  document.getElementById('tab-'+tab).classList.remove('oculto');
-  if(tab==='resumen') actualizarResumen();
-}
-
-document.getElementById('btn-ver-stock').onclick = function(){
-  var div = document.getElementById('desglose-stock');
-  div.classList.toggle('oculto');
-  if(!div.classList.contains('oculto')){
-    var html = '<div class="total-box"><h2>STOCK ACTUAL</h2>';
-    for(var i=0;i<PRODUCTOS.length;i++){
-      var p = PRODUCTOS[i];
-      var vendido = 0;
-      for(var j=0;j<ventas.length;j++){
-        vendido += ventas[j].carrito[p.id]||0;
-      }
-      var enCarrito = carrito[p.id]||0;
-      var disponible = (stockActual[p.id]||0) - enCarrito;
-      html += '<div style="font-size:14px;margin:8px 0;padding-bottom:8px;border-bottom:1px solid #333"><b>' + p.icono + ' ' + p.nombre + '</b><br>Inicial: ' + (stockInicial[p.id]||0) + ' | Vendido hoy: ' + vendido + '<br>En carrito: ' + enCarrito + ' | Disponible: ' + disponible + '</div>';
-    }
-    html += '</div>';
-    div.innerHTML = html;
+      grid.appendChild(div);
+    });
   }
 };
 
-var tabs = document.querySelectorAll('.tab');
-for(var i=0;i<tabs.length;i++){
-  tabs[i].onclick = (function(t){
-    return function(){ cambiarTab(t.dataset.tab); };
-  })(tabs[i]);
-}
-document.getElementById('pago').oninput = actualizarTotal;
-document.getElementById('btn-vender').onclick = vender;
-document.getElementById('btn-costo').onclick = venderCosto;
-document.getElementById('btn-anular').onclick = anularPedido;
-document.getElementById('btn-guardar-stock').onclick = guardarStock;
-document.getElementById('btn-reiniciar-stock').onclick = reiniciarStockDia;
-document.getElementById('btn-cerrar-dia').onclick = cerrarDia;
-document.getElementById('btn-respaldar').onclick = respaldarDatos;
-document.getElementById('btn-cargar').onclick = cargarRespaldo;
-document.getElementById('btn-wsp-resumen').onclick = mandarResumenWSP;
-
-document.addEventListener('DOMContentLoaded', function(){
-  if(verificarLogin()){
-    init();
+const Resumen = {
+  calcular() {
+    const cajaInicial = parseInt(document.getElementById('cajaInicial').value) || 0;
+    DB.setCajaInicial(cajaInicial);
+    let totalDia = 0, totalEfectivo = 0, totalTransfer = 0;
+    const desglose = {
+      empanadas: { cant: 0, total: 0 },
+      bebidas591: { cant: 0, total: 0 },
+      latas: { cant: 0, total: 0 },
+      cachantun: { cant: 0, total: 0 },
+      costo: { cant: 0, total: 0 }
+    };
+    estado.ventas.forEach(v => {
+      totalDia += v.total;
+      if (v.metodo === 'efectivo') totalEfectivo += v.total;
+      if (v.metodo === 'transferencia') totalTransfer += v.total;
+      for (let id in v.carrito) {
+        const p = buscarProducto(id);
+        const cant = v.carrito[id];
+        const enLiquidacion = v.liquidacionIds.includes(parseInt(id));
+        const subtotal = enLiquidacion && p.tipo === 'empanada'? 2000 * cant : p.precio * cant;
+        if (enLiquidacion && p.tipo === 'empanada') {
+          desglose.costo.cant += cant;
+          desglose.costo.total += subtotal;
+        } else if (p.tipo === 'empanada') {
+          desglose.empanadas.cant += cant;
+          desglose.empanadas.total += subtotal;
+        } else if (p.tipo === '591') {
+          desglose.bebidas591.cant += cant;
+          desglose.bebidas591.total += subtotal;
+        } else if (p.tipo === 'lata') {
+          desglose.latas.cant += cant;
+          desglose.latas.total += subtotal;
+        } else if (p.tipo === 'cachantun') {
+          desglose.cachantun.cant += cant;
+          desglose.cachantun.total += subtotal;
+        }
+      }
+    });
+    return {
+      cajaInicial, totalDia, totalEfectivo, totalTransfer,
+      totalCaja: cajaInicial + totalEfectivo,
+      numVentas: estado.ventas.length, desglose
+    };
+  },
+  actualizar() {
+    const datos = this.calcular();
+    document.getElementById('total-dia').textContent = UI.formatearPrecio(datos.totalDia);
+    document.getElementById('total-efectivo').textContent = UI.formatearPrecio(datos.totalEfectivo);
+    document.getElementById('total-transfer').textContent = UI.formatearPrecio(datos.totalTransfer);
+    document.getElementById('mostrar-caja-inicial').textContent = UI.formatearPrecio(datos.cajaInicial);
+    document.getElementById('total-caja').textContent = UI.formatearPrecio(datos.totalCaja);
+    document.getElementById('num-ventas').textContent = datos.numVentas;
+    document.getElementById('total-empanadas').textContent = `${datos.desglose.empanadas.cant} und - ${UI.formatearPrecio(datos.desglose.empanadas.total)}`;
+    document.getElementById('total-591').textContent = `${datos.desglose.bebidas591.cant} und - ${UI.formatearPrecio(datos.desglose.bebidas591.total)}`;
+    document.getElementById('total-latas').textContent = `${datos.desglose.latas.cant} und - ${UI.formatearPrecio(datos.desglose.latas.total)}`;
+    document.getElementById('total-cachantun').textContent = `${datos.desglose.cachantun.cant} und - ${UI.formatearPrecio(datos.desglose.cachantun.total)}`;
+    document.getElementById('total-costo').textContent = `${datos.desglose.costo.cant} und - ${UI.formatearPrecio(datos.desglose.costo.total)}`;
+    this.renderHistorial();
+  },
+  renderHistorial() {
+    const lista = document.getElementById('historial-lista');
+    lista.innerHTML = '';
+    [...estado.ventas].reverse().forEach((v, reverseIndex) => {
+      const index = estado.ventas.length - 1 - reverseIndex;
+      const fecha = new Date(v.fecha);
+      const div = document.createElement('div');
+      div.className = 'historial-item' + (v.tipo === 'costo'? ' costo' : '');
+      let detalle = '';
+      for (let id in v.carrito) {
+        const p = buscarProducto(id);
+        const enLiquidacion = v.liquidacionIds.includes(parseInt(id));
+        const precio = enLiquidacion && p.tipo === 'empanada'? 2000 : p.precio;
+        detalle += `${v.carrito[id]}x ${p.nombre} @ ${UI.formatearPrecio(precio)}, `;
+      }
+      detalle = detalle.slice(0, -2);
+      const wspHtml = v.whatsapp? `<div class="wsp">📱 WhatsApp: ${v.whatsapp}</div>` : '';
+      const folioHtml = `<div class="folio">Boleta: ${v.folio}</div>`;
+      const vendedorHtml = `<div class="vendedor">Vendedor: ${v.vendedor}</div>`;
+      div.innerHTML = `
+        ${folioHtml}
+        ${vendedorHtml}
+        <div class="fecha">${fecha.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })} -
+          <span class="metodo">${v.metodo.toUpperCase()}${v.tipo === 'costo'? ' - COSTO' : ''}</span>
+        </div>
+        <div>${detalle}</div>
+        <div style="font-weight:bold;color:#ff6600;margin-top:4px">${UI.formatearPrecio(v.total)}</div>
+        ${wspHtml}
+        <button class="btn btn-eliminar" onclick="Ventas.eliminar(${index})">ELIMINAR VENTA</button>`;
+      lista.appendChild(div);
+    });
+  },
+  mandarWSP() {
+    const datos = this.calcular();
+    const fecha = new Date().toLocaleDateString('es-CL');
+    let msg = '*📊 RESUMEN LOS WEONES DE LAS EMPANADAS*%0A';
+    msg += '📅 ' + fecha + '%0A';
+    msg += '👤 Generado por: ' + estado.usuarioActual + '%0A%0A';
+    msg += '*💸 TOTAL EN CAJA: ' + UI.formatearPrecio(datos.totalCaja) + '*%0A';
+    msg += '├ 💰 Caja inicial: ' + UI.formatearPrecio(datos.cajaInicial) + '%0A';
+    msg += '└ 💵 Efectivo ventas: ' + UI.formatearPrecio(datos.totalEfectivo) + '%0A%0A';
+    msg += '*💰 TOTAL VENDIDO: ' + UI.formatearPrecio(datos.totalDia) + '*%0A';
+    msg += '├ 💳 Transferencia: ' + UI.formatearPrecio(datos.totalTransfer) + '%0A';
+    msg += '└ 📊 N° de ventas: ' + datos.numVentas + '%0A%0A';
+    msg += '*📦 DESGLOSE POR PRODUCTO:*%0A';
+    msg += '├ 🥟 Empanadas: ' + datos.desglose.empanadas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.empanadas.total) + '%0A';
+    msg += '├ 🍶 Bebidas 591: ' + datos.desglose.bebidas591.cant + ' und - ' + UI.formatearPrecio(datos.desglose.bebidas591.total) + '%0A';
+    msg += '├ 🥫 Latas: ' + datos.desglose.latas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.latas.total) + '%0A';
+    msg += '└ 💧 Cachantun: ' + datos.desglose.cachantun.cant + ' und - ' + UI.formatearPrecio(datos.desglose.cachantun.total) + '%0A';
+    if (datos.desglose.costo.cant > 0) {
+      msg += '%0A🏷 *LIQUIDACIÓN*: ' + datos.desglose.costo.cant + ' und - ' + UI.formatearPrecio(datos.desglose.costo.total) + '%0A';
+    }
+    msg += '%0A_Generado desde Caja Weones v' + VERSION_APP + '_ 🥟';
+    window.open('https://wa.me/?text=' + msg, '_blank');
   }
-});
+};
+const StockGestion = {
+  render() {
+    const tabla = document.getElementById('tabla-stock');
+    tabla.innerHTML = '';
+    PRODUCTOS.forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${p.icono} ${p.nombre}</td>
+        <td><input type="number" value="${estado.stockInicial[p.id] || 0}" id="stock-${p.id}" inputmode="numeric"></td>`;
+      tabla.appendChild(tr);
+    });
+  },
+  guardar() {
+    PRODUCTOS.forEach(p => {
+      estado.stockInicial[p.id] = parseInt(document.getElementById('stock-' + p.id).value) || 0;
+    });
+    estado.stockActual = JSON.parse(JSON.stringify(estado.stockInicial));
+    estado.diaActivo = true;
+    DB.setStockInicial(estado.stockInicial);
+    DB.setStockActual(estado.stockActual);
+    DB.setDiaActivo(true);
+    Productos.render();
+    Stock.verificarDiaActivo();
+    UI.mostrarAlerta('Stock inicial guardado. Día activado', true);
+    App.cambiarTab('vender');
+  },
+  reiniciar() {
+    if (!estado.diaActivo) {
+      UI.mostrarAlerta('Día cerrado. Carga stock inicial primero');
+      return;
+    }
+    if (!confirm('¿Reiniciar stock del día al inicial? Se perderá el stock actual pero no las ventas.')) return;
+    estado.stockActual = JSON.parse(JSON.stringify(estado.stockInicial));
+    DB.setStockActual(estado.stockActual);
+    Productos.render();
+    UI.mostrarAlerta('Stock del día reiniciado', true);
+  },
+  cerrarDia() {
+    if (!confirm('¿Cerrar día? Se borran ventas y el stock queda en 0. El stock inicial se mantiene.')) return;
+    estado.ventas = [];
+    PRODUCTOS.forEach(p => estado.stockActual[p.id] = 0);
+    estado.diaActivo = false;
+    estado.carrito = {};
+    estado.liquidacionIds = [];
+    DB.setVentas([]);
+    DB.setStockActual(estado.stockActual);
+    DB.setDiaActivo(false);
+    Resumen.actualizar();
+    Productos.render();
+    Stock.verificarDiaActivo();
+    UI.mostrarAlerta('Día cerrado', true);
+  },
+  verDesglose() {
+    const div = document.getElementById('desglose-stock');
+    div.classList.toggle('oculto');
+    if (!div.classList.contains('oculto')) {
+      let html = '<div class="total-box"><h2>STOCK ACTUAL</h2>';
+      PRODUCTOS.forEach(p => {
+        let vendido = 0;
+        estado.ventas.forEach(v => vendido += v.carrito[p.id] || 0);
+        const enCarrito = estado.carrito[p.id] || 0;
+        const disponible = (estado.stockActual[p.id] || 0) - enCarrito;
+        html += `
+          <div style="font-size:14px;margin:8px 0;padding-bottom:8px;border-bottom:1px solid #333">
+            <b>${p.icono} ${p.nombre}</b><br>
+            Inicial: ${estado.stockInicial[p.id] || 0} | Vendido: ${vendido}<br>
+            En carrito: ${enCarrito} | Disponible: ${disponible}
+          </div>`;
+      });
+      html += '</div>';
+      div.innerHTML = html;
+    }
+  }
+};
+
+const Respaldo = {
+  descargar() {
+    const datos = {
+      version: VERSION_APP,
+      fecha: new Date().toISOString(),
+      vendedor: estado.usuarioActual,
+      cajaInicial: DB.getCajaInicial(),
+      stockInicial: estado.stockInicial,
+      stockActual: estado.stockActual,
+      ventas: estado.ventas,
+      folioActual: estado.folioActual
+    };
+    const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `respaldo-weones-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    UI.mostrarAlerta('Respaldo descargado', true);
+  },
+  cargar() {
+    const input = document.getElementById('archivo');
+    if (!input.files[0]) {
+      UI.mostrarAlerta('Selecciona un archivo');
+      return;
+    }
+    if (!confirm('¿Cargar respaldo? Se borrarán los datos actuales.')) {
+      input.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const datos = JSON.parse(e.target.result);
+        if (!datos.ventas ||!datos.stockActual) {
+          throw new Error('Archivo corrupto');
+        }
+        estado.stockInicial = datos.stockInicial || {};
+        estado.stockActual = datos.stockActual || {};
+        estado.ventas = datos.ventas || [];
+        estado.folioActual = datos.folioActual || 1;
+        estado.diaActivo = true;
+        DB.setStockInicial(estado.stockInicial);
+        DB.setStockActual(estado.stockActual);
+        DB.setVentas(estado.ventas);
+        DB.setFolio(estado.folioActual);
+        DB.setCajaInicial(datos.cajaInicial || 0);
+        DB.setDiaActivo(true);
+        document.getElementById('cajaInicial').value = datos.cajaInicial || 0;
+        Productos.render();
+        Resumen.actualizar();
+        Stock.verificarDiaActivo();
+        UI.mostrarAlerta('Respaldo cargado', true);
+      } catch (err) {
+        UI.mostrarAlerta('Error al cargar: ' + err.message);
+      }
+      input.value = '';
+    };
+    reader.readAsText(input.files[0]);
+  }
+};
+
+const App = {
+  cambiarTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
+    document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+    document.querySelector(`[onclick="App.cambiarTab('${tab}')"]`).classList.add('activo');
+    document.getElementById(tab).classList.add('activa');
+    if (tab === 'stock') {
+      StockGestion.render();
+      document.getElementById('cajaInicial').value = DB.getCajaInicial();
+    } else if (tab === 'resumen') {
+      Resumen.actualizar();
+    }
+  },
+  init() {
+    if (!Auth.verificar()) return;
+    Productos.render();
+    Stock.verificarDiaActivo();
+    Resumen.actualizar();
+    document.getElementById('pago').addEventListener('input', Stock.actualizarTotal);
+    document.getElementById('metodo-pago').addEventListener('change', Stock.cambiarMetodoPago);
+    document.getElementById('cajaInicial').addEventListener('input', () => {
+      DB.setCajaInicial(document.getElementById('cajaInicial').value);
+      Resumen.actualizar();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && document.getElementById('loginScreen').classList.contains('oculto')) {
+        if (document.activeElement.tagName!== 'INPUT') {
+          Ventas.ejecutar();
+        }
+      }
+      if (e.key === 'Escape') {
+        Ventas.anular();
+      }
+    });
+    console.log(`🥟 Los Weones de las Empanadas v${VERSION_APP} iniciado`);
+  }
+};
+
+window.onload = () => {
+  if (Auth.verificar()) {
+    App.init();
+  }
+};
+
+window.Auth = Auth;
+window.Ventas = Ventas;
+window.Productos = Productos;
+window.Stock = Stock;
+window.StockGestion = StockGestion;
+window.Resumen = Resumen;
+window.Respaldo = Respaldo;
+window.App = App;
+window.UI = UI;
 </script>
-
 </body>
 </html>
