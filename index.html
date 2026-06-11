@@ -26,7 +26,7 @@
    .total-box.monto{font-size:36px;color:#ff6600;font-weight:bold;text-shadow:0 0 20px rgba(255,102,0,0.5)}
    .total-box.vuelto{font-size:16px;color:#00ff00;margin-top:8px;font-weight:600}
    .input-grupo{margin-bottom:15px}.input-grupo label{display:block;color:#ff6600;font-size:13px;margin-bottom:6px;font-weight:600}
-   .input-grupo input,.input-grupo select{width:100%;padding:14px;background:#1a1a;border:2px solid #333;border-radius:12px;color:#fff;font-size:16px;outline:0;transition:all 0.3s}
+   .input-grupo input,.input-grupo select{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#fff;font-size:16px;outline:0;transition:all 0.3s}
    .input-grupo input:focus,.input-grupo select:focus{border-color:#ff6600;box-shadow:0 0 15px rgba(255,102,0,0.2)}
    .input-grupo select option{background:#1a1a1a;color:#fff}
    .btn{width:100%;padding:16px;background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);border:none;border-radius:14px;color:#000;font-size:16px;font-weight:bold;cursor:pointer;transition:all 0.2s;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 15px rgba(255,102,0,0.3)}
@@ -56,7 +56,7 @@
    .oculto{display:none!important}.login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center}
    .login-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:40px;border-radius:20px;border:2px solid #ff6600;max-width:400px;width:90%;text-align:center}
    .login-box h1{color:#ff6600;margin-bottom:20px;font-size:28px}
-   .mensaje-venta{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:30px 50px;border-radius:20px;font-size:24px;font-weight:bold;z-index:1001;box-shadow:0 10px 40px rgba(0,170,0,0.5);animation:popIn 0.3s}
+   .mensaje-venta{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:30px 50px;border-radius:20px;font-size:24px;font-weight:bold;z-index:101;box-shadow:0 10px 40px rgba(0,170,0,0.5);animation:popIn 0.3s}
     @keyframes popIn{from{transform:translate(-50%,-50%) scale(0.5);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
   </style>
 </head>
@@ -279,8 +279,8 @@ const UI = {
   },
   mostrarVentaGuardada() {
     const m = document.getElementById('mensajeVenta');
-    m.style.display = 'block';
-    setTimeout(() => m.style.display = 'none', 2000);
+    m.classList.remove('oculto');
+    setTimeout(() => m.classList.add('oculto'), 2000);
   },
   formatearPrecio(num) {
     return '$' + (num || 0).toLocaleString('es-CL');
@@ -390,6 +390,7 @@ const Ventas = {
     estado.liquidacionIds = Object.keys(estado.carrito).map(id => parseInt(id));
     document.getElementById('bannerLiquidacion').classList.remove('oculto');
     Stock.actualizarTotal();
+    Productos.render();
     UI.mostrarAlerta('Precio liquidación: $2.000', true);
   },
   anular() {
@@ -512,26 +513,34 @@ const Productos = {
     const sinStock = stockDisponible === 0 ||!estado.diaActivo;
     const div = document.querySelector(`[data-producto-id="${id}"]`);
     if (!div) return;
+    
     div.className = 'producto' + (sinStock? ' sin-stock' : '') + (enCarrito > 0? ' activo' : '');
+    const precioUnitario = estado.liquidacionIds.includes(p.id) && p.tipo === 'empanada' ? 2000 : p.precio;
+    
     if (enCarrito > 0 && estado.diaActivo) {
+      div.onclick = null;
+      div.style.cursor = 'default';
       div.innerHTML = `
         <div class="producto-icono">${p.icono}</div>
         <h3>${p.nombre}</h3>
-        <div class="precio">${UI.formatearPrecio(p.precio)}</div>
+        <div class="precio">${UI.formatearPrecio(precioUnitario)}</div>
         <div class="stock">Stock: ${stockDisponible}</div>
         <div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">
-          <button onclick="Productos.quitar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">-</button>
+          <button onclick="Productos.quitar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">-</button>
           <span style="font-size:18px;font-weight:bold;min-width:30px;text-align:center">${enCarrito}</span>
-          <button onclick="Productos.agregar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">+</button>
+          <button onclick="Productos.agregar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">+</button>
         </div>`;
     } else {
+      div.style.cursor = sinStock ? 'not-allowed' : 'pointer';
       div.innerHTML = `
         <div class="producto-icono">${p.icono}</div>
         <h3>${p.nombre}</h3>
-        <div class="precio">${UI.formatearPrecio(p.precio)}</div>
+        <div class="precio">${UI.formatearPrecio(precioUnitario)}</div>
         <div class="stock">Stock: ${stockDisponible}</div>`;
-      if (estado.diaActivo) {
+      if (estado.diaActivo && stockDisponible > 0) {
         div.onclick = () => this.agregar(p.id);
+      } else {
+        div.onclick = null;
       }
     }
   },
@@ -539,35 +548,10 @@ const Productos = {
     const grid = document.getElementById('productos-grid');
     grid.innerHTML = '';
     PRODUCTOS.forEach(p => {
-      const stockDisp = estado.diaActivo? (estado.stockActual[p.id] || 0) : 0;
-      const enCarrito = estado.carrito[p.id] || 0;
-      const stockDisponible = stockDisp - enCarrito;
-      const sinStock = stockDisponible === 0 ||!estado.diaActivo;
       const div = document.createElement('div');
       div.setAttribute('data-producto-id', p.id);
-      div.className = 'producto' + (sinStock?' sin-stock' : '') + (enCarrito > 0?' activo' : '');
-      if (enCarrito > 0 && estado.diaActivo) {
-        div.innerHTML = `
-          <div class="producto-icono">${p.icono}</div>
-          <h3>${p.nombre}</h3>
-          <div class="precio">${UI.formatearPrecio(p.precio)}</div>
-          <div class="stock">Stock: ${stockDisponible}</div>
-          <div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">
-            <button onclick="Productos.quitar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">-</button>
-            <span style="font-size:18px;font-weight:bold;min-width:30px;text-align:center">${enCarrito}</span>
-            <button onclick="Productos.agregar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px">+</button>
-          </div>`;
-      } else {
-        div.innerHTML = `
-          <div class="producto-icono">${p.icono}</div>
-          <h3>${p.nombre}</h3>
-          <div class="precio">${UI.formatearPrecio(p.precio)}</div>
-          <div class="stock">Stock: ${stockDisponible}</div>`;
-        if (estado.diaActivo) {
-          div.onclick = () => this.agregar(p.id);
-        }
-      }
       grid.appendChild(div);
+      this.renderItem(p.id);
     });
   }
 };
@@ -591,7 +575,7 @@ const Resumen = {
       for (let id in v.carrito) {
         const p = buscarProducto(id);
         const cant = v.carrito[id];
-        const enLiquidacion = v.liquidacionIds.includes(parseInt(id));
+        const enLiquidacion = v.liquidacionIds && v.liquidacionIds.includes(parseInt(id));
         const subtotal = enLiquidacion && p.tipo === 'empanada'? 2000 * cant : p.precio * cant;
         if (enLiquidacion && p.tipo === 'empanada') {
           desglose.costo.cant += cant;
@@ -643,7 +627,7 @@ const Resumen = {
       let detalle = '';
       for (let id in v.carrito) {
         const p = buscarProducto(id);
-        const enLiquidacion = v.liquidacionIds.includes(parseInt(id));
+        const enLiquidacion = v.liquidacionIds && v.liquidacionIds.includes(parseInt(id));
         const precio = enLiquidacion && p.tipo === 'empanada'? 2000 : p.precio;
         detalle += `${v.carrito[id]}x ${p.nombre} @ ${UI.formatearPrecio(precio)}, `;
       }
@@ -701,6 +685,9 @@ const StockGestion = {
     });
   },
   guardar() {
+    if (estado.ventas.length > 0 && !confirm('Ya hay ventas registradas hoy. Reconfigurar el stock inicial podría alterar el balance del día. ¿Continuar?')) {
+      return;
+    }
     PRODUCTOS.forEach(p => {
       estado.stockInicial[p.id] = parseInt(document.getElementById('stock-' + p.id).value) || 0;
     });
