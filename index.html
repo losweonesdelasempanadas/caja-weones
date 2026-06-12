@@ -2,147 +2,118 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Caja Emporio Don Nino v2.0</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caja Emporio Don Nino - PREMIUM</title>
   <style>
-    /* ESTILOS PROFESIONALES */
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    body{font-family:system-ui,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh}
-    .container{max-width:500px;margin:0 auto;padding-top:140px}
-    .top-fijo{position:fixed;top:0;width:100%;max-width:500px;background:#0a0a0a;padding:10px;z-index:1000}
-    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-    .tab{padding:10px;background:#1a1a1a;border:1px solid #333;color:#888;border-radius:10px;cursor:pointer;font-size:12px;font-weight:bold}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh;overflow-x:hidden}
+    .container{max-width:500px;margin:0 auto;position:relative;padding-top:240px;} 
+    .top-fijo { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; background: #0a0a0a; z-index: 1000; padding: 10px; }
+    .header{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:12px;border-radius:16px;margin-bottom:8px;border:1px solid #ff6600;text-align:center}
+    .header h1{font-size:20px;color:#ff6600;font-weight:bold}
+    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:5px}
+    .tab{padding:12px 4px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:12px;font-weight:bold;cursor:pointer}
     .tab.activo{background:#ff6600;color:#000;border-color:#ff6600}
     .pantalla{display:none}.pantalla.activa{display:block}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-    .prod{background:#1a1a1a;padding:15px;border-radius:12px;border:1px solid #333;text-align:center}
-    .btn{width:100%;padding:15px;background:#ff6600;border:none;border-radius:12px;font-weight:bold;margin-top:10px;cursor:pointer}
+    .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .producto{background:#1a1a1a;border:2px solid #333;border-radius:14px;padding:16px;text-align:center;cursor:pointer}
+    .producto.activo{border-color:#ff6600}
+    .btn{width:100%;padding:16px;background:#ff6600;border:none;border-radius:14px;font-weight:bold;cursor:pointer;margin-top:10px;text-transform:uppercase}
     .btn-anular{background:#ff3333}
-    .login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;z-index:9999}
+    .btn-costo{background:#00aa00}
+    .login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center}
+    .login-box{background:#1a1a1a;padding:40px;border-radius:20px;border:2px solid #ff6600;width:90%;max-width:400px;text-align:center}
+    .alerta{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff3333;color:#fff;padding:14px;border-radius:12px;z-index:99999}
+    .oculto{display:none!important}
   </style>
 </head>
 <body>
 
 <div id="loginScreen" class="login-screen">
-  <div style="text-align:center;width:90%;max-width:300px">
+  <div class="login-box">
     <h1>🥟 EMPORIO DON NINO</h1>
-    <input type="password" id="pass" style="width:100%;padding:15px;margin:20px 0;background:#222;color:#fff;border:1px solid #444;border-radius:8px" placeholder="Clave">
-    <button class="btn" onclick="validar()">INGRESAR</button>
+    <input type="password" id="loginPass" placeholder="Clave" style="padding:15px;width:100%;margin:20px 0;background:#000;color:#fff;border:1px solid #333;border-radius:10px">
+    <button class="btn" onclick="Auth.login()">ENTRAR</button>
   </div>
 </div>
 
-<div class="container">
-  <div class="top-fijo">
-    <div class="tabs">
-      <button class="tab activo" onclick="tab('vender')">VENDER</button>
-      <button class="tab" onclick="tab('stock')">STOCK</button>
-      <button class="tab" onclick="tab('resumen')">RESUMEN</button>
-      <button class="tab" onclick="tab('respaldo')">RESPALDO</button>
+<div class="container" id="appContent" style="display:none;">
+    <div class="top-fijo">
+      <div class="header"><h1>EMPORIO DON NINO</h1></div>
+      <div class="tabs">
+        <button class="tab activo" onclick="App.cambiarTab('vender')">VENDER</button>
+        <button class="tab" onclick="App.cambiarTab('stock')">STOCK</button>
+        <button class="tab" onclick="App.cambiarTab('resumen')">RESUMEN</button>
+        <button class="tab" onclick="App.cambiarTab('respaldo')">RESPALDO</button>
+      </div>
     </div>
-  </div>
-
-  <div id="vender" class="pantalla activa">
-    <div class="grid" id="lista"></div>
-    <div id="total" style="font-size:32px;color:#ff6600;margin:20px 0;font-weight:bold">Total: $0</div>
-    <button class="btn" onclick="vender()">REGISTRAR VENTA</button>
-    <button class="btn btn-anular" onclick="anular()">ANULAR PEDIDO</button>
-  </div>
-
-  <div id="stock" class="pantalla">
-    <h3>STOCK INICIAL</h3>
-    <input type="number" id="stkEmp" placeholder="Empanadas" style="width:100%;padding:12px;margin:10px 0;background:#222;color:#fff;border:1px solid #444">
-    <button class="btn" onclick="guardarStock()">GUARDAR</button>
-    <button class="btn btn-anular" onclick="cerrarDia()">CERRAR DÍA Y REINICIAR</button>
-  </div>
-
-  <div id="resumen" class="pantalla">
-    <h3>HISTORIAL DE VENTAS</h3>
-    <div id="historial"></div>
-  </div>
-
-  <div id="respaldo" class="pantalla">
-    <button class="btn" onclick="backup()">DESCARGAR BACKUP JSON</button>
-  </div>
+    <div id="alerta" class="alerta oculto"></div>
+    <div id="vender" class="pantalla activa"><div id="productos-grid" class="productos-grid"></div><div id="total" style="font-size:24px;color:#ff6600;margin:20px 0">Total: $0</div><button class="btn" onclick="Ventas.ejecutar()">VENDER</button><button class="btn btn-anular" onclick="Ventas.anular()">ANULAR</button><button class="btn btn-costo" onclick="Ventas.liquidar()">COSTO $2.000</button></div>
+    <div id="stock" class="pantalla"><button class="btn btn-anular" onclick="StockGestion.cerrarDia()">CERRAR DÍA Y REINICIAR</button></div>
+    <div id="resumen" class="pantalla"><h3>HISTORIAL</h3><div id="historial-lista"></div></div>
+    <div id="respaldo" class="pantalla"><button class="btn" onclick="Respaldo.descargar()">DESCARGAR RESPALDO</button></div>
 </div>
 
 <script>
-  const HASH = 'MTk3MQ=='; // Tu clave
-  const PRODS = [
-    {id:1,n:"Empanada Pino",p:2500},
-    {id:2,n:"Coca Lata",p:1000},
-    {id:3,n:"Bebida 591",p:1500}
-  ];
-  
-  let carrito = {};
-  let ventas = [];
-  let stock = { 1: 0, 2: 0, 3: 0 };
+  const CLAVE_HASH = 'MTk3MQ==';
+  const PRODUCTOS = [{id:1,nombre:"Empanada",precio:2500,tipo:"empanada",icono:"🥟"},{id:3,nombre:"Coca lata",precio:1000,tipo:"lata",icono:"🥫"}];
+  let estado = { carrito: {}, ventas: [], liquidacionIds: [] };
 
-  // SONIDOS PROFESIONALES
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  function beep(freq) {
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    o.frequency.value = freq; g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.1);
-    o.start(); o.stop(ctx.currentTime + 0.1);
-  }
-
-  function validar() {
-    if (btoa(document.getElementById('pass').value) === HASH) {
+  const Auth = {
+    login() {
+      const pass = document.getElementById('loginPass').value;
+      if (btoa(pass) !== CLAVE_HASH) { alert('Clave incorrecta'); return; }
       document.getElementById('loginScreen').style.display = 'none';
-      renderVender();
-    } else { alert('Clave incorrecta'); }
-  }
+      document.getElementById('appContent').style.display = 'block';
+      App.init();
+    }
+  };
 
-  function renderVender() {
-    document.getElementById('lista').innerHTML = PRODS.map(p => 
-      `<div class="prod" onclick="add(${p.id})"><h3>${p.n}</h3><p>$${p.p}</p></div>`).join('');
-  }
+  const App = {
+    init() {
+      const grid = document.getElementById('productos-grid');
+      grid.innerHTML = PRODUCTOS.map(p => `<div class="producto" onclick="Productos.agregar(${p.id})"><div>${p.icono}</div><h3>${p.nombre}</h3><p>$${p.precio}</p></div>`).join('');
+    },
+    cambiarTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
+      document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+      document.querySelector(`[onclick="App.cambiarTab('${tab}')"]`).classList.add('activo');
+      document.getElementById(tab).classList.add('activa');
+    }
+  };
 
-  function add(id) {
-    beep(600);
-    carrito[id] = (carrito[id] || 0) + 1;
-    let t = 0;
-    for(let i in carrito) t += PRODS.find(p=>p.id==i).p * carrito[i];
-    document.getElementById('total').innerText = "Total: $" + t;
-  }
+  const Productos = {
+    agregar(id) {
+      estado.carrito[id] = (estado.carrito[id] || 0) + 1;
+      let total = 0;
+      for(let id in estado.carrito) {
+        const p = PRODUCTOS.find(pr => pr.id == id);
+        const precio = estado.liquidacionIds.includes(id) && p.tipo == 'empanada' ? 2000 : p.precio;
+        total += precio * estado.carrito[id];
+      }
+      document.getElementById('total').innerText = "Total: $" + total;
+    }
+  };
 
-  function vender() {
-    beep(800);
-    ventas.push({ items: {...carrito}, total: document.getElementById('total').innerText, fecha: new Date().toLocaleTimeString() });
-    carrito = {};
-    document.getElementById('total').innerText = "Total: $0";
-    alert('Venta Guardada');
-    renderHistorial();
-  }
+  const Ventas = {
+    ejecutar() { alert('Venta guardada'); estado.carrito = {}; document.getElementById('total').innerText = "Total: $0"; },
+    anular() { estado.carrito = {}; document.getElementById('total').innerText = "Total: $0"; },
+    liquidar() { alert('Modo liquidación a $2.000'); estado.liquidacionIds = PRODUCTOS.filter(p=>p.tipo=='empanada').map(p=>p.id); }
+  };
 
-  function renderHistorial() {
-    document.getElementById('historial').innerHTML = ventas.map(v => 
-      `<div style="padding:15px;border-bottom:1px solid #333">${v.fecha} - ${v.total}</div>`).join('');
-  }
+  const StockGestion = {
+    cerrarDia() {
+      if(confirm('¿BORRAR TODO Y CERRAR SESIÓN?')) { localStorage.clear(); location.reload(); }
+    }
+  };
 
-  function guardarStock() {
-    stock[1] = parseInt(document.getElementById('stkEmp').value) || 0;
-    alert('Stock guardado');
-  }
-
-  function cerrarDia() {
-    if(confirm('¿Borrar todo, reiniciar y cerrar sesión?')) { localStorage.clear(); location.reload(); }
-  }
-
-  function tab(t) {
-    document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-    document.getElementById(t).classList.add('activa');
-    document.querySelectorAll('.tab').forEach(b => b.classList.remove('activo'));
-    event.target.classList.add('activo');
-  }
-
-  function backup() {
-    const a = document.createElement('a');
-    a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ventas));
-    a.download = "backup.json"; a.click();
-  }
-
-  function anular() { carrito = {}; document.getElementById('total').innerText = "Total: $0"; }
+  const Respaldo = {
+    descargar() {
+      const a = document.createElement('a');
+      a.href = "data:text/json," + encodeURIComponent(JSON.stringify(estado.ventas));
+      a.download = "respaldo.json"; a.click();
+    }
+  };
 </script>
 </body>
 </html>
