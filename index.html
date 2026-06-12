@@ -5,61 +5,127 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Los Weones de las Empanadas - CAJA V2.0 PREMIUM</title>
   <style>
-    /* MANTÉN TU CSS AQUÍ. No he modificado nada de diseño. */
+    /* Tu CSS original se mantiene igual */
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh;overflow-x:hidden}
     .container{max-width:500px;margin:0 auto;position:relative;padding-top:240px;} 
-    /* ... (resto de tu CSS) ... */
+    .top-fijo{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;background:#0a0a0a;z-index:1000;padding:10px 10px 5px 10px;}
+    .header{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:12px 20px;border-radius:16px;margin-bottom:8px;border:1px solid #ff6600;text-align:center;position:relative;transition:all 0.4s ease;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .logo-header{width:65px;height:65px;border-radius:50%;border:2px solid #ff6600;margin-bottom:5px;box-shadow:0 0 15px rgba(255,102,0,0.4)}
+    .header.modo-costo{border-color:#00ff00;box-shadow:0 0 25px rgba(0,255,0,0.3)}
+    .header.modo-costo h1{color:#00ff00;text-shadow:0 0 20px rgba(0,255,0,0.5)}
+    .user-bar{display:flex;align-items:center;justify-content:space-between;background:#141414;padding:6px 12px;border-radius:8px;margin-bottom:8px;border:1px solid #222;font-size:12px}
+    .status-dot{width:8px;height:8px;background-color:#00ff00;border-radius:50%;box-shadow:0 0 10px #00ff00;animation:parpadeo 1.8s infinite ease-in-out}
+    @keyframes parpadeo{0%,100%{opacity:0.4}50%{opacity:1}}
+    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:5px}
+    .tab{padding:12px 4px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:12px;font-weight:bold;cursor:pointer;transition:all 0.3s;text-align:center}
+    .tab.activo{background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);color:#000;border-color:#ff6600}
+    .pantalla{display:none}.pantalla.activa{display:block}
+    .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+    .producto{background:linear-gradient(135deg,rgba(35,35,35,0.7) 0%,rgba(20,20,20,0.8) 100%);border:2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer}
+    .producto.activo{border-color:#ff6600;background:linear-gradient(135deg,#2d1a00 0%,#3d2400 100%)}
+    .total-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:20px;border-radius:16px;margin-bottom:15px;border:2px solid #ff6600}
+    .total-box.monto{font-size:36px;color:#ff6600;font-weight:bold}
+    .input-grupo{margin-bottom:15px}.input-grupo label{display:block;color:#ff6600;font-size:13px;margin-bottom:6px;font-weight:600}
+    .input-grupo input,.input-grupo select{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#fff;font-size:16px}
+    .btn{width:100%;padding:16px;background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);border:none;border-radius:14px;color:#000;font-size:16px;font-weight:bold;cursor:pointer}
+    .btn-anular{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff}
+    .btn-costo{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff}
+    .alerta{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff3333;color:#fff;padding:14px 24px;border-radius:12px;z-index:99999}
+    .oculto{display:none!important}
+    .login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center}
+    .login-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:40px;border-radius:20px;border:2px solid #ff6600;text-align:center}
+    .mensaje-venta{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:30px 50px;border-radius:20px;font-size:24px;font-weight:bold;z-index:1001}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+  <div id="loginScreen" class="login-screen">
+    <div class="login-box">
+      <h1>🥟 LOS WEONES 🥟</h1>
+      <select id="loginUser"><option value="Marcelo">Marcelo</option><option value="Nataly">Nataly</option></select>
+      <input type="password" id="loginPass" placeholder="Clave" style="margin-top:10px;width:100%;padding:10px">
+      <button class="btn" style="margin-top:10px" onclick="Auth.login(document.getElementById('loginUser').value, document.getElementById('loginPass').value)">ENTRAR</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="top-fijo">
+      <div id="headerApp" class="header">
+        <img src="logo.png" class="logo-header" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='">
+        <h1>LOS WEONES DE LAS EMPANADAS</h1>
+      </div>
+      <div class="user-bar"><div class="user-info-left"><div class="status-dot"></div><span id="userDisplay">Caja Cerrada</span></div><button onclick="Auth.logout()" style="background:none;border:none;color:#ff3333">Salir</button></div>
+      <div class="tabs">
+        <button class="tab activo" onclick="App.cambiarTab('vender')">VENDER</button>
+        <button class="tab" onclick="App.cambiarTab('stock')">STOCK</button>
+        <button class="tab" onclick="App.cambiarTab('resumen')">RESUMEN</button>
+        <button class="tab" onclick="App.cambiarTab('respaldo')">RESPALDO</button>
+      </div>
+    </div>
+
+    <div id="alerta" class="alerta oculto"></div>
+    <div id="mensajeVenta" class="mensaje-venta oculto">✅ VENTA GUARDADA</div>
+
+    <div id="vender" class="pantalla activa">
+      <div id="productos-grid" class="productos-grid"></div>
+      <div id="totalBox" class="total-box"><h2>TOTAL</h2><div class="monto" id="total">$0</div></div>
+      <select id="metodo-pago"><option value="efectivo">Efectivo</option><option value="transferencia">Transferencia</option></select>
+      <input type="number" id="pago" placeholder="Pago con..." style="width:100%;padding:10px;margin-top:10px">
+      <button id="btnVender" class="btn" style="margin-top:10px" onclick="Ventas.ejecutar()">VENDER</button>
+    </div>
+
+    <div id="stock" class="pantalla">
+        <label>CAJA INICIAL</label>
+        <input type="number" id="cajaInicial" placeholder="0">
+        <button class="btn" onclick="StockGestion.guardar()">GUARDAR</button>
+    </div>
+    <div id="resumen" class="pantalla"></div>
+    <div id="respaldo" class="pantalla"></div>
+  </div>
+
   <script>
-    // 1. CONEXIÓN A SUPABASE
+    // CONEXIÓN CORREGIDA
     const dbClient = supabase.createClient('https://ibiqpvfrwzlunvovixyf.supabase.co', 'sb_publishable_WaCE6FvGEOIkFyGf0SCqqw_hNqt5uNz');
 
-    // ... (Mantén tus constantes y objetos Sonidos, Auth, etc.) ...
+    // ... (Mantén aquí todo tu código original de lógica: estados, objetos, ventas, etc.)
+    const CLAVE_HASH = 'MTk3MQ==';
+    let estado = { carrito:{}, ventas:[], usuarioActual:null };
 
-    // 2. CORRECCIÓN DEL SCROLL EN VENTAS.LIMPIAR
-    const Ventas = {
-        // ... (tus funciones anteriores)
-        limpiar() {
-            estado.carrito = {};
-            estado.liquidacionIds = [];
-            document.getElementById('bannerLiquidacion').classList.add('oculto');
-            document.getElementById('headerApp').classList.remove('modo-costo');
-            document.getElementById('totalBox').classList.remove('modo-costo-total');
-            document.getElementById('pago').value = '';
-            document.getElementById('wsp').value = '';
-            document.getElementById('metodo-pago').value = 'efectivo';
-            Stock.cambiarMetodoPago();
-
-            // CORRECCIÓN: Scroll suave hacia arriba con espera de 500ms
-            setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 500);
-        },
-        // ... (resto de funciones de ventas)
+    const Auth = {
+        login(u,p){ if(btoa(p)===CLAVE_HASH){ estado.usuarioActual=u; document.getElementById('loginScreen').classList.add('oculto'); App.init(); } },
+        verificar(){ return !!estado.usuarioActual; },
+        logout(){ location.reload(); }
     };
 
-    // 3. PERSISTENCIA DE CAJA INICIAL (Integración Supabase)
-    async function cargarCajaInicial() {
-        const { data } = await supabase.from('configuracion').select('caja_inicial').eq('id', 1).single();
-        if (data) {
-            document.getElementById('cajaInicial').value = data.caja_inicial;
-            document.getElementById('mostrar-caja-inicial').textContent = '$' + data.caja_inicial.toLocaleString('es-CL');
+    const Ventas = {
+        limpiar() {
+            document.getElementById('pago').value = '';
+            // CORRECCIÓN SCROLL SUAVE
+            setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 500);
+        },
+        ejecutar(){ /* tu lógica */ UI.mostrarVentaGuardada(); this.limpiar(); }
+    };
+
+    const UI = {
+        mostrarVentaGuardada(){
+            const m = document.getElementById('mensajeVenta');
+            m.classList.remove('oculto');
+            setTimeout(() => m.classList.add('oculto'), 2000);
         }
+    };
+
+    async function cargarCajaInicial() {
+        const { data } = await dbClient.from('configuracion').select('caja_inicial').eq('id', 1).single();
+        if(data) document.getElementById('cajaInicial').value = data.caja_inicial;
     }
 
-    // 4. INICIALIZACIÓN
-    window.onload = async () => { 
-        if (Auth.verificar()) {
-            App.init();
-            await cargarCajaInicial(); // Cargamos desde la nube al iniciar
-        }
+    const App = {
+        cambiarTab(tab){ /* tu lógica de tabs */ },
+        init(){ cargarCajaInicial(); }
     };
-    
-    // ... (Tu resto de funciones App, Productos, Resumen, etc.) ...
+
+    window.onload = () => { /* Auth.verificar etc */ };
   </script>
 </body>
 </html>
