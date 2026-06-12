@@ -3,131 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Los Weones de las Empanadas - CAJA V2.0</title>
+  <title>Caja Emporio Don Nino</title>
   <style>
-    /* Estilos originales mantenidos para que todo se vea igual */
-    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh}
-    .container{max-width:500px;margin:0 auto;position:relative;padding-top:240px;}
-    .top-fijo { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; background: #0a0a0a; z-index: 1000; padding: 10px; }
-    .header{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:12px;border-radius:16px;border:1px solid #ff6600;text-align:center;margin-bottom:8px}
-    .header h1{font-size:20px;color:#ff6600;font-weight:bold}
-    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:5px}
-    .tab{padding:12px 4px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:12px;font-weight:bold;cursor:pointer}
-    .tab.activo{background:#ff6600;color:#000;border-color:#ff6600}
+    body{font-family:sans-serif;background:#0a0a0a;color:#fff;padding:10px;margin:0}
+    .container{max-width:500px;margin:0 auto;padding-top:150px;}
+    .top-fijo{position:fixed;top:0;width:100%;max-width:500px;background:#0a0a0a;padding:10px;z-index:1000}
+    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px}
+    .tab{padding:10px;background:#222;border:none;color:#fff;border-radius:8px;cursor:pointer}
+    .tab.activo{background:#ff6600}
     .pantalla{display:none}.pantalla.activa{display:block}
-    .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-    .producto{background:#1a1a1a;border:1px solid #333;border-radius:14px;padding:16px;text-align:center;cursor:pointer}
-    .btn{width:100%;padding:16px;background:#ff6600;border:none;border-radius:14px;font-weight:bold;cursor:pointer;margin-top:10px}
-    .oculto{display:none!important}
-    .login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center}
-    .login-box{background:#1a1a1a;padding:40px;border-radius:20px;border:2px solid #ff6600;width:90%;max-width:400px;text-align:center}
-    .btn-anular{background:#ff3333;color:#fff;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .prod{background:#1a1a1a;padding:20px;border-radius:10px;text-align:center;border:1px solid #333}
+    .btn{width:100%;padding:15px;background:#ff6600;border:none;border-radius:10px;font-weight:bold;margin-top:10px}
+    .login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;z-index:9999}
   </style>
 </head>
 <body>
-  <div id="loginScreen" class="login-screen">
-    <div class="login-box">
-      <h1>🥟 LOS WEONES 🥟</h1>
-      <input type="password" id="loginPass" placeholder="Clave" style="padding:15px;width:100%;margin:20px 0;background:#000;color:#fff;border:1px solid #333">
-      <button class="btn" onclick="iniciarSesion()">ENTRAR</button>
+
+<div id="loginScreen" class="login-screen">
+  <div style="text-align:center;width:80%">
+    <h1>🔑 ACCESO</h1>
+    <input type="password" id="pass" style="width:100%;padding:15px;margin:20px 0;background:#222;color:#fff;border:1px solid #555" placeholder="Clave">
+    <button class="btn" onclick="validar()">ENTRAR</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="top-fijo">
+    <div class="tabs">
+      <button class="tab activo" onclick="tab('vender')">VENDER</button>
+      <button class="tab" onclick="tab('stock')">STOCK</button>
+      <button class="tab" onclick="tab('resumen')">RESUMEN</button>
+      <button class="tab" onclick="tab('respaldo')">RESPALDO</button>
     </div>
   </div>
 
-  <div class="container">
-    <div class="top-fijo">
-      <div class="header"><h1>LOS WEONES DE LAS EMPANADAS</h1></div>
-      <div class="tabs">
-        <button class="tab activo" onclick="cambiarTab('vender')">VENDER</button>
-        <button class="tab" onclick="cambiarTab('stock')">STOCK</button>
-        <button class="tab" onclick="cambiarTab('resumen')">RESUMEN</button>
-        <button class="tab" onclick="cambiarTab('respaldo')">RESPALDO</button>
-      </div>
-    </div>
-
-    <div id="vender" class="pantalla activa">
-      <div id="productos-grid" class="productos-grid"></div>
-      <div style="margin-top:20px">
-        <div id="total" style="font-size:30px;color:#ff6600">Total: $0</div>
-        <button class="btn" onclick="vender()">VENDER</button>
-        <button class="btn btn-anular" onclick="anular()">ANULAR</button>
-      </div>
-    </div>
-    
-    <div id="stock" class="pantalla">
-      <button class="btn" onclick="cerrarDia()">CERRAR DÍA (REINICIAR TODO)</button>
-    </div>
-    <div id="resumen" class="pantalla"></div>
-    <div id="respaldo" class="pantalla"></div>
+  <div id="vender" class="pantalla activa">
+    <div class="grid" id="lista"></div>
+    <div id="total" style="font-size:24px;margin:20px 0">Total: $0</div>
+    <button class="btn" onclick="vender()">REGISTRAR VENTA</button>
+    <button class="btn" style="background:#cc0000" onclick="anular()">ANULAR</button>
   </div>
 
-  <script>
-    const CLAVE_HASH = 'MTk3MQ==';
-    const PRODUCTOS = [
-      {id:1,nombre:"Empanada",precio:2500,icono:"🥟"},
-      {id:3,nombre:"Coca lata",precio:1000,icono:"🥫"},
-      {id:8,nombre:"Coca 591",precio:1500,icono:"🍶"}
-    ];
-    
-    let carrito = {};
+  <div id="stock" class="pantalla">
+    <button class="btn" style="background:#cc0000" onclick="cerrarDia()">CERRAR DÍA Y REINICIAR</button>
+  </div>
 
-    function iniciarSesion() {
-      const pass = document.getElementById('loginPass').value;
-      if (btoa(pass) !== CLAVE_HASH) { alert('Clave incorrecta'); return; }
+  <div id="resumen" class="pantalla">
+    <h3>HISTORIAL DE VENTAS</h3>
+    <div id="historial"></div>
+  </div>
+
+  <div id="respaldo" class="pantalla">
+    <button class="btn" onclick="backup()">DESCARGAR JSON</button>
+  </div>
+</div>
+
+<script>
+  const HASH = 'MTk3MQ==';
+  let carrito = {};
+  let ventas = [];
+  const PRODS = [
+    {id:1,n:"Empanada",p:2500},
+    {id:2,n:"Coca lata",p:1000}
+  ];
+
+  function validar() {
+    if (btoa(document.getElementById('pass').value) === HASH) {
       document.getElementById('loginScreen').style.display = 'none';
-      renderProductos();
-    }
+      renderVender();
+    } else { alert('Error'); }
+  }
 
-    function renderProductos() {
-      const grid = document.getElementById('productos-grid');
-      grid.innerHTML = '';
-      PRODUCTOS.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'producto';
-        div.onclick = () => agregarProducto(p.id);
-        div.innerHTML = `<div>${p.icono}</div><h3>${p.nombre}</h3><p>$${p.precio}</p>`;
-        grid.appendChild(div);
-      });
-    }
+  function renderVender() {
+    const grid = document.getElementById('lista');
+    grid.innerHTML = PRODS.map(p => `<div class="prod" onclick="add(${p.id})"><h3>${p.n}</h3><p>$${p.p}</p></div>`).join('');
+  }
 
-    function agregarProducto(id) {
-      carrito[id] = (carrito[id] || 0) + 1;
-      actualizarTotal();
-    }
+  function add(id) {
+    carrito[id] = (carrito[id] || 0) + 1;
+    let t = 0;
+    for(let i in carrito) t += PRODS.find(p=>p.id==i).p * carrito[i];
+    document.getElementById('total').innerText = "Total: $" + t;
+  }
 
-    function actualizarTotal() {
-      let total = 0;
-      for (let id in carrito) {
-        const p = PRODUCTOS.find(pr => pr.id == id);
-        total += p.precio * carrito[id];
-      }
-      document.getElementById('total').innerText = "Total: $" + total;
-    }
+  function vender() {
+    ventas.push({items: {...carrito}, total: document.getElementById('total').innerText});
+    carrito = {};
+    document.getElementById('total').innerText = "Total: $0";
+    renderHistorial();
+    alert('Venta Guardada');
+  }
 
-    function anular() {
-      carrito = {};
-      actualizarTotal();
-      alert('Venta anulada');
-    }
+  function renderHistorial() {
+    document.getElementById('historial').innerHTML = ventas.map(v => `<div style="border-bottom:1px solid #333;padding:10px">${v.total}</div>`).join('');
+  }
 
-    function vender() {
-      alert('Venta guardada!');
-      carrito = {};
-      actualizarTotal();
-    }
+  function tab(t) {
+    document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+    document.getElementById(t).classList.add('activa');
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('activo'));
+    event.target.classList.add('activo');
+  }
 
-    function cerrarDia() {
-      if (!confirm('¿Cerrar día? Se borrará el stock y la caja inicial.')) return;
-      localStorage.clear();
-      location.reload();
-    }
+  function cerrarDia() {
+    if(confirm('¿Borrar todo?')) { localStorage.clear(); location.reload(); }
+  }
 
-    function cambiarTab(tab) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
-      document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-      document.querySelector('[onclick*="'+tab+'"]').classList.add('activo');
-      document.getElementById(tab).classList.add('activa');
-    }
-  </script>
+  function backup() {
+    const a = document.createElement('a');
+    a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ventas));
+    a.download = "respaldo.json"; a.click();
+  }
+
+  function anular() { carrito = {}; document.getElementById('total').innerText = "Total: $0"; }
+</script>
 </body>
 </html>
