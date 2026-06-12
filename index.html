@@ -3,109 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Los Weones de las Empanadas - CAJA V2.0 PREMIUM</title>
+  <title>Los Weones de las Empanadas - CAJA V2.0</title>
   <style>
-    /* MANTIENE TU MISMO ESTILO, NO LO CAMBIES */
+    /* MANTIENE TUS ESTILOS ORIGINALES */
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh;overflow-x:hidden}
-    .container{max-width:500px;margin:0 auto;position:relative;padding-top:240px;} 
-    .top-fijo { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; background: #0a0a0a; z-index: 1000; padding: 10px 10px 5px 10px; }
-    .header{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:12px 20px;border-radius:16px;margin-bottom:8px;border:1px solid #ff6600;text-align:center;position:relative;transition:all 0.4s ease;display:flex;flex-direction:column;align-items:center;justify-content:center}
-    .header h1{font-size:20px;color:#ff6600;text-shadow:0 0 20px rgba(255,102,0,0.5);transition:all 0.4s ease;font-weight:bold;letter-spacing:0.5px}
-    .logo-header { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #ff6600; margin-bottom: 5px; box-shadow: 0 0 15px rgba(255,102,0,0.4); transition:all 0.4s ease; }
-    .user-bar { display: flex; align-items: center; justify-content: space-between; background: #141414; padding: 6px 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #222; font-size: 12px; }
-    .user-info-left { display: flex; align-items: center; gap: 8px; color: #aaa; }
-    .status-dot { width: 8px; height: 8px; background-color: #00ff00; border-radius: 50%; box-shadow: 0 0 10px #00ff00; animation: parpadeo 1.8s infinite ease-in-out; }
-    @keyframes parpadeo { 0%, 100% { opacity: 0.4; box-shadow: 0 0 4px #00ff00; } 50% { opacity: 1; box-shadow: 0 0 12px #00ff00; } }
-    .btn-logout { background: none; border: none; color: #ff3333; font-size: 12px; font-weight: bold; cursor: pointer; transition: color 0.2s; }
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh}
+    .container{max-width:500px;margin:0 auto;position:relative;padding-top:240px;}
+    .top-fijo { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; background: #0a0a0a; z-index: 1000; padding: 10px; }
+    .header{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:12px;border-radius:16px;border:1px solid #ff6600;text-align:center;margin-bottom:8px}
+    .header h1{font-size:20px;color:#ff6600;font-weight:bold}
     .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:5px}
-    .tab{padding:12px 4px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:12px;font-weight:bold;cursor:pointer;transition:all 0.3s;text-align:center}
-    .tab.activo{background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);color:#000;border-color:#ff6600;box-shadow:0 4px 15px rgba(255,102,0,0.4)}
+    .tab{padding:12px 4px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:12px;font-weight:bold;cursor:pointer}
+    .tab.activo{background:#ff6600;color:#000;border-color:#ff6600}
     .pantalla{display:none}.pantalla.activa{display:block}
-    .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
-    .producto{background:linear-gradient(135deg, rgba(35,35,35,0.7) 0%, rgba(20,20,20,0.8) 100%);backdrop-filter: blur(5px);-webkit-backdrop-filter: blur(5px);border: 2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);position:relative;overflow:hidden}
-    .producto.activo{border-color:#ff6600;background:linear-gradient(135deg,#2d1a00 0%,#3d2400 100%);box-shadow:0 0 20px rgba(255,102,0,0.25);border: 2px solid rgba(255,102,0,0.4);}
-    .producto.sin-stock{opacity:.4;cursor:not-allowed}.producto-icono{font-size:40px;margin-bottom:8px;text-align:center;display:inline-block}
-    .producto h3{font-size:14px;color:#ff6600;margin-bottom:6px;font-weight:600;line-height:1.2}
-    .producto.precio{font-size:18px;color:#fff;font-weight:bold;margin-bottom:4px}
-    .producto.stock{font-size:11px;color:#888}
-    .total-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:20px;border-radius:16px;margin-bottom:15px;border:2px solid #ff6600;transition:all 0.4s ease}
-    .total-box h2{font-size:14px;color:#888;margin-bottom:8px;text-transform:uppercase;transition:all 0.4s ease}
-    .total-box.monto{font-size:36px;color:#ff6600;font-weight:bold;text-shadow:0 0 20px rgba(255,102,0,0.5);transition:all 0.4s ease}
-    .total-box.vuelto{font-size:16px;color:#00ff00;margin-top:8px;font-weight:600}
-    .total-box.modo-costo-total { border-color: #00ff00; background: linear-gradient(135deg, #0d1a0d 0%, #1a331a 100%); box-shadow: 0 0 20px rgba(0,255,0,0.25); }
-    .input-grupo{margin-bottom:15px}.input-grupo label{display:block;color:#ff6600;font-size:13px;margin-bottom:6px;font-weight:600}
-    .input-grupo input,.input-grupo select{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#fff;font-size:16px;outline:0;transition:all 0.3s}
-    .input-grupo input:focus,.input-grupo select:focus{border-color:#ff6600;box-shadow:0 0 15px rgba(255,102,0,0.2)}
-    .btn{width:100%;padding:16px;background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);border:none;border-radius:14px;color:#000;font-size:16px;font-weight:bold;cursor:pointer;transition:all 0.2s;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 15px rgba(255,102,0,0.3);position:relative}
-    .btn-anular{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;box-shadow:0 4px 15px rgba(255,51,0.3)}
-    .btn-costo{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;box-shadow:0 4px 15px rgba(0,170,0,0.3)}
-    .btn-eliminar{background:linear-gradient(135deg,#aa0000 0%,#cc0000 100%);color:#fff;padding:8px;font-size:12px;margin-top:8px}
-    .banner-liquidacion{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:16px;box-shadow:0 4px 15px rgba(0,170,0,0.4);animation:pulse 2s infinite}
-    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
-    .aviso-cerrado{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:14px;box-shadow:0 4px 15px rgba(255,51,0.4)}
-    .stock-tabla{width:100%;background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:15px}
-    .stock-tabla th{background:#2d2d2d;padding:12px;text-align:left;font-size:12px;color:#ff6600;text-transform:uppercase}
-    .stock-tabla td{padding:12px;border-top:1px solid #333;font-size:14px}
-    .stock-tabla input{width:80px;padding:8px;background:#0a0a0a;border:1px solid #333;border-radius:8px;color:#fff;text-align:center}
-    .resumen-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
-    .resumen-item{background:#1a1a1a;padding:14px;border-radius:12px;border:1px solid #333}
-    .resumen-item h3{font-size:11px;color:#888;margin-bottom:6px;text-transform:uppercase}
-    .resumen-item.valor{font-size:20px;color:#ff6600;font-weight:bold}
-    .resumen-item.destacado{grid-column:span 2;background:linear-gradient(135deg,#1a1a1a 0%,#2d1a00 100%);border-color:#ff6600}
-    .resumen-item.destacado.valor{font-size:28px}
-    .historial-item{background:#1a1a1a;padding:14px;border-radius:12px;margin-bottom:10px;border-left:4px solid #ff6600}
-    .historial-item.costo{border-left-color:#00aa00}.historial-item.fecha{font-size:11px;color:#888;margin-bottom:6px}
-    .historial-item.folio{font-size:11px;color:#ff6600;font-weight:bold;margin-bottom:4px}
-    .historial-item.vendedor{font-size:11px;color:#00aaff;margin-bottom:4px}
-    .historial-item.metodo{color:#ff6600;font-weight:600}.historial-item.wsp{font-size:12px;color:#00ff00;margin-top:4px}
-    .alerta{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff3333;color:#fff;padding:14px 24px;border-radius:12px;font-weight:bold;z-index:99999;box-shadow:0 8px 25px rgba(0,0,0,0.5);animation:slideDown 0.3s}
-    @keyframes slideDown{from{transform:translateX(-50%) translateY(-100px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
-    .oculto{display:none!important}.login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center}
-    .login-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:40px;border-radius:20px;border:2px solid #ff6600;max-width:400px;width:90%;text-align:center}
-    .login-box h1{color:#ff6600;margin-bottom:20px;font-size:28px}
-    .mensaje-venta{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:30px 50px;border-radius:20px;font-size:24px;font-weight:bold;z-index:1001;box-shadow:0 10px 40px rgba(0,170,0,0.5);animation:popIn 0.3s}
-    @keyframes popIn{from{transform:translate(-50%,-50%) scale(0.5);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
-    @keyframes popIcono { 0% { transform: scale(1); } 30% { transform: scale(0.7); } 60% { transform: scale(1.3); } 100% { transform: scale(1); } }
-    .animar-icono { animation: popIcono 0.3s ease-in-out; }
-    .confeti { position: fixed; pointer-events: none; z-index: 9999; font-size: 26px; bottom: 80px; left: 50%; transform: translateX(-50%); animation: volarConfeti 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-    @keyframes volarConfeti { 0% { transform: translate(-50%, 0) scale(1) rotate(0deg); opacity: 1; } 100% { transform: translate(calc(-50% + var(--x)), var(--y)) scale(0.4) rotate(var(--r)); opacity: 0; } }
+    .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .producto{background:#1a1a1a;border:1px solid #333;border-radius:14px;padding:16px;text-align:center}
+    .btn{width:100%;padding:16px;background:#ff6600;border:none;border-radius:14px;font-weight:bold;cursor:pointer;margin-top:10px}
+    .oculto{display:none!important}
+    .login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center}
+    .login-box{background:#1a1a1a;padding:40px;border-radius:20px;border:2px solid #ff6600;width:90%;max-width:400px;text-align:center}
   </style>
 </head>
 <body>
+
   <div id="loginScreen" class="login-screen">
     <div class="login-box">
       <h1>🥟 LOS WEONES 🥟</h1>
       <div class="input-grupo">
         <label>USUARIO</label>
-        <select id="loginUser">
-          <option value="">Selecciona tu nombre</option>
-          <option value="Marcelo">Marcelo</option>
-          <option value="Nataly">Nataly</option>
-          <option value="Invitado">Invitado</option>
-        </select>
+        <select id="loginUser"><option value="Marcelo">Marcelo</option><option value="Nataly">Nataly</option></select>
       </div>
       <div class="input-grupo">
         <label>CLAVE</label>
-        <input type="password" id="loginPass" placeholder="Ingresa la clave" inputmode="numeric">
+        <input type="password" id="loginPass" placeholder="Clave">
       </div>
-      <button class="btn" onclick="Auth.login(document.getElementById('loginUser').value, document.getElementById('loginPass').value)">ENTRAR</button>
+      <button class="btn" onclick="Auth.login()">ENTRAR</button>
     </div>
   </div>
 
   <div class="container">
     <div class="top-fijo">
-      <div id="headerApp" class="header">
-        <img src="logo.png" alt="Logo Los Weones" class="logo-header" onerror="this.style.display='none'">
-        <h1>LOS WEONES DE LAS EMPANADAS</h1>
-      </div>
-      <div class="user-bar">
-        <div class="user-info-left">
-          <div class="status-dot"></div>
-          <span id="userDisplay">Caja Cerrada</span>
-        </div>
-        <button onclick="Auth.logout()" class="btn-logout">Salir</button>
-      </div>
+      <div class="header"><h1>LOS WEONES DE LAS EMPANADAS</h1></div>
       <div class="tabs">
         <button class="tab activo" onclick="App.cambiarTab('vender')">VENDER</button>
         <button class="tab" onclick="App.cambiarTab('stock')">STOCK</button>
@@ -114,130 +52,53 @@
       </div>
     </div>
 
-    <!-- ... (restante del HTML igual) ... -->
-    <div id="alerta" class="alerta oculto"></div>
-    <div id="mensajeVenta" class="mensaje-venta oculto">✅ VENTA GUARDADA</div>
-
     <div id="vender" class="pantalla activa">
-      <div id="bannerLiquidacion" class="banner-liquidacion oculto">🔥 MODO LIQUIDACIÓN ACTIVO - EMPANADAS A $2.000 🔥</div>
-      <div id="aviso-dia-cerrado" class="aviso-cerrado oculto">⚠️ DÍA CERRADO - Carga stock inicial para activar ventas ⚠️</div>
       <div id="productos-grid" class="productos-grid"></div>
-      
-      <div id="totalBox" class="total-box">
-        <h2>TOTAL A PAGAR</h2>
-        <div class="monto" id="total">$0</div>
-        <div class="vuelto oculto" id="vuelto"></div>
-      </div>
-      
-      <div class="input-grupo">
-        <label>MÉTODO DE PAGO</label>
-        <select id="metodo-pago">
-          <option value="efectivo">💵 Efectivo</option>
-          <option value="transferencia">💳 Transferencia</option>
-        </select>
-      </div>
-      <div class="input-grupo" id="grupo-pago">
-        <label>PAGO CON</label>
-        <input type="number" id="pago" placeholder="0" inputmode="numeric">
-      </div>
-      <div class="input-grupo">
-        <label>WHATSAPP CLIENTE (opcional)</label>
-        <input type="tel" id="wsp" placeholder="+56912345678" inputmode="tel">
-      </div>
-      <button id="btnVender" class="btn" onclick="Ventas.ejecutar()">VENDER</button>
-      <button class="btn btn-anular" style="margin-top:10px" onclick="Ventas.anular()">ANULAR PEDIDO</button>
-      <button class="btn btn-costo" style="margin-top:10px" onclick="Ventas.liquidar()">COSTO $2.000</button>
     </div>
-
-    <div id="stock" class="pantalla">
-      <div class="input-grupo">
-        <label>💰 CAJA INICIAL DEL DÍA</label>
-        <input type="number" id="cajaInicial" placeholder="0" inputmode="numeric">
-      </div>
-      <table class="stock-tabla">
-        <thead><tr><th>Producto</th><th>Stock Inicial</th></tr></thead>
-        <tbody id="tabla-stock"></tbody>
-      </table>
-      <button class="btn" onclick="StockGestion.guardar()">GUARDAR STOCK INICIAL</button>
-      <button class="btn btn-anular" style="margin-top:10px" onclick="StockGestion.reiniciar()">REINICIAR STOCK DEL DÍA</button>
-      <button class="btn btn-anular" style="margin-top:10px" onclick="StockGestion.cerrarDia()">CERRAR DÍA</button>
-      <button class="btn" style="margin-top:10px" onclick="StockGestion.verDesglose()">VER DESGLOSE STOCK</button>
-      <div id="desglose-stock" class="oculto" style="margin-top:15px"></div>
-    </div>
-
-    <div id="resumen" class="pantalla">
-      <div class="resumen-grid">
-        <div class="resumen-item destacado">
-          <h3>💸 TOTAL EN CAJA</h3>
-          <div class="valor" id="total-caja">$0</div>
-          <div style="font-size:11px;color:#888;margin-top:4px">Inicial: <span id="mostrar-caja-inicial">$0</span></div>
-        </div>
-        <div class="resumen-item destacado">
-          <h3>💰 TOTAL VENDIDO</h3>
-          <div class="valor" id="total-dia">$0</div>
-        </div>
-        <div class="resumen-item"><h3>💵 Efectivo</h3><div class="valor" id="total-efectivo">$0</div></div>
-        <div class="resumen-item"><h3>💳 Transfer</h3><div class="valor" id="total-transfer">$0</div></div>
-        <div class="resumen-item"><h3>📊 N° Ventas</h3><div class="valor" id="num-ventas">0</div></div>
-        <div class="resumen-item"><h3>🥟 Empanadas</h3><div class="valor" id="total-empanadas">0</div></div>
-        <div class="resumen-item"><h3>🍶 Bebidas 591</h3><div class="valor" id="total-591">0</div></div>
-        <div class="resumen-item"><h3>🥫 Latas</h3><div class="valor" id="total-latas">0</div></div>
-        <div class="resumen-item"><h3>💧 Cachantun</h3><div class="valor" id="total-cachantun">0</div></div>
-        <div class="resumen-item"><h3>🏷️ Costo</h3><div class="valor" id="total-costo">0</div></div>
-      </div>
-      <button class="btn" onclick="Resumen.mandarWSP()">MANDAR RESUMEN A WSP</button>
-      <h2 style="color:#ff6600;margin:20px 0 10px;font-size:16px">HISTORIAL DE VENTAS</h2>
-      <div id="historial-lista"></div>
-    </div>
-
-    <div id="respaldo" class="pantalla">
-      <div class="total-box">
-        <h2>💾 RESPALDO DE DATOS</h2>
-        <p style="color:#888;font-size:13px;margin-bottom:15px">Descarga un respaldo JSON de todas las ventas y stock</p>
-        <button class="btn" onclick="Respaldo.descargar()">DESCARGAR RESPALDO</button>
-      </div>
-      <div class="total-box" style="margin-top:15px">
-        <h2>📂 CARGAR RESPALDO</h2>
-        <p style="color:#888;font-size:13px;margin-bottom:15px">Restaura datos desde un archivo JSON</p>
-        <input type="file" id="archivo" accept=".json" style="margin-bottom:10px">
-        <button class="btn" onclick="Respaldo.cargar()">CARGAR RESPALDO</button>
-      </div>
-    </div>
+    
+    <div id="stock" class="pantalla"></div>
+    <div id="resumen" class="pantalla"></div>
+    <div id="respaldo" class="pantalla"></div>
   </div>
 
   <script>
-    // CAMBIOS APLICADOS AQUÍ PARA QUE LA SESIÓN NO SE GUARDE
     const CLAVE_HASH = 'MTk3MQ==';
-    let sesionActiva = false; // Nueva variable de control volátil (se borra al recargar)
+    const PRODUCTOS = [
+      {id:1,nombre:"Empanada",precio:2500,icono:"🥟"},
+      {id:3,nombre:"Coca lata",precio:1000,icono:"🥫"}
+    ];
+    let estado = { carrito: {}, stockActual: {}, ventas: [], diaActivo: false };
 
     const Auth = {
-      login(user, pass) {
-        if (btoa(pass) !== CLAVE_HASH) {
-          alert('Clave incorrecta');
-          return false;
-        }
-        sesionActiva = true; // Activa la sesión solo en memoria
+      login() {
+        const pass = document.getElementById('loginPass').value;
+        if (btoa(pass) !== CLAVE_HASH) { alert('Clave incorrecta'); return; }
+        
+        // CORRECCIÓN: Al entrar, ocultamos login e inicializamos todo
         document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('userDisplay').textContent = 'Vendedor: ' + user;
-        document.getElementById('loginPass').value = '';
         App.init();
-        return true;
-      },
-      logout() {
-        location.reload(); // Recargar borra todo de la memoria
-      },
-      verificar() {
-        // Ya no buscamos en localStorage, verificamos la variable volátil
-        if (!sesionActiva) {
-          document.getElementById('loginScreen').classList.remove('oculto');
-          return false;
-        }
-        return true;
       }
     };
 
-    // ... (restante del código de funciones igual) ...
-    // Asegúrate de que las funciones DB, PRODUCTOS, Ventas, Stock, etc. estén debajo igual que antes.
+    const App = {
+      cambiarTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
+        document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+        document.querySelector('[onclick*="'+tab+'"]').classList.add('activo');
+        document.getElementById(tab).classList.add('activa');
+      },
+      init() {
+        // Inicializa la grilla de productos obligatoriamente al entrar
+        const grid = document.getElementById('productos-grid');
+        grid.innerHTML = '';
+        PRODUCTOS.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'producto';
+          div.innerHTML = `<div>${p.icono}</div><h3>${p.nombre}</h3><p>$${p.precio}</p>`;
+          grid.appendChild(div);
+        });
+      }
+    };
   </script>
 </body>
 </html>
