@@ -8,7 +8,7 @@
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh;overflow-x:hidden}
    
-   .container{max-width:500px;margin:0 auto;position:relative;padding-top:215px;} 
+   .container{max-width:500px;margin:0 auto;position:relative;padding-top:240px;} 
    
    .top-fijo {
      position: fixed;
@@ -293,7 +293,7 @@
         <div class="resumen-item"><h3>🍶 Bebidas 591</h3><div class="valor" id="total-591">0</div></div>
         <div class="resumen-item"><h3>🥫 Latas</h3><div class="valor" id="total-latas">0</div></div>
         <div class="resumen-item"><h3>💧 Cachantun</h3><div class="valor" id="total-cachantun">0</div></div>
-        <div class="resumen-item"><h3>🏷 Costo</h3><div class="valor" id="total-costo">0</div></div>
+        <div class="resumen-item"><h3>🏷️ Costo</h3><div class="valor" id="total-costo">0</div></div>
       </div>
       <button class="btn" onclick="Resumen.mandarWSP()">MANDAR RESUMEN A WSP</button>
       <h2 style="color:#ff6600;margin:20px 0 10px;font-size:16px">HISTORIAL DE VENTAS</h2>
@@ -315,705 +315,705 @@
     </div>
   </div>
 
-<script>
-const CLAVE_HASH = 'MTk3MQ==';
-const VERSION_APP = '2.0-refactor';
-const FOLIO_PREFIX = 'LWE-';
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-let alertaTimeout = null; 
+  <script>
+  const CLAVE_HASH = 'MTk3MQ==';
+  const VERSION_APP = '2.0-refactor';
+  const FOLIO_PREFIX = 'LWE-';
 
-const Sonidos = {
-  ctx: null,
-  init() {
-    if (!this.ctx) {
-      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  let alertaTimeout = null; 
+
+  const Sonidos = {
+    ctx: null,
+    init() {
+      if (!this.ctx) {
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    },
+    play(tipo) {
+      this.init();
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      const ahora = this.ctx.currentTime;
+      if (tipo === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, ahora);
+        gain.gain.setValueAtTime(0.1, ahora);
+        gain.gain.exponentialRampToValueAtTime(0.01, ahora + 0.1);
+        osc.start(ahora); osc.stop(ahora + 0.1);
+      } else if (tipo === 'exito') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, ahora);
+        osc.frequency.setValueAtTime(659.25, ahora + 0.1);
+        gain.gain.setValueAtTime(0.15, ahora);
+        gain.gain.exponentialRampToValueAtTime(0.01, ahora + 0.3);
+        osc.start(ahora); osc.stop(ahora + 0.3);
+      } else if (tipo === 'alerta') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, ahora);
+        gain.gain.setValueAtTime(0.2, ahora);
+        gain.gain.exponentialRampToValueAtTime(0.01, ahora + 0.4);
+        osc.start(ahora); osc.stop(ahora + 0.4);
+      }
     }
-  },
-  play(tipo) {
-    this.init();
-    if (!this.ctx) return;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    const ahora = this.ctx.currentTime;
-    if (tipo === 'click') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(600, ahora);
-      gain.gain.setValueAtTime(0.1, ahora);
-      gain.gain.exponentialRampToValueAtTime(0.01, ahora + 0.1);
-      osc.start(ahora); osc.stop(ahora + 0.1);
-    } else if (tipo === 'exito') {
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(523.25, ahora);
-      osc.frequency.setValueAtTime(659.25, ahora + 0.1);
-      gain.gain.setValueAtTime(0.15, ahora);
-      gain.gain.exponentialRampToValueAtTime(0.01, ahora + 0.3);
-      osc.start(ahora); osc.stop(ahora + 0.3);
-    } else if (tipo === 'alerta') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(150, ahora);
-      gain.gain.setValueAtTime(0.2, ahora);
-      gain.gain.exponentialRampToValueAtTime(0.01, ahora + 0.4);
-      osc.start(ahora); osc.stop(ahora + 0.4);
-    }
-  }
-};
+  };
 
-const DB = {
-  get: (key, def = null) => JSON.parse(localStorage.getItem(key) || JSON.stringify(def)),
-  set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
-  getStockInicial: () => DB.get('stockInicial', {}),
-  getStockActual: () => DB.get('stockActual', {}),
-  getVentas: () => DB.get('ventas', []),
-  getUsuario: () => localStorage.getItem('usuarioActual'),
-  getFolio: () => parseInt(localStorage.getItem('folioActual') || '1'),
-  getCajaInicial: () => parseInt(localStorage.getItem('cajaInicial') || '0'),
-  getDiaActivo: () => localStorage.getItem('diaActivo') === 'true',
-  setStockInicial: (val) => DB.set('stockInicial', val),
-  setStockActual: (val) => DB.set('stockActual', val),
-  setVentas: (val) => DB.set('ventas', val),
-  setUsuario: (val) => localStorage.setItem('usuarioActual', val),
-  setFolio: (val) => localStorage.setItem('folioActual', val),
-  setCajaInicial: (val) => localStorage.setItem('cajaInicial', val),
-  setDiaActivo: (val) => localStorage.setItem('diaActivo', val)
-};
+  const DB = {
+    get: (key, def = null) => JSON.parse(localStorage.getItem(key) || JSON.stringify(def)),
+    set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
+    getStockInicial: () => DB.get('stockInicial', {}),
+    getStockActual: () => DB.get('stockActual', {}),
+    getVentas: () => DB.get('ventas', []),
+    getUsuario: () => localStorage.getItem('usuarioActual'),
+    getFolio: () => parseInt(localStorage.getItem('folioActual') || '1'),
+    getCajaInicial: () => parseInt(localStorage.getItem('cajaInicial') || '0'),
+    getDiaActivo: () => localStorage.getItem('diaActivo') === 'true',
+    setStockInicial: (val) => DB.set('stockInicial', val),
+    setStockActual: (val) => DB.set('stockActual', val),
+    setVentas: (val) => DB.set('ventas', val),
+    setUsuario: (val) => localStorage.setItem('usuarioActual', val),
+    setFolio: (val) => localStorage.setItem('folioActual', val),
+    setCajaInicial: (val) => localStorage.setItem('cajaInicial', val),
+    setDiaActivo: (val) => localStorage.setItem('diaActivo', val)
+  };
 
-const PRODUCTOS = [
-  {id:1,nombre:"Empanada de pino",precio:2500,tipo:"empanada",icono:"🥟"},
-  {id:2,nombre:"Empanada pollo queso",precio:2500,tipo:"empanada",icono:"🥟"},
-  {id:11,nombre:"Empanada napolitana",precio:2500,tipo:"empanada",icono:"🥟"},
-  {id:3,nombre:"Coca cola lata",precio:1000,tipo:"lata",icono:"🥫"},
-  {id:12,nombre:"Coca cola zero lata",precio:1000,tipo:"lata",icono:"🥫"},
-  {id:4,nombre:"Kem piña lata",precio:1000,tipo:"lata",icono:"🥫"},
-  {id:5,nombre:"Bilz lata",precio:1000,tipo:"lata",icono:"🥫"},
-  {id:6,nombre:"Cachantun sin gas 500",precio:1000,tipo:"cachantun",icono:"🍶"},
-  {id:7,nombre:"Score morada lata",precio:1000,tipo:"lata",icono:"🥫"},
-  {id:8,nombre:"Coca cola 591",precio:1500,tipo:"591",icono:"🍶"},
-  {id:9,nombre:"Sprite lata",precio:1000,tipo:"lata",icono:"🥫"},
-  {id:10,nombre:"Crush lata",precio:1000,tipo:"lata",icono:"🥫"}
-];
+  const PRODUCTOS = [
+    {id:1,nombre:"Empanada de pino",precio:2500,tipo:"empanada",icono:"🥟"},
+    {id:2,nombre:"Empanada pollo queso",precio:2500,tipo:"empanada",icono:"🥟"},
+    {id:11,nombre:"Empanada napolitana",precio:2500,tipo:"empanada",icono:"🥟"},
+    {id:3,nombre:"Coca cola lata",precio:1000,tipo:"lata",icono:"🥫"},
+    {id:12,nombre:"Coca cola zero lata",precio:1000,tipo:"lata",icono:"🥫"},
+    {id:4,nombre:"Kem piña lata",precio:1000,tipo:"lata",icono:"🥫"},
+    {id:5,nombre:"Bilz lata",precio:1000,tipo:"lata",icono:"🥫"},
+    {id:6,nombre:"Cachantun sin gas 500",precio:1000,tipo:"cachantun",icono:"🍶"},
+    {id:7,nombre:"Score morada lata",precio:1000,tipo:"lata",icono:"🥫"},
+    {id:8,nombre:"Coca cola 591",precio:1500,tipo:"591",icono:"🍶"},
+    {id:9,nombre:"Sprite lata",precio:1000,tipo:"lata",icono:"🥫"},
+    {id:10,nombre:"Crush lata",precio:1000,tipo:"lata",icono:"🥫"}
+  ];
 
-const buscarProducto = (id) => PRODUCTOS.find(p => p.id == id);
+  const buscarProducto = (id) => PRODUCTOS.find(p => p.id == id);
 
-let estado = {
-  carrito: {},
-  stockInicial: DB.getStockInicial(),
-  stockActual: DB.getStockActual(),
-  ventas: DB.getVentas(),
-  diaActivo: DB.getDiaActivo(),
-  liquidacionIds: [],
-  usuarioActual: DB.getUsuario(),
-  folioActual: DB.getFolio()
-};
+  let estado = {
+    carrito: {},
+    stockInicial: DB.getStockInicial(),
+    stockActual: DB.getStockActual(),
+    ventas: DB.getVentas(),
+    diaActivo: DB.getDiaActivo(),
+    liquidacionIds: [],
+    usuarioActual: DB.getUsuario(),
+    folioActual: DB.getFolio()
+  };
 
-const Auth = {
-  login(user, pass) {
-    if (btoa(pass)!== CLAVE_HASH) {
-      UI.mostrarAlerta('Clave incorrecta');
-      return false;
-    }
-    Sonidos.init();
-    estado.usuarioActual = user;
-    DB.setUsuario(user);
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('userDisplay').textContent = 'Vendedor: ' + user;
-    document.getElementById('loginPass').value = '';
-    document.body.style.overflow = 'auto';
-    App.init();
-    return true;
-  },
-  logout() {
-    if (!confirm('¿Cerrar sesión?')) return;
-    localStorage.removeItem('usuarioActual');
-    location.reload();
-  },
-  verificar() {
-    if (!estado.usuarioActual) {
-      document.getElementById('loginScreen').classList.remove('oculto');
-      return false;
-    }
-    document.getElementById('loginScreen').classList.add('oculto');
-    document.getElementById('userDisplay').textContent = 'Vendedor: ' + estado.usuarioActual;
-    return true;
-  }
-};
-
-const UI = {
-  mostrarAlerta(msg, ok = false) {
-    const a = document.getElementById('alerta');
-    if (alertaTimeout) clearTimeout(alertaTimeout);
-    a.textContent = msg;
-    a.style.background = ok ? '#00aa00' : '#ff3333';
-    a.classList.remove('oculto');
-    Sonidos.play(ok ? 'exito' : 'alerta');
-    alertaTimeout = setTimeout(() => {
-      a.classList.add('oculto');
-    }, 2000);
-  },
-  mostrarVentaGuardada() {
-    const m = document.getElementById('mensajeVenta');
-    m.classList.remove('oculto');
-    Sonidos.play('exito');
-    setTimeout(() => m.classList.add('oculto'), 2000);
-  },
-  formatearPrecio(num) {
-    return '$' + (num || 0).toLocaleString('es-CL');
-  },
-  lanzarConfeti() {
-    const emojis = ['🥟', '✨', '🥟', '💵', '✨'];
-    for (let i = 0; i < 15; i++) {
-      const el = document.createElement('div');
-      el.className = 'confeti';
-      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      const distanciaX = -150 + Math.random() * 300;     
-      const distanciaY = -200 - Math.random() * 250;     
-      el.style.setProperty('--x', distanciaX + 'px');
-      el.style.setProperty('--y', distanciaY + 'px');
-      el.style.setProperty('--r', (Math.random() * 720) + 'deg');
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 1200);
-    }
-  }
-};
-
-const Ventas = {
-  generarFolio() {
-    const folio = FOLIO_PREFIX + String(estado.folioActual).padStart(6, '0');
-    estado.folioActual++;
-    DB.setFolio(estado.folioActual);
-    return folio;
-  },
-  calcularTotal() {
-    let total = 0;
-    for (let id in estado.carrito) {
-      const p = buscarProducto(id);
-      const cant = estado.carrito[id];
-      const precio = estado.liquidacionIds.includes(parseInt(id)) && p.tipo === 'empanada'? 2000 : p.precio;
-      total += precio * cant;
-    }
-    return total;
-  },
-  calcularVuelto(total) {
-    const metodo = document.getElementById('metodo-pago').value;
-    if (metodo!== 'efectivo') return { pago: total, vuelto: 0 };
-    const pago = parseInt(document.getElementById('pago').value) || 0;
-    const vuelto = pago >= total? pago - total : 0;
-    return { pago, vuelto };
-  },
-  validarStock() {
-    for (let id in estado.carrito) {
-      if ((estado.stockActual[id] || 0) < estado.carrito[id]) {
-        const p = buscarProducto(id);
-        UI.mostrarAlerta(`Stock insuficiente: ${p.nombre}`);
+  const Auth = {
+    login(user, pass) {
+      if (btoa(pass) !== CLAVE_HASH) {
+        UI.mostrarAlerta('Clave incorrecta');
         return false;
       }
+      Sonidos.init();
+      estado.usuarioActual = user;
+      DB.setUsuario(user);
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('userDisplay').textContent = 'Vendedor: ' + user;
+      document.getElementById('loginPass').value = '';
+      document.body.style.overflow = 'auto';
+      App.init();
+      return true;
+    },
+    logout() {
+      if (!confirm('¿Cerrar sesión?')) return;
+      localStorage.removeItem('usuarioActual');
+      location.reload();
+    },
+    verificar() {
+      if (!estado.usuarioActual) {
+        document.getElementById('loginScreen').classList.remove('oculto');
+        return false;
+      }
+      document.getElementById('loginScreen').classList.add('oculto');
+      document.getElementById('userDisplay').textContent = 'Vendedor: ' + estado.usuarioActual;
+      return true;
     }
-    return true;
-  },
-  ejecutar(tipo = 'venta') {
-    if (!estado.diaActivo) {
-      UI.mostrarAlerta('Día cerrado. Carga stock inicial');
-      return;
-    }
-    if (Object.keys(estado.carrito).length === 0) {
-      UI.mostrarAlerta('Carrito vacío');
-      return;
-    }
-    if (!this.validarStock()) return;
-    const total = this.calcularTotal();
-    const { pago, vuelto } = this.calcularVuelto(total);
-    const metodo = document.getElementById('metodo-pago').value;
-    if (metodo === 'efectivo' && pago < total) {
-      UI.mostrarAlerta('Pago insuficiente');
-      return;
-    }
-    const wsp = document.getElementById('wsp').value.trim();
-    if (wsp &&!wsp.startsWith('+56')) {
-      UI.mostrarAlerta('Usa formato +56912345678');
-      return;
-    }
-    
-    UI.lanzarConfeti();
+  };
 
-    for (let id in estado.carrito) {
-      estado.stockActual[id] = (estado.stockActual[id] || 0) - estado.carrito[id];
-    }
-    const venta = {
-      folio: this.generarFolio(),
-      vendedor: estado.usuarioActual,
-      carrito: JSON.parse(JSON.stringify(estado.carrito)),
-      total, pago, vuelto, metodo,
-      whatsapp: wsp || null,
-      fecha: new Date().toISOString(),
-      tipo: estado.liquidacionIds.length > 0? 'costo' : 'venta',
-      liquidacionIds: [...estado.liquidacionIds]
-    };
-    estado.ventas.push(venta);
-    DB.setVentas(estado.ventas);
-    DB.setStockActual(estado.stockActual);
-    if (wsp) this.mandarWspVenta(venta);
-    UI.mostrarVentaGuardada();
-    this.limpiar();
-    Productos.render();
-    Stock.actualizarTotal();
-    Resumen.actualizar();
-  },
-  liquidar() {
-    if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado'); return; }
-    if (Object.keys(estado.carrito).length === 0) { UI.mostrarAlerta('Agrega empanadas al carrito'); return; }
-    let soloEmpanadas = true;
-    for (let id in estado.carrito) {
-      if (buscarProducto(id).tipo!== 'empanada') { soloEmpanadas = false; break; }
-    }
-    if (!soloEmpanadas) { UI.mostrarAlerta('COSTO solo para empanadas'); return; }
-    estado.liquidacionIds = Object.keys(estado.carrito).map(id => parseInt(id));
-    document.getElementById('bannerLiquidacion').classList.remove('oculto');
-    
-    document.getElementById('headerApp').classList.add('modo-costo');
-    document.getElementById('totalBox').classList.add('modo-costo-total');
-    
-    Stock.actualizarTotal();
-    Productos.render();
-    UI.mostrarAlerta('Precio liquidación: $2.000', true);
-  },
-  anular() {
-    if (Object.keys(estado.carrito).length === 0) { UI.mostrarAlerta('No hay nada en el carrito'); return; }
-    if (!confirm('¿Anular pedido?')) return;
-    this.limpiar();
-    Productos.render();
-    Stock.actualizarTotal();
-    UI.mostrarAlerta('Pedido anulado', true);
-  },
-  limpiar() {
-    estado.carrito = {};
-    estado.liquidacionIds = [];
-    document.getElementById('bannerLiquidacion').classList.add('oculto');
-    
-    document.getElementById('headerApp').classList.remove('modo-costo');
-    document.getElementById('totalBox').classList.remove('modo-costo-total');
-    
-    document.getElementById('pago').value = '';
-    document.getElementById('wsp').value = '';
-    document.getElementById('metodo-pago').value = 'efectivo';
-    Stock.cambiarMetodoPago();
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  },
-  eliminar(index) {
-    if (!confirm('¿Eliminar venta? Se devolverá el stock.')) return;
-    const venta = estado.ventas[index];
-    for (let id in venta.carrito) {
-      estado.stockActual[id] = (estado.stockActual[id] || 0) + venta.carrito[id];
-    }
-    estado.ventas.splice(index, 1);
-    DB.setVentas(estado.ventas);
-    DB.setStockActual(estado.stockActual);
-    Productos.render();
-    Resumen.actualizar();
-    UI.mostrarAlerta('Venta eliminada y stock devuelto', true);
-  },
-  mandarWspVenta(venta) {
-    let msg = 'LOS WEONES DE LAS EMPANADAS';
-    msg += venta.tipo === 'costo'? ' - LIQUIDACIÓN' : '';
-    msg += '%0A%0A*Boleta: ' + venta.folio + '*%0A';
-    msg += 'Atendido por: ' + venta.vendedor + '%0A%0A';
-    for (let id in venta.carrito) {
-      const p = buscarProducto(id);
-      const enLiquidacion = venta.liquidacionIds.includes(parseInt(id));
-      const precioUnit = enLiquidacion && p.tipo === 'empanada'? 2000 : p.precio;
-      msg += venta.carrito[id] + 'x ' + p.nombre + ' - $' + (precioUnit * venta.carrito[id]).toLocaleString('es-CL') + '%0A';
-    }
-    msg += '%0A*TOTAL: $' + venta.total.toLocaleString('es-CL') + '*%0A';
-    msg += 'Pago: ' + (venta.metodo === 'transferencia'? 'Transferencia' : 'Efectivo $' + venta.pago.toLocaleString('es-CL')) + '%0A';
-    if (venta.metodo === 'efectivo' && venta.vuelto > 0) {
-      msg += 'Vuelto: $' + venta.vuelto.toLocaleString('es-CL') + '%0A';
-    }
-    msg += '%0AGracias por tu compra! visite nuestra pagina www.emporiodonnino.store 🥟';
-    window.open('https://wa.me/' + venta.whatsapp.replace(/[^0-9]/g, '') + '?text=' + msg, '_blank');
-  }
-};
-
-const Stock = {
-  cambiarMetodoPago() {
-    const metodo = document.getElementById('metodo-pago').value;
-    const grupoPago = document.getElementById('grupo-pago');
-    if (metodo === 'transferencia') {
-      grupoPago.classList.add('oculto');
-      document.getElementById('pago').value = '';
-    } else {
-      grupoPago.classList.remove('oculto');
-    }
-    this.actualizarTotal();
-  },
-  actualizarTotal() {
-    const total = Ventas.calcularTotal();
-    let textoTotal = UI.formatearPrecio(total);
-    if (estado.liquidacionIds.length > 0) textoTotal += ' - LIQUIDACIÓN';
-    document.getElementById('total').textContent = textoTotal;
-    const { vuelto } = Ventas.calcularVuelto(total);
-    const vueltoDiv = document.getElementById('vuelto');
-    if (document.getElementById('metodo-pago').value === 'efectivo' && vuelto > 0) {
-      vueltoDiv.textContent = 'Vuelto: ' + UI.formatearPrecio(vuelto);
-      vueltoDiv.classList.remove('oculto');
-    } else {
-      vueltoDiv.classList.add('oculto');
-    }
-  },
-  verificarDiaActivo() {
-    const aviso = document.getElementById('aviso-dia-cerrado');
-    if (!estado.diaActivo) {
-      aviso.classList.remove('oculto');
-    } else {
-      aviso.classList.add('oculto');
-    }
-  }
-};
-
-const Productos = {
-  agregar(id) {
-    if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado. Carga stock inicial'); return; }
-    const stockDisp = (estado.stockActual[id] || 0) - (estado.carrito[id] || 0);
-    
-    if (stockDisp <= 0) { 
-      const p = buscarProducto(id);
-      UI.mostrarAlerta(`Sin stock para ${p.nombre}`); 
-      return; 
-    }
-    
-    // === RESTAURADO: SONIDO AL AGREGAR PRODUCTO PRIMERA VEZ ===
-    Sonidos.play('click');
-    estado.carrito[id] = (estado.carrito[id] || 0) + 1;
-    this.renderItem(id);
-    Stock.actualizarTotal();
-  },
-  quitar(id) {
-    if (!estado.carrito[id] || estado.carrito[id] <= 0) return;
-    
-    // === RESTAURADO: SONIDO AL QUITAR UN ELEMENTO ===
-    Sonidos.play('click');
-    estado.carrito[id]--;
-    if (estado.carrito[id] === 0) delete estado.carrito[id];
-    this.renderItem(id);
-    Stock.actualizarTotal();
-  },
-  renderItem(id) {
-    const p = buscarProducto(id);
-    const stockDisp = estado.diaActivo? (estado.stockActual[id] || 0) : 0;
-    const enCarrito = estado.carrito[id] || 0;
-    const stockDisponible = stockDisp - enCarrito;
-    const sinStock = stockDisponible === 0 ||!estado.diaActivo;
-    const div = document.querySelector(`[data-producto-id="${id}"]`);
-    if (!div) return;
-    
-    div.className = 'producto' + (sinStock? ' sin-stock' : '') + (enCarrito > 0? ' activo' : '');
-    const precioUnitario = estado.liquidacionIds.includes(p.id) && p.tipo === 'empanada' ? 2000 : p.precio;
-    
-    if (enCarrito > 0 && estado.diaActivo) {
-      div.onclick = null;
-      div.style.cursor = 'default';
-      div.innerHTML = `
-        <div class="producto-icono">${p.icono}</div>
-        <h3>${p.nombre}</h3>
-        <div class="precio">${UI.formatearPrecio(precioUnitario)}</div>
-        <div class="stock">Stock: ${stockDisponible}</div>
-        <div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">
-          <button onclick="Productos.quitar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">-</button>
-          <span style="font-size:18px;font-weight:bold;min-width:30px;text-align:center">${enCarrito}</span>
-          <button onclick="Sonidos.play('click');Productos.agregar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">+</button>
-        </div>`;
-    } else {
-      div.style.cursor = sinStock ? 'not-allowed' : 'pointer';
-      div.innerHTML = `
-        <div class="producto-icono">${p.icono}</div>
-        <h3>${p.nombre}</h3>
-        <div class="precio">${UI.formatearPrecio(precioUnitario)}</div>
-        <div class="stock">Stock: ${stockDisponible}</div>`;
-      if (estado.diaActivo && stockDisponible > 0) {
-        div.onclick = () => this.agregar(p.id);
-      } else {
-        div.onclick = null;
+  const UI = {
+    mostrarAlerta(msg, ok = false) {
+      const a = document.getElementById('alerta');
+      if (alertaTimeout) clearTimeout(alertaTimeout);
+      a.textContent = msg;
+      a.style.background = ok ? '#00aa00' : '#ff3333';
+      a.classList.remove('oculto');
+      Sonidos.play(ok ? 'exito' : 'alerta');
+      alertaTimeout = setTimeout(() => {
+        a.classList.add('oculto');
+      }, 2000);
+    },
+    mostrarVentaGuardada() {
+      const m = document.getElementById('mensajeVenta');
+      m.classList.remove('oculto');
+      Sonidos.play('exito');
+      setTimeout(() => m.classList.add('oculto'), 2000);
+    },
+    formatearPrecio(num) {
+      return '$' + (num || 0).toLocaleString('es-CL');
+    },
+    lanzarConfeti() {
+      const emojis = ['🥟', '✨', '🥟', '💵', '✨'];
+      for (let i = 0; i < 15; i++) {
+        const el = document.createElement('div');
+        el.className = 'confeti';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        const distanciaX = -150 + Math.random() * 300;     
+        const distanciaY = -200 - Math.random() * 250;     
+        el.style.setProperty('--x', distanciaX + 'px');
+        el.style.setProperty('--y', distanciaY + 'px');
+        el.style.setProperty('--r', (Math.random() * 720) + 'deg');
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1200);
       }
     }
+  };
 
-    const icono = div.querySelector('.producto-icono');
-    if (icono) {
-      icono.classList.add('animar-icono');
-      setTimeout(() => icono.classList.remove('animar-icono'), 300);
-    }
-  },
-  render() {
-    const grid = document.getElementById('productos-grid');
-    grid.innerHTML = '';
-    PRODUCTOS.forEach(p => {
-      const div = document.createElement('div');
-      div.setAttribute('data-producto-id', p.id);
-      grid.appendChild(div);
-      this.renderItem(p.id);
-    });
-  }
-};
-
-const Resumen = {
-  calcular() {
-    const cajaInicial = parseInt(document.getElementById('cajaInicial').value) || 0;
-    DB.setCajaInicial(cajaInicial);
-    let totalDia = 0, totalEfectivo = 0, totalTransfer = 0;
-    const desglose = {
-      empanadas: { cant: 0, total: 0 }, bebidas591: { cant: 0, total: 0 },
-      latas: { cant: 0, total: 0 }, cachantun: { cant: 0, total: 0 }, costo: { cant: 0, total: 0 }
-    };
-    estado.ventas.forEach(v => {
-      totalDia += v.total;
-      if (v.metodo === 'efectivo') totalEfectivo += v.total;
-      if (v.metodo === 'transferencia') totalTransfer += v.total;
-      for (let id in v.carrito) {
+  const Ventas = {
+    generarFolio() {
+      const folio = FOLIO_PREFIX + String(estado.folioActual).padStart(6, '0');
+      estado.folioActual++;
+      DB.setFolio(estado.folioActual);
+      return folio;
+    },
+    calcularTotal() {
+      let total = 0;
+      for (let id in estado.carrito) {
         const p = buscarProducto(id);
-        const cant = v.carrito[id];
-        const enLiquidacion = v.liquidacionIds.includes(parseInt(id));
-        const subtotal = enLiquidacion && p.tipo === 'empanada'? 2000 * cant : p.precio * cant;
-        if (enLiquidacion && p.tipo === 'empanada') {
-          desglose.costo.cant += cant; desglose.costo.total += subtotal;
-        } else if (p.tipo === 'empanada') {
-          desglose.empanadas.cant += cant; desglose.empanadas.total += subtotal;
-        } else if (p.tipo === '591') {
-          desglose.bebidas591.cant += cant; desglose.bebidas591.total += subtotal;
-        } else if (p.tipo === 'lata') {
-          desglose.latas.cant += cant; desglose.latas.total += subtotal;
-        } else if (p.tipo === 'cachantun') {
-          desglose.cachantun.cant += cant; desglose.cachantun.total += subtotal;
+        const cant = estado.carrito[id];
+        const precio = estado.liquidacionIds.includes(parseInt(id)) && p.tipo === 'empanada'? 2000 : p.precio;
+        total += precio * cant;
+      }
+      return total;
+    },
+    calcularVuelto(total) {
+      const metodo = document.getElementById('metodo-pago').value;
+      if (metodo !== 'efectivo') return { pago: total, vuelto: 0 };
+      const pago = parseInt(document.getElementById('pago').value) || 0;
+      const vuelto = pago >= total? pago - total : 0;
+      return { pago, vuelto };
+    },
+    validarStock() {
+      for (let id in estado.carrito) {
+        if ((estado.stockActual[id] || 0) < estado.carrito[id]) {
+          const p = buscarProducto(id);
+          UI.mostrarAlerta('Stock insuficiente: ' + p.nombre);
+          return false;
         }
       }
-    });
-    return {
-      cajaInicial, totalDia, totalEfectivo, totalTransfer,
-      totalCaja: cajaInicial + totalEfectivo, numVentas: estado.ventas.length, desglose
-    };
-  },
-  actualizar() {
-    const datos = this.calcular();
-    document.getElementById('total-dia').textContent = UI.formatearPrecio(datos.totalDia);
-    document.getElementById('total-efectivo').textContent = UI.formatearPrecio(datos.totalEfectivo);
-    document.getElementById('total-transfer').textContent = UI.formatearPrecio(datos.totalTransfer);
-    document.getElementById('mostrar-caja-inicial').textContent = UI.formatearPrecio(datos.cajaInicial);
-    document.getElementById('total-caja').textContent = UI.formatearPrecio(datos.totalCaja);
-    document.getElementById('num-ventas').textContent = datos.numVentas;
-    document.getElementById('total-empanadas').textContent = `${datos.desglose.empanadas.cant} und - ${UI.formatearPrecio(datos.desglose.empanadas.total)}`;
-    document.getElementById('total-591').textContent = `${datos.desglose.bebidas591.cant} und - ${UI.formatearPrecio(datos.desglose.bebidas591.total)}`;
-    document.getElementById('total-latas').textContent = `${datos.desglose.latas.cant} und - ${UI.formatearPrecio(datos.desglose.latas.total)}`;
-    document.getElementById('total-cachantun').textContent = `${datos.desglose.cachantun.cant} und - ${UI.formatearPrecio(datos.desglose.cachantun.total)}`;
-    document.getElementById('total-costo').textContent = `${datos.desglose.costo.cant} und - ${UI.formatearPrecio(datos.desglose.costo.total)}`;
-    this.renderHistorial();
-  },
-  renderHistorial() {
-    const lista = document.getElementById('historial-lista');
-    lista.innerHTML = '';
-    [...estado.ventas].reverse().forEach((v, reverseIndex) => {
-      const index = estado.ventas.length - 1 - reverseIndex;
-      const fecha = new Date(v.fecha);
-      const div = document.createElement('div');
-      div.className = 'historial-item' + (v.tipo === 'costo'? ' costo' : '');
-      let detalle = '';
-      for (let id in v.carrito) {
-        const p = buscarProducto(id);
-        const enLiquidacion = v.liquidacionIds.includes(parseInt(id));
-        const precio = enLiquidacion && p.tipo === 'empanada'? 2000 : p.precio;
-        detalle += `${v.carrito[id]}x ${p.nombre} @ ${UI.formatearPrecio(precio)}, `;
+      return true;
+    },
+    ejecutar(tipo = 'venta') {
+      if (!estado.diaActivo) {
+        UI.mostrarAlerta('Día cerrado. Carga stock inicial');
+        return;
       }
-      detalle = detalle.slice(0, -2);
-      const wspHtml = v.whatsapp? `<div class="wsp">📱 WhatsApp: ${v.whatsapp}</div>` : '';
-      div.innerHTML = `
-        <div class="folio">Boleta: ${v.folio}</div>
-        <div class="vendedor">Vendedor: ${v.vendedor}</div>
-        <div class="fecha">${fecha.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })} - <span class="metodo">${v.metodo.toUpperCase()}${v.tipo === 'costo'? ' - COSTO' : ''}</span></div>
-        <div>${detalle}</div>
-        <div style="font-weight:bold;color:#ff6600;margin-top:4px">${UI.formatearPrecio(v.total)}</div>
-        ${wspHtml}
-        <button class="btn btn-eliminar" onclick="Ventas.eliminar(${index})">ELIMINAR VENTA</button>`;
-      lista.appendChild(div);
-    });
-  },
-  mandarWSP() {
-    const datos = this.calcular();
-    const fecha = new Date().toLocaleDateString('es-CL');
-    let msg = '*📊 RESUMEN LOS WEONES DE LAS EMPANADAS*%0A';
-    msg += '📅 ' + fecha + '%0A';
-    msg += '👤 Generado por: ' + estado.usuarioActual + '%0A%0A';
-    msg += '*💸 TOTAL EN CAJA: ' + UI.formatearPrecio(datos.totalCaja) + '*%0A';
-    msg += '├ 💰 Caja inicial: ' + UI.formatearPrecio(datos.cajaInicial) + '%0A';
-    msg += '└ 💵 Efectivo ventas: ' + UI.formatearPrecio(datos.totalEfectivo) + '%0A%0A';
-    msg += '*💰 TOTAL VENDIDO: ' + UI.formatearPrecio(datos.totalDia) + '*%0A';
-    msg += '├ 💳 Transferencia: ' + UI.formatearPrecio(datos.totalTransfer) + '%0A';
-    msg += '└ 📊 N° de ventas: ' + datos.numVentas + '%0A%0A';
-    msg += '*📦 DESGLOSE POR PRODUCTO:*%0A';
-    msg += '├ 🥟 Empanadas: ' + datos.desglose.empanadas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.empanadas.total) + '%0A';
-    msg += '├ 🍶 Bebidas 591: ' + datos.desglose.bebidas591.cant + ' und - ' + UI.formatearPrecio(datos.desglose.bebidas591.total) + '%0A';
-    msg += '├ 🥫 Latas: ' + datos.desglose.latas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.latas.total) + '%0A';
-    msg += '└ 💧 Cachantun: ' + datos.desglose.cachantun.cant + ' und - ' + UI.formatearPrecio(datos.desglose.cachantun.total) + '%0A';
-    if (datos.desglose.costo.cant > 0) msg += '%0A🏷 *LIQUIDACIÓN*: ' + datos.desglose.costo.cant + ' und - ' + UI.formatearPrecio(datos.desglose.costo.total) + '%0A';
-    msg += '%0A_Generado desde Caja Weones v' + VERSION_APP + '_ 🥟';
-    window.open('https://wa.me/?text=' + msg, '_blank');
-  }
-};
-const StockGestion = {
-  render() {
-    const tabla = document.getElementById('tabla-stock');
-    tabla.innerHTML = '';
-    PRODUCTOS.forEach(p => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${p.icono} ${p.nombre}</td>
-        <td><input type="number" value="${estado.stockInicial[p.id] || 0}" id="stock-${p.id}" inputmode="numeric"></td>`;
-      tabla.appendChild(tr);
-    });
-  },
-  guardar() {
-    if (estado.ventas.length > 0 && !confirm('Ya hay ventas registradas hoy. Reconfigurar el stock inicial podría alterar el balance del día. ¿Continuar?')) return;
-    PRODUCTOS.forEach(p => {
-      estado.stockInicial[p.id] = parseInt(document.getElementById('stock-' + p.id).value) || 0;
-    });
-    estado.stockActual = JSON.parse(JSON.stringify(estado.stockInicial));
-    estado.diaActivo = true;
-    DB.setStockInicial(estado.stockInicial);
-    DB.setStockActual(estado.stockActual);
-    DB.setDiaActivo(true);
-    Productos.render();
-    Stock.verificarDiaActivo();
-    UI.mostrarAlerta('Stock inicial guardado. Día activado', true);
-    App.cambiarTab('vender');
-  },
-  reiniciar() {
-    if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado. Carga stock inicial primero'); return; }
-    if (!confirm('¿Reiniciar stock del día al inicial? Se perderá el stock actual pero no las ventas.')) return;
-    estado.stockActual = JSON.parse(JSON.stringify(estado.stockInicial));
-    DB.setStockActual(estado.stockActual);
-    Productos.render();
-    UI.mostrarAlerta('Stock del día reiniciado', true);
-  },
-  cerrarDia() {
-    if (!confirm('¿Cerrar día? Se borran ventas y el stock queda en 0. El stock inicial se mantiene.')) return;
-    estado.ventas = [];
-    PRODUCTOS.forEach(p => estado.stockActual[p.id] = 0);
-    estado.diaActivo = false;
-    estado.carrito = {};
-    estado.liquidacionIds = [];
-    DB.setVentas([]);
-    DB.setStockActual(estado.stockActual);
-    DB.setDiaActivo(false);
-    Resumen.actualizar();
-    Productos.render();
-    Stock.verificarDiaActivo();
-    UI.mostrarAlerta('Día cerrado', true);
-  },
-  verDesglose() {
-    const div = document.getElementById('desglose-stock');
-    div.classList.toggle('oculto');
-    if (!div.classList.contains('oculto')) {
-      let html = '<div class="total-box"><h2>STOCK ACTUAL</h2>';
-      PRODUCTOS.forEach(p => {
-        let vendido = 0;
-        estado.ventas.forEach(v => vendido += v.carrito[p.id] || 0);
-        const enCarrito = estado.carrito[p.id] || 0;
-        const disponible = (estado.stockActual[p.id] || 0) - enCarrito;
-        html += `
-          <div style="font-size:14px;margin:8px 0;padding-bottom:8px;border-bottom:1px solid #333">
-            <b>${p.icono} ${p.nombre}</b><br>
-            Inicial: ${estado.stockInicial[p.id] || 0} | Vendido: ${vendido}<br>
-            En carrito: ${enCarrito} | Disponible: ${disponible}
-          </div>`;
+      if (Object.keys(estado.carrito).length === 0) {
+        UI.mostrarAlerta('Carrito vacío');
+        return;
+      }
+      if (!this.validarStock()) return;
+      const total = this.calcularTotal();
+      const { pago, vuelto } = this.calcularVuelto(total);
+      const metodo = document.getElementById('metodo-pago').value;
+      if (metodo === 'efectivo' && pago < total) {
+        UI.mostrarAlerta('Pago insuficiente');
+        return;
+      }
+      const wsp = document.getElementById('wsp').value.trim();
+      if (wsp && !wsp.startsWith('+56')) {
+        UI.mostrarAlerta('Usa formato +56912345678');
+        return;
+      }
+      
+      UI.lanzarConfeti();
+
+      for (let id in estado.carrito) {
+        estado.stockActual[id] = (estado.stockActual[id] || 0) - estado.carrito[id];
+      }
+      const venta = {
+        folio: this.generarFolio(),
+        vendedor: estado.usuarioActual,
+        carrito: JSON.parse(JSON.stringify(estado.carrito)),
+        total, pago, vuelto, metodo,
+        whatsapp: wsp || null,
+        fecha: new Date().toISOString(),
+        tipo: estado.liquidacionIds.length > 0? 'costo' : 'venta',
+        liquidacionIds: [...estado.liquidacionIds]
+      };
+      estado.ventas.push(venta);
+      DB.setVentas(estado.ventas);
+      DB.setStockActual(estado.stockActual);
+      if (wsp) this.mandarWspVenta(venta);
+      UI.mostrarVentaGuardada();
+      this.limpiar();
+      Productos.render();
+      Stock.actualizarTotal();
+      Resumen.actualizar();
+    },
+    liquidar() {
+      if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado'); return; }
+      if (Object.keys(estado.carrito).length === 0) { UI.mostrarAlerta('Agrega empanadas al carrito'); return; }
+      let soloEmpanadas = true;
+      for (let id in estado.carrito) {
+        if (buscarProducto(id).tipo !== 'empanada') { soloEmpanadas = false; break; }
+      }
+      if (!soloEmpanadas) { UI.mostrarAlerta('COSTO solo para empanadas'); return; }
+      estado.liquidacionIds = Object.keys(estado.carrito).map(id => parseInt(id));
+      document.getElementById('bannerLiquidacion').classList.remove('oculto');
+      
+      document.getElementById('headerApp').classList.add('modo-costo');
+      document.getElementById('totalBox').classList.add('modo-costo-total');
+      
+      Stock.actualizarTotal();
+      Productos.render();
+      UI.mostrarAlerta('Precio liquidación: $2.000', true);
+    },
+    anular() {
+      if (Object.keys(estado.carrito).length === 0) { UI.mostrarAlerta('No hay nada en el carrito'); return; }
+      if (!confirm('¿Anular pedido?')) return;
+      this.limpiar();
+      Productos.render();
+      Stock.actualizarTotal();
+      UI.mostrarAlerta('Pedido anulado', true);
+    },
+    limpiar() {
+      estado.carrito = {};
+      estado.liquidacionIds = [];
+      document.getElementById('bannerLiquidacion').classList.add('oculto');
+      
+      document.getElementById('headerApp').classList.remove('modo-costo');
+      document.getElementById('totalBox').classList.remove('modo-costo-total');
+      
+      document.getElementById('pago').value = '';
+      document.getElementById('wsp').value = '';
+      document.getElementById('metodo-pago').value = 'efectivo';
+      Stock.cambiarMetodoPago();
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
       });
-      html += '</div>';
-      div.innerHTML = html;
-    }
-  }
-};
-
-const Respaldo = {
-  downloadObjectAsJson(exportObj, exportName){
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href",     dataStr);
-    downloadAnchorNode.setAttribute("download", exportName + ".json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-  },
-  descargar() {
-    const datos = { version: VERSION_APP, fecha: new Date().toISOString(), vendedor: estado.usuarioActual, cajaInicial: DB.getCajaInicial(), stockInicial: estado.stockInicial, stockActual: estado.stockActual, ventas: estado.ventas, folioActual: estado.folioActual };
-    this.downloadObjectAsJson(datos, `respaldo-weones-${new Date().toISOString().split('T')[0]}`);
-    UI.mostrarAlerta('Respaldo descargado', true);
-  },
-  cargar() {
-    const input = document.getElementById('archivo');
-    if (!input.files[0]) { UI.mostrarAlerta('Selecciona un archivo'); return; }
-    if (!confirm('¿Cargar respaldo? Se borrarán los datos actuales.')) { input.value = ''; return; }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const datos = JSON.parse(e.target.result);
-        if (!datos.ventas ||!datos.stockActual) throw new Error('Archivo corrupto');
-        estado.stockInicial = datos.stockInicial || {};
-        estado.stockActual = datos.stockActual || {};
-        estado.ventas = datos.ventas || [];
-        estado.folioActual = datos.folioActual || 1;
-        estado.diaActivo = true;
-        DB.setStockInicial(estado.stockInicial);
-        DB.setStockActual(estado.stockActual);
-        DB.setVentas(estado.ventas);
-        DB.setFolio(estado.folioActual);
-        DB.setCajaInicial(datos.cajaInicial || 0);
-        DB.setDiaActivo(true);
-        document.getElementById('cajaInicial').value = datos.cajaInicial || 0;
-        Productos.render();
-        Resumen.actualizar();
-        Stock.verificarDiaActivo();
-        UI.mostrarAlerta('Respaldo cargado', true);
-      } catch (err) { UI.mostrarAlerta('Error al cargar: ' + err.message); }
-      input.value = '';
-    };
-    reader.readAsText(input.files[0]);
-  }
-};
-
-const App = {
-  cambiarTab(tab) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
-    document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-    document.querySelector(`[onclick="App.cambiarTab('${tab}')"]`).classList.add('activo');
-    document.getElementById(tab).classList.add('activa');
-    if (tab === 'stock') {
-      StockGestion.render();
-      document.getElementById('cajaInicial').value = DB.getCajaInicial();
-    } else if (tab === 'resumen') {
-      Resumen.actualizar();
-    }
-  },
-  init() {
-    if (!Auth.verificar()) return;
-    Productos.render();
-    Stock.verificarDiaActivo();
-    Resumen.actualizar();
-    document.getElementById('pago').addEventListener('input', Stock.actualizarTotal);
-    document.getElementById('metodo-pago').addEventListener('change', Stock.cambiarMetodoPago);
-    document.getElementById('cajaInicial').addEventListener('input', () => {
-      DB.setCajaInicial(document.getElementById('cajaInicial').value);
-      Resumen.actualizar();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && document.getElementById('loginScreen').classList.contains('oculto')) {
-        if (document.activeElement.tagName!== 'INPUT') Ventas.ejecutar();
+    },
+    eliminar(index) {
+      if (!confirm('¿Eliminar venta? Se devolverá el stock.')) return;
+      const venta = estado.ventas[index];
+      for (let id in venta.carrito) {
+        estado.stockActual[id] = (estado.stockActual[id] || 0) + venta.carrito[id];
       }
-      if (e.key === 'Escape') Ventas.anular();
-    });
-    console.log(`🥟 Los Weones de las Empanadas v${VERSION_APP} iniciado`);
-  }
-};
+      estado.ventas.splice(index, 1);
+      DB.setVentas(estado.ventas);
+      DB.setStockActual(estado.stockActual);
+      Productos.render();
+      Resumen.actualizar();
+      UI.mostrarAlerta('Venta eliminada y stock devuelto', true);
+    },
+    mandarWspVenta(venta) {
+      let msg = 'LOS WEONES DE LAS EMPANADAS';
+      msg += venta.tipo === 'costo'? ' - LIQUIDACIÓN' : '';
+      msg += '%0A%0A*Boleta: ' + venta.folio + '*%0A';
+      msg += 'Atendido por: ' + venta.vendedor + '%0A%0A';
+      for (let id in venta.carrito) {
+        const p = buscarProducto(id);
+        const enLiquidacion = venta.liquidacionIds.includes(parseInt(id));
+        const precioUnit = enLiquidacion && p.tipo === 'empanada'? 2000 : p.precio;
+        msg += venta.carrito[id] + 'x ' + p.nombre + ' - $' + (precioUnit * venta.carrito[id]).toLocaleString('es-CL') + '%0A';
+      }
+      msg += '%0A*TOTAL: $' + venta.total.toLocaleString('es-CL') + '*%0A';
+      msg += 'Pago: ' + (venta.metodo === 'transferencia'? 'Transferencia' : 'Efectivo $' + venta.pago.toLocaleString('es-CL')) + '%0A';
+      if (venta.metodo === 'efectivo' && venta.vuelto > 0) {
+        msg += 'Vuelto: $' + venta.vuelto.toLocaleString('es-CL') + '%0A';
+      }
+      msg += '%0AGracias por tu compra! visite nuestra pagina www.emporiodonnino.store 🥟';
+      window.open('https://wa.me/' + venta.whatsapp.replace(/[^0-9]/g, '') + '?text=' + msg, '_blank');
+    }
+  };
 
-window.onload = () => { if (Auth.verificar()) App.init(); };
+  const Stock = {
+    cambiarMetodoPago() {
+      const metodo = document.getElementById('metodo-pago').value;
+      const grupoPago = document.getElementById('grupo-pago');
+      if (metodo === 'transferencia') {
+        grupoPago.classList.add('oculto');
+        document.getElementById('pago').value = '';
+      } else {
+        grupoPago.classList.remove('oculto');
+      }
+      this.actualizarTotal();
+    },
+    actualizarTotal() {
+      const total = Ventas.calcularTotal();
+      let textoTotal = UI.formatearPrecio(total);
+      if (estado.liquidacionIds.length > 0) textoTotal += ' - LIQUIDACIÓN';
+      document.getElementById('total').textContent = textoTotal;
+      const { vuelto } = Ventas.calcularVuelto(total);
+      const vueltoDiv = document.getElementById('vuelto');
+      if (document.getElementById('metodo-pago').value === 'efectivo' && vuelto > 0) {
+        vueltoDiv.textContent = 'Vuelto: ' + UI.formatearPrecio(vuelto);
+        vueltoDiv.classList.remove('oculto');
+      } else {
+        vueltoDiv.classList.add('oculto');
+      }
+    },
+    verificarDiaActivo() {
+      const aviso = document.getElementById('aviso-dia-cerrado');
+      if (!estado.diaActivo) {
+        aviso.classList.remove('oculto');
+      } else {
+        aviso.classList.add('oculto');
+      }
+    }
+  };
+
+  const Productos = {
+    agregar(id) {
+      if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado. Carga stock inicial'); return; }
+      const stockDisp = (estado.stockActual[id] || 0) - (estado.carrito[id] || 0);
+      
+      if (stockDisp <= 0) { 
+        const p = buscarProducto(id);
+        UI.mostrarAlerta('Sin stock para ' + p.nombre); 
+        return; 
+      }
+      
+      Sonidos.play('click');
+      estado.carrito[id] = (estado.carrito[id] || 0) + 1;
+      this.renderItem(id);
+      Stock.actualizarTotal();
+    },
+    quitar(id) {
+      if (!estado.carrito[id] || estado.carrito[id] <= 0) return;
+      
+      Sonidos.play('click');
+      estado.carrito[id]--;
+      if (estado.carrito[id] === 0) delete estado.carrito[id];
+      this.renderItem(id);
+      Stock.actualizarTotal();
+    },
+    renderItem(id) {
+      const p = buscarProducto(id);
+      const stockDisp = estado.diaActivo? (estado.stockActual[id] || 0) : 0;
+      const enCarrito = estado.carrito[id] || 0;
+      const stockDisponible = stockDisp - enCarrito;
+      const sinStock = stockDisponible === 0 || !estado.diaActivo;
+      
+      // LÍNEA 707 REFORMADA SIN COMILLAS INVERTIDAS
+      const div = document.querySelector('[data-producto-id="' + id + '"]');
+      if (!div) return;
+      
+      div.className = 'producto' + (sinStock? ' sin-stock' : '') + (enCarrito > 0? ' activo' : '');
+      const precioUnitario = estado.liquidacionIds.includes(p.id) && p.tipo === 'empanada' ? 2000 : p.precio;
+      
+      if (enCarrito > 0 && estado.diaActivo) {
+        div.onclick = null;
+        div.style.cursor = 'default';
+        
+        // DISEÑO MAQUETADO CON TRADUCCIÓN COMPLETA A COMILLAS SIMPLES
+        div.innerHTML = '<div class="producto-icono">' + p.icono + '</div>' +
+                        '<h3>' + p.nombre + '</h3>' +
+                        '<div class="precio">' + UI.formatearPrecio(precioUnitario) + '</div>' +
+                        '<div class="stock">Stock: ' + stockDisponible + '</div>' +
+                        '<div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">' +
+                          '<button onclick="Productos.quitar(' + p.id + ');event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">-</button>' +
+                          '<span style="font-size:18px;font-weight:bold;min-width:30px;text-align:center">' + enCarrito + '</span>' +
+                          '<button onclick="Sonidos.play(\'click\');Productos.agregar(' + p.id + ');event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">+</button>' +
+                        '</div>';
+      } else {
+        div.style.cursor = sinStock ? 'not-allowed' : 'pointer';
+        div.innerHTML = '<div class="producto-icono">' + p.icono + '</div>' +
+                        '<h3>' + p.nombre + '</h3>' +
+                        '<div class="precio">' + UI.formatearPrecio(precioUnitario) + '</div>' +
+                        '<div class="stock">Stock: ' + stockDisponible + '</div>';
+        if (estado.diaActivo && stockDisponible > 0) {
+          div.onclick = () => this.agregar(p.id);
+        } else {
+          div.onclick = null;
+        }
+      }
+
+      const icono = div.querySelector('.producto-icono');
+      if (icono) {
+        icono.classList.add('animar-icono');
+        setTimeout(() => icono.classList.remove('animar-icono'), 300);
+      }
+    },
+    render() {
+      const grid = document.getElementById('productos-grid');
+      grid.innerHTML = '';
+      PRODUCTOS.forEach(p => {
+        const div = document.createElement('div');
+        div.setAttribute('data-producto-id', p.id);
+        grid.appendChild(div);
+        this.renderItem(p.id);
+      });
+    }
+  };
+
+  const Resumen = {
+    calcular() {
+      const cajaInicial = parseInt(document.getElementById('cajaInicial').value) || 0;
+      DB.setCajaInicial(cajaInicial);
+      let totalDia = 0, totalEfectivo = 0, totalTransfer = 0;
+      const desglose = {
+        empanadas: { cant: 0, total: 0 }, bebidas591: { cant: 0, total: 0 },
+        latas: { cant: 0, total: 0 }, cachantun: { cant: 0, total: 0 }, costo: { cant: 0, total: 0 }
+      };
+      estado.ventas.forEach(v => {
+        totalDia += v.total;
+        if (v.metodo === 'efectivo') totalEfectivo += v.total;
+        if (v.metodo === 'transferencia') totalTransfer += v.total;
+        for (let id in v.carrito) {
+          const p = buscarProducto(id);
+          const cant = v.carrito[id];
+          const enLiquidacion = v.liquidacionIds.includes(parseInt(id));
+          const subtotal = enLiquidacion && p.tipo === 'empanada'? 2000 * cant : p.precio * cant;
+          if (enLiquidacion && p.tipo === 'empanada') {
+            desglose.costo.cant += cant; desglose.costo.total += subtotal;
+          } else if (p.tipo === 'empanada') {
+            desglose.empanadas.cant += cant; desglose.empanadas.total += subtotal;
+          } else if (p.tipo === '591') {
+            desglose.bebidas591.cant += cant; desglose.bebidas591.total += subtotal;
+          } else if (p.tipo === 'lata') {
+            desglose.latas.cant += cant; desglose.latas.total += subtotal;
+          } else if (p.tipo === 'cachantun') {
+            desglose.cachantun.cant += cant; desglose.cachantun.total += subtotal;
+          }
+        }
+      });
+      return {
+        cajaInicial, totalDia, totalEfectivo, totalTransfer,
+        totalCaja: cajaInicial + totalEfectivo, numVentas: estado.ventas.length, desglose
+      };
+    },
+    actualizar() {
+      const datos = this.calcular();
+      document.getElementById('total-dia').textContent = UI.formatearPrecio(datos.totalDia);
+      document.getElementById('total-efectivo').textContent = UI.formatearPrecio(datos.totalEfectivo);
+      document.getElementById('total-transfer').textContent = UI.formatearPrecio(datos.totalTransfer);
+      document.getElementById('mostrar-caja-inicial').textContent = UI.formatearPrecio(datos.cajaInicial);
+      document.getElementById('total-caja').textContent = UI.formatearPrecio(datos.totalCaja);
+      document.getElementById('num-ventas').textContent = datos.numVentas;
+      document.getElementById('total-empanadas').textContent = datos.desglose.empanadas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.empanadas.total);
+      document.getElementById('total-591').textContent = datos.desglose.bebidas591.cant + ' und - ' + UI.formatearPrecio(datos.desglose.bebidas591.total);
+      document.getElementById('total-latas').textContent = datos.desglose.latas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.latas.total);
+      document.getElementById('total-cachantun').textContent = datos.desglose.cachantun.cant + ' und - ' + UI.formatearPrecio(datos.desglose.cachantun.total);
+      document.getElementById('total-costo').textContent = datos.desglose.costo.cant + ' und - ' + UI.formatearPrecio(datos.desglose.costo.total);
+      this.renderHistorial();
+    },
+    renderHistorial() {
+      const lista = document.getElementById('historial-lista');
+      lista.innerHTML = '';
+      [...estado.ventas].reverse().forEach((v, reverseIndex) => {
+        const index = estado.ventas.length - 1 - reverseIndex;
+        const fecha = new Date(v.fecha);
+        const div = document.createElement('div');
+        div.className = 'historial-item' + (v.tipo === 'costo'? ' costo' : '');
+        let detalle = '';
+        for (let id in v.carrito) {
+          const p = buscarProducto(id);
+          const enLiquidacion = v.liquidacionIds.includes(parseInt(id));
+          const precio = enLiquidacion && p.tipo === 'empanada'? 2000 : p.precio;
+          detalle += v.carrito[id] + 'x ' + p.nombre + ' @ ' + UI.formatearPrecio(precio) + ', ';
+        }
+        detalle = detalle.slice(0, -2);
+        const wspHtml = v.whatsapp? '<div class="wsp">📱 WhatsApp: ' + v.whatsapp + '</div>' : '';
+        
+        div.innerHTML = '<div class="folio">Boleta: ' + v.folio + '</div>' +
+          '<div class="vendedor">Vendedor: ' + v.vendedor + '</div>' +
+          '<div class="fecha">' + fecha.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + ' - <span class="metodo">' + v.metodo.toUpperCase() + (v.tipo === 'costo'? ' - COSTO' : '') + '</span></div>' +
+          '<div>' + detalle + '</div>' +
+          '<div style="font-weight:bold;color:#ff6600;margin-top:4px">' + UI.formatearPrecio(v.total) + '</div>' +
+          wspHtml +
+          '<button class="btn btn-eliminar" onclick="Ventas.eliminar(' + index + ')">ELIMINAR VENTA</button>';
+        lista.appendChild(div);
+      });
+    },
+    mandarWSP() {
+      const datos = this.calcular();
+      const fecha = new Date().toLocaleDateString('es-CL');
+      let msg = '📊 RESUMEN LOS WEONES DE LAS EMPANADAS%0A';
+      msg += '📅 ' + fecha + '%0A';
+      msg += '👤 Generado por: ' + estado.usuarioActual + '%0A%0A';
+      msg += '💸 TOTAL EN CAJA: ' + UI.formatearPrecio(datos.totalCaja) + '%0A';
+      msg += '├ 💰 Caja inicial: ' + UI.formatearPrecio(datos.cajaInicial) + '%0A';
+      msg += '└ 💵 Efectivo ventas: ' + UI.formatearPrecio(datos.totalEfectivo) + '%0A%0A';
+      msg += '💰 TOTAL VENDIDO: ' + UI.formatearPrecio(datos.totalDia) + '%0A';
+      msg += '├ 💳 Transferencia: ' + UI.formatearPrecio(datos.totalTransfer) + '%0A';
+      msg += '└ 📊 N° de ventas: ' + datos.numVentas + '%0A%0A';
+      msg += '📦 DESGLOSE POR PRODUCTO:%0A';
+      msg += '├ 🥟 Empanadas: ' + datos.desglose.empanadas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.empanadas.total) + '%0A';
+      msg += '├ 🍶 Bebidas 591: ' + datos.desglose.bebidas591.cant + ' und - ' + UI.formatearPrecio(datos.desglose.bebidas591.total) + '%0A';
+      msg += '├ 🥫 Latas: ' + datos.desglose.latas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.latas.total) + '%0A';
+      msg += '└ 💧 Cachantun: ' + datos.desglose.cachantun.cant + ' und - ' + UI.formatearPrecio(datos.desglose.cachantun.total) + '%0A';
+      if (datos.desglose.costo.cant > 0) msg += '%0A🏷️ LIQUIDACIÓN: ' + datos.desglose.costo.cant + ' und - ' + UI.formatearPrecio(datos.desglose.costo.total) + '%0A';
+      msg += '%0A_Generado desde Caja Weones v' + VERSION_APP + '_ 🥟';
+      window.open('https://wa.me/?text=' + msg, '_blank');
+    }
+  };
+
+  const StockGestion = {
+    render() {
+      const tabla = document.getElementById('tabla-stock');
+      tabla.innerHTML = '';
+      PRODUCTOS.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + p.icono + ' ' + p.nombre + '</td>' +
+          '<td><input type="number" value="' + (estado.stockInicial[p.id] || 0) + '" id="stock-' + p.id + '" inputmode="numeric"></td>';
+        tabla.appendChild(tr);
+      });
+    },
+    guardar() {
+      if (estado.ventas.length > 0 && !confirm('Ya hay ventas registradas hoy. Reconfigurar el stock inicial podría alterar el balance del día. ¿Continuar?')) return;
+      PRODUCTOS.forEach(p => {
+        estado.stockInicial[p.id] = parseInt(document.getElementById('stock-' + p.id).value) || 0;
+      });
+      estado.stockActual = JSON.parse(JSON.stringify(estado.stockInicial));
+      estado.diaActivo = true;
+      DB.setStockInicial(estado.stockInicial);
+      DB.setStockActual(estado.stockActual);
+      DB.setDiaActivo(true);
+      Productos.render();
+      Stock.verificarDiaActivo();
+      UI.mostrarAlerta('Stock inicial guardado. Día activado', true);
+      App.cambiarTab('vender');
+    },
+    reiniciar() {
+      if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado. Carga stock inicial primero'); return; }
+      if (!confirm('¿Reiniciar stock del día al inicial? Se perderá el stock actual pero no las ventas.')) return;
+      estado.stockActual = JSON.parse(JSON.stringify(estado.stockInicial));
+      DB.setStockActual(estado.stockActual);
+      Productos.render();
+      UI.mostrarAlerta('Stock del día reiniciado', true);
+    },
+    cerrarDia() {
+      if (!confirm('¿Cerrar día? Se borran ventas y el stock queda en 0. El stock inicial se mantiene.')) return;
+      estado.ventas = [];
+      PRODUCTOS.forEach(p => estado.stockActual[p.id] = 0);
+      estado.diaActivo = false;
+      estado.carrito = {};
+      estado.liquidacionIds = [];
+      DB.setVentas([]);
+      DB.setStockActual(estado.stockActual);
+      DB.setDiaActivo(false);
+      Resumen.actualizar();
+      Productos.render();
+      Stock.verificarDiaActivo();
+      UI.mostrarAlerta('Día cerrado', true);
+    },
+    verDesglose() {
+      const div = document.getElementById('desglose-stock');
+      div.classList.toggle('oculto');
+      if (!div.classList.contains('oculto')) {
+        let html = '<div class="total-box"><h2>STOCK ACTUAL</h2>';
+        PRODUCTOS.forEach(p => {
+          let vendido = 0;
+          estado.ventas.forEach(v => vendido += v.carrito[p.id] || 0);
+          const enCarrito = estado.carrito[p.id] || 0;
+          const disponible = (estado.stockActual[p.id] || 0) - enCarrito;
+          html += '<div style="font-size:14px;margin:8px 0;padding-bottom:8px;border-bottom:1px solid #333">' +
+            '<b>' + p.icono + ' ' + p.nombre + '</b><br>' +
+            'Inicial: ' + (estado.stockInicial[p.id] || 0) + ' | Vendido: ' + vendido + '<br>' +
+            'En carrito: ' + enCarrito + ' | Disponible: ' + disponible +
+          '</div>';
+        });
+        html += '</div>';
+        div.innerHTML = html;
+      }
+    }
+  };
+
+  const Respaldo = {
+    downloadObjectAsJson(exportObj, exportName){
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href",     dataStr);
+      downloadAnchorNode.setAttribute("download", exportName + ".json");
+      document.body.appendChild(downloadAnchorNode);
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    },
+    descargar() {
+      const datos = { version: VERSION_APP, fecha: new Date().toISOString(), vendedor: estado.usuarioActual, cajaInicial: DB.getCajaInicial(), stockInicial: estado.stockInicial, stockActual: estado.stockActual, ventas: estado.ventas, folioActual: estado.folioActual };
+      this.downloadObjectAsJson(datos, 'respaldo-weones-' + new Date().toISOString().split('T')[0]);
+      UI.mostrarAlerta('Respaldo descargado', true);
+    },
+    cargar() {
+      const input = document.getElementById('archivo');
+      if (!input.files[0]) { UI.mostrarAlerta('Selecciona un archivo'); return; }
+      if (!confirm('¿Cargar respaldo? Se borrarán los datos actuales.')) { input.value = ''; return; }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const datos = JSON.parse(e.target.result);
+          if (!datos.ventas || !datos.stockActual) throw new Error('Archivo corrupto');
+          estado.stockInicial = datos.stockInicial || {};
+          estado.stockActual = datos.stockActual || {};
+          estado.ventas = datos.ventas || [];
+          estado.folioActual = datos.folioActual || 1;
+          estado.diaActivo = true;
+          DB.setStockInicial(estado.stockInicial);
+          DB.setStockActual(estado.stockActual);
+          DB.setVentas(estado.ventas);
+          DB.setFolio(estado.folioActual);
+          DB.setCajaInicial(datos.cajaInicial || 0);
+          DB.setDiaActivo(true);
+          document.getElementById('cajaInicial').value = datos.cajaInicial || 0;
+          Productos.render();
+          Resumen.actualizar();
+          Stock.verificarDiaActivo();
+          UI.mostrarAlerta('Respaldo cargado', true);
+        } catch (err) { UI.mostrarAlerta('Error al cargar: ' + err.message); }
+        input.value = '';
+      };
+      reader.readAsText(input.files[0]);
+    }
+  };
+
+  const App = {
+    cambiarTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
+      document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+      document.querySelector('[onclick="App.cambiarTab(\'' + tab + '\')"]').classList.add('activo');
+      document.getElementById(tab).classList.add('activa');
+      if (tab === 'stock') {
+        StockGestion.render();
+        document.getElementById('cajaInicial').value = DB.getCajaInicial();
+      } else if (tab === 'resumen') {
+        Resumen.actualizar();
+      }
+    },
+    init() {
+      if (!Auth.verificar()) return;
+      Productos.render();
+      Stock.verificarDiaActivo();
+      Resumen.actualizar();
+      document.getElementById('pago').addEventListener('input', Stock.actualizarTotal);
+      document.getElementById('metodo-pago').addEventListener('change', Stock.cambiarMetodoPago);
+      document.getElementById('cajaInicial').addEventListener('input', () => {
+        DB.setCajaInicial(document.getElementById('cajaInicial').value);
+        Resumen.actualizar();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && document.getElementById('loginScreen').classList.contains('oculto')) {
+          if (document.activeElement.tagName !== 'INPUT') Ventas.ejecutar();
+        }
+        if (e.key === 'Escape') Ventas.anular();
+      });
+      console.log('🥟 Los Weones de las Empanadas v' + VERSION_APP + ' iniciado');
+    }
+  };
+
+  window.onload = () => { if (Auth.verificar()) App.init(); };
 </script>
 </body>
 </html>
-
