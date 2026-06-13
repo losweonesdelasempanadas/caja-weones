@@ -3,181 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Los Weones de las Empanadas - CAJA V2.0 PREMIUM</title>
+  <title>Los Weones de las Empanadas - CAJA V2.1 PREMIUM</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh;overflow-x:hidden}
-   
-   .container{max-width:500px;margin:0 auto;position:relative;padding-top:240px;} 
-   
-   .top-fijo {
-     position: fixed;
-     top: 0;
-     left: 50%;
-     transform: translateX(-50%);
-     width: 100%;
-     max-width: 500px;
-     background: #0a0a0a; 
-     z-index: 1000;
-     padding: 10px 10px 5px 10px;
-   }
-
-   .header{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:12px 20px;border-radius:16px;margin-bottom:8px;border:1px solid #ff6600;text-align:center;position:relative;transition:all 0.4s ease;display:flex;flex-direction:column;align-items:center;justify-content:center}
-   .header h1{font-size:20px;color:#ff6600;text-shadow:0 0 20px rgba(255,102,0,0.5);transition:all 0.4s ease;font-weight:bold;letter-spacing:0.5px}
-   
-   .logo-header {
-     width: 65px;
-     height: 65px;
-     border-radius: 50%;
-     border: 2px solid #ff6600;
-     margin-bottom: 5px;
-     box-shadow: 0 0 15px rgba(255,102,0,0.4);
-     transition:all 0.4s ease;
-   }
-   
-   .header.modo-costo {
-     border-color: #00ff00;
-     box-shadow: 0 0 25px rgba(0,255,0,0.3);
-   }
-   .header.modo-costo h1 {
-     color: #00ff00;
-     text-shadow: 0 0 20px rgba(0,255,0,0.5);
-   }
-   .header.modo-costo .logo-header {
-     border-color: #00ff00;
-     box-shadow: 0 0 15px rgba(0,255,0,0.4);
-   }
-
-   .user-bar {
-     display: flex;
-     align-items: center;
-     justify-content: space-between;
-     background: #141414;
-     padding: 6px 12px;
-     border-radius: 8px;
-     margin-bottom: 8px;
-     border: 1px solid #222;
-     font-size: 12px;
-   }
-   .user-info-left {
-     display: flex;
-     align-items: center;
-     gap: 8px;
-     color: #aaa;
-   }
-   
-   .status-dot {
-     width: 8px;
-     height: 8px;
-     background-color: #00ff00;
-     border-radius: 50%;
-     box-shadow: 0 0 10px #00ff00;
-     animation: parpadeo 1.8s infinite ease-in-out;
-   }
-   @keyframes parpadeo {
-     0%, 100% { opacity: 0.4; box-shadow: 0 0 4px #00ff00; }
-     50% { opacity: 1; box-shadow: 0 0 12px #00ff00; }
-   }
-
-   .btn-logout {
-     background: none;
-     border: none;
-     color: #ff3333;
-     font-size: 12px;
-     font-weight: bold;
-     cursor: pointer;
-     transition: color 0.2s;
-   }
-   .btn-logout:active { color: #ff6600; }
-
-   .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:5px}
-   .tab{padding:12px 4px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:12px;font-weight:bold;cursor:pointer;transition:all 0.3s;text-align:center}
-   .tab.activo{background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);color:#000;border-color:#ff6600;box-shadow:0 4px 15px rgba(255,102,0,0.4)}
-   
-   .pantalla{display:none}.pantalla.activa{display:block}
-   .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
-   
-   .producto{background:linear-gradient(135deg, rgba(35,35,35,0.7) 0%, rgba(20,20,20,0.8) 100%);backdrop-filter: blur(5px);-webkit-backdrop-filter: blur(5px);border: 2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);position:relative;overflow:hidden}
-   .producto:active{transform:scale(0.95)}
-   .producto.activo{border-color:#ff6600;background:linear-gradient(135deg,#2d1a00 0%,#3d2400 100%);box-shadow:0 0 20px rgba(255,102,0,0.25);border: 2px solid rgba(255,102,0,0.4);}
-   .producto.sin-stock{opacity:.4;cursor:not-allowed}.producto-icono{font-size:40px;margin-bottom:8px;text-align:center;display:inline-block}
-   .producto h3{font-size:14px;color:#ff6600;margin-bottom:6px;font-weight:600;line-height:1.2}
-   .producto.precio{font-size:18px;color:#fff;font-weight:bold;margin-bottom:4px}
-   .producto.stock{font-size:11px;color:#888}
-   
-   .total-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:20px;border-radius:16px;margin-bottom:15px;border:2px solid #ff6600;transition:all 0.4s ease}
-   .total-box h2{font-size:14px;color:#888;margin-bottom:8px;text-transform:uppercase;transition:all 0.4s ease}
-   .total-box.monto{font-size:36px;color:#ff6600;font-weight:bold;text-shadow:0 0 20px rgba(255,102,0,0.5);transition:all 0.4s ease}
-   .total-box.vuelto{font-size:16px;color:#00ff00;margin-top:8px;font-weight:600}
-   
-   .total-box.modo-costo-total {
-     border-color: #00ff00;
-     background: linear-gradient(135deg, #0d1a0d 0%, #1a331a 100%);
-     box-shadow: 0 0 20px rgba(0,255,0,0.25);
-   }
-   .total-box.modo-costo-total h2 { color: #88ff88; }
-   .total-box.modo-costo-total .monto { color: #00ff00; text-shadow: 0 0 20px rgba(0,255,0,0.5); }
-
-   .input-grupo{margin-bottom:15px}.input-grupo label{display:block;color:#ff6600;font-size:13px;margin-bottom:6px;font-weight:600}
-   .input-grupo input,.input-grupo select{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#fff;font-size:16px;outline:0;transition:all 0.3s}
-   .input-grupo input:focus,.input-grupo select:focus{border-color:#ff6600;box-shadow:0 0 15px rgba(255,102,0,0.2)}
-   .input-grupo select option{background:#1a1a1a;color:#fff}
-   .btn{width:100%;padding:16px;background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);border:none;border-radius:14px;color:#000;font-size:16px;font-weight:bold;cursor:pointer;transition:all 0.2s;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 15px rgba(255,102,0,0.3);position:relative}
-   .btn:active{transform:scale(0.98)}.btn-anular{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;box-shadow:0 4px 15px rgba(255,51,0.3)}
-   .btn-costo{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;box-shadow:0 4px 15px rgba(0,170,0,0.3)}
-   .btn-eliminar{background:linear-gradient(135deg,#aa0000 0%,#cc0000 100%);color:#fff;padding:8px;font-size:12px;margin-top:8px}
-   .banner-liquidacion{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:16px;box-shadow:0 4px 15px rgba(0,170,0,0.4);animation:pulse 2s infinite}
+    .container{max-width:500px;margin:0 auto;position:relative;padding-top:240px;}
+    .top-fijo{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;background:#0a0a0a;z-index:1000;padding:10px 10px 5px 10px;}
+    .header{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:12px 20px;border-radius:16px;margin-bottom:8px;border:1px solid #ff6600;text-align:center;position:relative;transition:all 0.4s ease;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .header h1{font-size:20px;color:#ff6600;text-shadow:0 0 20px rgba(255,102,0,0.5);transition:all 0.4s ease;font-weight:bold;letter-spacing:0.5px}
+    .logo-header{width:65px;height:65px;border-radius:50%;border:2px solid #ff6600;margin-bottom:5px;box-shadow:0 0 15px rgba(255,102,0,0.4);transition:all 0.4s ease;}
+    .header.modo-costo{border-color:#00ff00;box-shadow:0 0 25px rgba(0,255,0,0.3);}
+    .header.modo-costo h1{color:#00ff00;text-shadow:0 0 20px rgba(0,255,0,0.5);}
+    .header.modo-costo .logo-header{border-color:#00ff00;box-shadow:0 0 15px rgba(0,255,0,0.4);}
+    .user-bar{display:flex;align-items:center;justify-content:space-between;background:#141414;padding:6px 12px;border-radius:8px;margin-bottom:8px;border:1px solid #222;font-size:12px;}
+    .user-info-left{display:flex;align-items:center;gap:8px;color:#aaa;}
+    .status-dot{width:8px;height:8px;background-color:#00ff00;border-radius:50%;box-shadow:0 0 10px #00ff00;animation:parpadeo 1.8s infinite ease-in-out;}
+    @keyframes parpadeo{0%,100%{opacity:0.4;box-shadow:0 0 4px #00ff00;}50%{opacity:1;box-shadow:0 0 12px #00ff00;}}
+    .btn-logout{background:none;border:none;color:#ff3333;font-size:12px;font-weight:bold;cursor:pointer;transition:color 0.2s;}
+    .btn-logout:active{color:#ff6600;}
+    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:5px}
+    .tab{padding:12px 4px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:12px;font-weight:bold;cursor:pointer;transition:all 0.3s;text-align:center}
+    .tab.activo{background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);color:#000;border-color:#ff6600;box-shadow:0 4px 15px rgba(255,102,0,0.4)}
+    .pantalla{display:none}.pantalla.activa{display:block}
+    .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+    .producto{background:linear-gradient(135deg,rgba(35,35,35,0.7) 0%,rgba(20,20,20,0.8) 100%);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);border:2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden}
+    .producto:active{transform:scale(0.95)}
+    .producto.activo{border-color:#ff6600;background:linear-gradient(135deg,#2d1a00 0%,#3d2400 100%);box-shadow:0 0 20px rgba(255,102,0,0.25);border:2px solid rgba(255,102,0,0.4);}
+    .producto.sin-stock{opacity:.4;cursor:not-allowed}.producto-icono{font-size:40px;margin-bottom:8px;text-align:center;display:inline-block}
+    .producto h3{font-size:14px;color:#ff6600;margin-bottom:6px;font-weight:600;line-height:1.2}
+    .producto.precio{font-size:18px;color:#fff;font-weight:bold;margin-bottom:4px}
+    .producto.stock{font-size:11px;color:#888}
+    .total-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:20px;border-radius:16px;margin-bottom:15px;border:2px solid #ff6600;transition:all 0.4s ease}
+    .total-box h2{font-size:14px;color:#888;margin-bottom:8px;text-transform:uppercase;transition:all 0.4s ease}
+    .total-box.monto{font-size:36px;color:#ff6600;font-weight:bold;text-shadow:0 0 20px rgba(255,102,0,0.5);transition:all 0.4s ease}
+    .total-box.vuelto{font-size:16px;color:#00ff00;margin-top:8px;font-weight:600}
+    .total-box.modo-costo-total{border-color:#00ff00;background:linear-gradient(135deg,#0d1a0d 0%,#1a331a 100%);box-shadow:0 0 20px rgba(0,255,0,0.25);}
+    .total-box.modo-costo-total h2{color:#88ff88;}
+    .total-box.modo-costo-total.monto{color:#00ff00;text-shadow:0 0 20px rgba(0,255,0,0.5);}
+    .input-grupo{margin-bottom:15px}.input-grupo label{display:block;color:#ff6600;font-size:13px;margin-bottom:6px;font-weight:600}
+    .input-grupo input,.input-grupo select{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#fff;font-size:16px;outline:0;transition:all 0.3s}
+    .input-grupo input:focus,.input-grupo select:focus{border-color:#ff6600;box-shadow:0 0 15px rgba(255,102,0,0.2)}
+    .input-grupo select option{background:#1a1a1a;color:#fff}
+    .btn{width:100%;padding:16px;background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);border:none;border-radius:14px;color:#000;font-size:16px;font-weight:bold;cursor:pointer;transition:all 0.2s;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 15px rgba(255,102,0,0.3);position:relative}
+    .btn:active{transform:scale(0.98)}.btn-anular{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;box-shadow:0 4px 15px rgba(255,51,0.3)}
+    .btn-costo{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;box-shadow:0 4px 15px rgba(0,170,0,0.3)}
+    .btn-eliminar{background:linear-gradient(135deg,#aa0000 0%,#cc0000 100%);color:#fff;padding:8px;font-size:12px;margin-top:8px}
+    .banner-liquidacion{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:16px;box-shadow:0 4px 15px rgba(0,170,0,0.4);animation:pulse 2s infinite}
     @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
-   .aviso-cerrado{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:14px;box-shadow:0 4px 15px rgba(255,51,0.4)}
-   .stock-tabla{width:100%;background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:15px}
-   .stock-tabla th{background:#2d2d2d;padding:12px;text-align:left;font-size:12px;color:#ff6600;text-transform:uppercase}
-   .stock-tabla td{padding:12px;border-top:1px solid #333;font-size:14px}
-   .stock-tabla input{width:80px;padding:8px;background:#0a0a0a;border:1px solid #333;border-radius:8px;color:#fff;text-align:center}
-   .resumen-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
-   .resumen-item{background:#1a1a1a;padding:14px;border-radius:12px;border:1px solid #333}
-   .resumen-item h3{font-size:11px;color:#888;margin-bottom:6px;text-transform:uppercase}
-   .resumen-item.valor{font-size:20px;color:#ff6600;font-weight:bold}
-   .resumen-item.destacado{grid-column:span 2;background:linear-gradient(135deg,#1a1a1a 0%,#2d1a00 100%);border-color:#ff6600}
-   .resumen-item.destacado.valor{font-size:28px}
-   .historial-item{background:#1a1a1a;padding:14px;border-radius:12px;margin-bottom:10px;border-left:4px solid #ff6600}
-   .historial-item.costo{border-left-color:#00aa00}.historial-item.fecha{font-size:11px;color:#888;margin-bottom:6px}
-   .historial-item.folio{font-size:11px;color:#ff6600;font-weight:bold;margin-bottom:4px}
-   .historial-item.vendedor{font-size:11px;color:#00aaff;margin-bottom:4px}
-   .historial-item.metodo{color:#ff6600;font-weight:600}.historial-item.wsp{font-size:12px;color:#00ff00;margin-top:4px}
-   
-   .alerta{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff3333;color:#fff;padding:14px 24px;border-radius:12px;font-weight:bold;z-index:99999;box-shadow:0 8px 25px rgba(0,0,0,0.5);animation:slideDown 0.3s}
+    .aviso-cerrado{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:14px;box-shadow:0 4px 15px rgba(255,51,51,0.4)}
+    .stock-tabla{width:100%;background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:15px}
+    .stock-tabla th{background:#2d2d2d;padding:12px;text-align:left;font-size:12px;color:#ff6600;text-transform:uppercase}
+    .stock-tabla td{padding:12px;border-top:1px solid #333;font-size:14px}
+    .stock-tabla input{width:80px;padding:8px;background:#0a0a0a;border:1px solid #333;border-radius:8px;color:#fff;text-align:center}
+    .resumen-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+    .resumen-item{background:#1a1a1a;padding:14px;border-radius:12px;border:1px solid #333}
+    .resumen-item h3{font-size:11px;color:#888;margin-bottom:6px;text-transform:uppercase}
+    .resumen-item.valor{font-size:20px;color:#ff6600;font-weight:bold}
+    .resumen-item.destacado{grid-column:span 2;background:linear-gradient(135deg,#1a1a1a 0%,#2d1a00 100%);border-color:#ff6600}
+    .resumen-item.destacado.valor{font-size:28px}
+    .historial-item{background:#1a1a1a;padding:14px;border-radius:12px;margin-bottom:10px;border-left:4px solid #ff6600}
+    .historial-item.costo{border-left-color:#00aa00}.historial-item.fecha{font-size:11px;color:#888;margin-bottom:6px}
+    .historial-item.folio{font-size:11px;color:#ff6600;font-weight:bold;margin-bottom:4px}
+    .historial-item.vendedor{font-size:11px;color:#00aaff;margin-bottom:4px}
+    .historial-item.metodo{color:#ff6600;font-weight:600}.historial-item.wsp{font-size:12px;color:#00ff00;margin-top:4px}
+    .alerta{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff3333;color:#fff;padding:14px 24px;border-radius:12px;font-weight:bold;z-index:99999;box-shadow:0 8px 25px rgba(0,0,0,0.5);animation:slideDown 0.3s}
     @keyframes slideDown{from{transform:translateX(-50%) translateY(-100px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
-   
-   .oculto{display:none!important}.login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center}
-   .login-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:40px;border-radius:20px;border:2px solid #ff6600;max-width:400px;width:90%;text-align:center}
-   .login-box h1{color:#ff6600;margin-bottom:20px;font-size:28px}
-   .mensaje-venta{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:30px 50px;border-radius:20px;font-size:24px;font-weight:bold;z-index:1001;box-shadow:0 10px 40px rgba(0,170,0,0.5);animation:popIn 0.3s}
+    .oculto{display:none!important}.login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center}
+    .login-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:40px;border-radius:20px;border:2px solid #ff6600;max-width:400px;width:90%;text-align:center}
+    .login-box h1{color:#ff6600;margin-bottom:20px;font-size:28px}
+    .mensaje-venta{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:30px 50px;border-radius:20px;font-size:24px;font-weight:bold;z-index:1001;box-shadow:0 10px 40px rgba(0,170,0,0.5);animation:popIn 0.3s}
     @keyframes popIn{from{transform:translate(-50%,-50%) scale(0.5);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
-
-   @keyframes popIcono {
-     0% { transform: scale(1); }
-     30% { transform: scale(0.7); }
-     60% { transform: scale(1.3); }
-     100% { transform: scale(1); }
-   }
-   .animar-icono {
-     animation: popIcono 0.3s ease-in-out;
-   }
-
-   .confeti {
-     position: fixed;
-     pointer-events: none;
-     z-index: 9999;
-     font-size: 26px;
-     bottom: 80px; 
-     left: 50%;
-     transform: translateX(-50%);
-     animation: volarConfeti 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-   }
-   @keyframes volarConfeti {
-     0% { transform: translate(-50%, 0) scale(1) rotate(0deg); opacity: 1; }
-     100% { transform: translate(calc(-50% + var(--x)), var(--y)) scale(0.4) rotate(var(--r)); opacity: 0; }
-   }
+    @keyframes popIcono{0%{transform:scale(1);}30%{transform:scale(0.7);}60%{transform:scale(1.3);}100%{transform:scale(1);}}
+    .animar-icono{animation:popIcono 0.3s ease-in-out;}
+    .confeti{position:fixed;pointer-events:none;z-index:9999;font-size:26px;bottom:80px;left:50%;transform:translateX(-50%);animation:volarConfeti 1.2s cubic-bezier(0.25,1,0.5,1) forwards;}
+    @keyframes volarConfeti{0%{transform:translate(-50%,0) scale(1) rotate(0deg);opacity:1;}100%{transform:translate(calc(-50% + var(--x)),var(--y)) scale(0.4) rotate(var(--r));opacity:0;}}
   </style>
 </head>
 <body>
@@ -202,13 +101,11 @@
   </div>
 
   <div class="container">
-    
     <div class="top-fijo">
       <div id="headerApp" class="header">
         <img src="logo.png" alt="Logo Los Weones" class="logo-header" onerror="this.style.display='none'">
         <h1>LOS WEONES DE LAS EMPANADAS</h1>
       </div>
-
       <div class="user-bar">
         <div class="user-info-left">
           <div class="status-dot"></div>
@@ -216,7 +113,6 @@
         </div>
         <button onclick="Auth.logout()" class="btn-logout">Salir</button>
       </div>
-
       <div class="tabs">
         <button class="tab activo" onclick="App.cambiarTab('vender')">VENDER</button>
         <button class="tab" onclick="App.cambiarTab('stock')">STOCK</button>
@@ -224,21 +120,17 @@
         <button class="tab" onclick="App.cambiarTab('respaldo')">RESPALDO</button>
       </div>
     </div>
-
     <div id="alerta" class="alerta oculto"></div>
     <div id="mensajeVenta" class="mensaje-venta oculto">✅ VENTA GUARDADA</div>
-
     <div id="vender" class="pantalla activa">
       <div id="bannerLiquidacion" class="banner-liquidacion oculto">🔥 MODO LIQUIDACIÓN ACTIVO - EMPANADAS A $2.000 🔥</div>
       <div id="aviso-dia-cerrado" class="aviso-cerrado oculto">⚠️ DÍA CERRADO - Carga stock inicial para activar ventas ⚠️</div>
       <div id="productos-grid" class="productos-grid"></div>
-      
       <div id="totalBox" class="total-box">
         <h2>TOTAL A PAGAR</h2>
         <div class="monto" id="total">$0</div>
         <div class="vuelto oculto" id="vuelto"></div>
       </div>
-      
       <div class="input-grupo">
         <label>MÉTODO DE PAGO</label>
         <select id="metodo-pago">
@@ -258,7 +150,6 @@
       <button class="btn btn-anular" style="margin-top:10px" onclick="Ventas.anular()">ANULAR PEDIDO</button>
       <button class="btn btn-costo" style="margin-top:10px" onclick="Ventas.liquidar()">COSTO $2.000</button>
     </div>
-
     <div id="stock" class="pantalla">
       <div class="input-grupo">
         <label>💰 CAJA INICIAL DEL DÍA</label>
@@ -274,7 +165,6 @@
       <button class="btn" style="margin-top:10px" onclick="StockGestion.verDesglose()">VER DESGLOSE STOCK</button>
       <div id="desglose-stock" class="oculto" style="margin-top:15px"></div>
     </div>
-
     <div id="resumen" class="pantalla">
       <div class="resumen-grid">
         <div class="resumen-item destacado">
@@ -299,7 +189,6 @@
       <h2 style="color:#ff6600;margin:20px 0 10px;font-size:16px">HISTORIAL DE VENTAS</h2>
       <div id="historial-lista"></div>
     </div>
-
     <div id="respaldo" class="pantalla">
       <div class="total-box">
         <h2>💾 RESPALDO DE DATOS</h2>
@@ -313,16 +202,13 @@
         <button class="btn" onclick="Respaldo.cargar()">CARGAR RESPALDO</button>
       </div>
     </div>
-  </div>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script>
+    <script>
   const CLAVE_HASH = 'MTk3MQ==';
-  const VERSION_APP = '2.0-refactor';
+  const VERSION_APP = '2.1-scrollfix';
   const FOLIO_PREFIX = 'LWE-';
 
-  let alertaTimeout = null; 
+  let alertaTimeout = null;
 
   const Sonidos = {
     ctx: null,
@@ -382,18 +268,18 @@
   };
 
   const PRODUCTOS = [
-    {id:1,nombre:"Empanada de pino",precio:2500,tipo:"empanada",icono:"🥟"},
-    {id:2,nombre:"Empanada pollo queso",precio:2500,tipo:"empanada",icono:"🥟"},
-    {id:11,nombre:"Empanada napolitana",precio:2500,tipo:"empanada",icono:"🥟"},
-    {id:3,nombre:"Coca cola lata",precio:1000,tipo:"lata",icono:"🥫"},
-    {id:12,nombre:"Coca cola zero lata",precio:1000,tipo:"lata",icono:"🥫"},
-    {id:4,nombre:"Kem piña lata",precio:1000,tipo:"lata",icono:"🥫"},
-    {id:5,nombre:"Bilz lata",precio:1000,tipo:"lata",icono:"🥫"},
-    {id:6,nombre:"Cachantun sin gas 500",precio:1000,tipo:"cachantun",icono:"🍶"},
-    {id:7,nombre:"Score morada lata",precio:1000,tipo:"lata",icono:"🥫"},
-    {id:8,nombre:"Coca cola 591",precio:1500,tipo:"591",icono:"🍶"},
-    {id:9,nombre:"Sprite lata",precio:1000,tipo:"lata",icono:"🥫"},
-    {id:10,nombre:"Crush lata",precio:1000,tipo:"lata",icono:"🥫"}
+    {id:1,nombre:'Empanada de pino',precio:2500,tipo:'empanada',icono:'🥟'},
+    {id:2,nombre:'Empanada pollo queso',precio:2500,tipo:'empanada',icono:'🥟'},
+    {id:11,nombre:'Empanada napolitana',precio:2500,tipo:'empanada',icono:'🥟'},
+    {id:3,nombre:'Coca cola lata',precio:1000,tipo:'lata',icono:'🥫'},
+    {id:12,nombre:'Coca cola zero lata',precio:1000,tipo:'lata',icono:'🥫'},
+    {id:4,nombre:'Kem piña lata',precio:1000,tipo:'lata',icono:'🥫'},
+    {id:5,nombre:'Bilz lata',precio:1000,tipo:'lata',icono:'🥫'},
+    {id:6,nombre:'Cachantun sin gas 500',precio:1000,tipo:'cachantun',icono:'🍶'},
+    {id:7,nombre:'Score morada lata',precio:1000,tipo:'lata',icono:'🥫'},
+    {id:8,nombre:'Coca cola 591',precio:1500,tipo:'591',icono:'🍶'},
+    {id:9,nombre:'Sprite lata',precio:1000,tipo:'lata',icono:'🥫'},
+    {id:10,nombre:'Crush lata',precio:1000,tipo:'lata',icono:'🥫'}
   ];
 
   const buscarProducto = (id) => PRODUCTOS.find(p => p.id == id);
@@ -411,7 +297,7 @@
 
   const Auth = {
     login(user, pass) {
-      if (btoa(pass) !== CLAVE_HASH) {
+      if (btoa(pass)!== CLAVE_HASH) {
         UI.mostrarAlerta('Clave incorrecta');
         return false;
       }
@@ -446,9 +332,9 @@
       const a = document.getElementById('alerta');
       if (alertaTimeout) clearTimeout(alertaTimeout);
       a.textContent = msg;
-      a.style.background = ok ? '#00aa00' : '#ff3333';
+      a.style.background = ok? '#00aa00' : '#ff3333';
       a.classList.remove('oculto');
-      Sonidos.play(ok ? 'exito' : 'alerta');
+      Sonidos.play(ok? 'exito' : 'alerta');
       alertaTimeout = setTimeout(() => {
         a.classList.add('oculto');
       }, 2000);
@@ -468,14 +354,21 @@
         const el = document.createElement('div');
         el.className = 'confeti';
         el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        const distanciaX = -150 + Math.random() * 300;     
-        const distanciaY = -200 - Math.random() * 250;     
+        const distanciaX = -150 + Math.random() * 300;
+        const distanciaY = -200 - Math.random() * 250;
         el.style.setProperty('--x', distanciaX + 'px');
         el.style.setProperty('--y', distanciaY + 'px');
         el.style.setProperty('--r', (Math.random() * 720) + 'deg');
         document.body.appendChild(el);
         setTimeout(() => el.remove(), 1200);
       }
+    },
+    scrollToTop() {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          window.scrollTo({top: 0, behavior: 'smooth'});
+        }, 100);
+      });
     }
   };
 
@@ -498,7 +391,7 @@
     },
     calcularVuelto(total) {
       const metodo = document.getElementById('metodo-pago').value;
-      if (metodo !== 'efectivo') return { pago: total, vuelto: 0 };
+      if (metodo!== 'efectivo') return { pago: total, vuelto: 0 };
       const pago = parseInt(document.getElementById('pago').value) || 0;
       const vuelto = pago >= total? pago - total : 0;
       return { pago, vuelto };
@@ -531,11 +424,11 @@
         return;
       }
       const wsp = document.getElementById('wsp').value.trim();
-      if (wsp && !wsp.startsWith('+56')) {
+      if (wsp &&!wsp.startsWith('+56')) {
         UI.mostrarAlerta('Usa formato +56912345678');
         return;
       }
-      
+
       UI.lanzarConfeti();
 
       for (let id in estado.carrito) {
@@ -560,21 +453,22 @@
       Productos.render();
       Stock.actualizarTotal();
       Resumen.actualizar();
+      UI.scrollToTop();
     },
     liquidar() {
       if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado'); return; }
       if (Object.keys(estado.carrito).length === 0) { UI.mostrarAlerta('Agrega empanadas al carrito'); return; }
       let soloEmpanadas = true;
       for (let id in estado.carrito) {
-        if (buscarProducto(id).tipo !== 'empanada') { soloEmpanadas = false; break; }
+        if (buscarProducto(id).tipo!== 'empanada') { soloEmpanadas = false; break; }
       }
       if (!soloEmpanadas) { UI.mostrarAlerta('COSTO solo para empanadas'); return; }
       estado.liquidacionIds = Object.keys(estado.carrito).map(id => parseInt(id));
       document.getElementById('bannerLiquidacion').classList.remove('oculto');
-      
+
       document.getElementById('headerApp').classList.add('modo-costo');
       document.getElementById('totalBox').classList.add('modo-costo-total');
-      
+
       Stock.actualizarTotal();
       Productos.render();
       UI.mostrarAlerta('Precio liquidación: $2.000', true);
@@ -591,19 +485,16 @@
       estado.carrito = {};
       estado.liquidacionIds = [];
       document.getElementById('bannerLiquidacion').classList.add('oculto');
-      
+
       document.getElementById('headerApp').classList.remove('modo-costo');
       document.getElementById('totalBox').classList.remove('modo-costo-total');
-      
+
       document.getElementById('pago').value = '';
       document.getElementById('wsp').value = '';
       document.getElementById('metodo-pago').value = 'efectivo';
       Stock.cambiarMetodoPago();
 
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      UI.scrollToTop();
     },
     eliminar(index) {
       if (!confirm('¿Eliminar venta? Se devolverá el stock.')) return;
@@ -638,7 +529,6 @@
       window.open('https://wa.me/' + venta.whatsapp.replace(/[^0-9]/g, '') + '?text=' + msg, '_blank');
     }
   };
-
   const Stock = {
     cambiarMetodoPago() {
       const metodo = document.getElementById('metodo-pago').value;
@@ -679,13 +569,13 @@
     agregar(id) {
       if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado. Carga stock inicial'); return; }
       const stockDisp = (estado.stockActual[id] || 0) - (estado.carrito[id] || 0);
-      
-      if (stockDisp <= 0) { 
+
+      if (stockDisp <= 0) {
         const p = buscarProducto(id);
-        UI.mostrarAlerta('Sin stock para ' + p.nombre); 
-        return; 
+        UI.mostrarAlerta('Sin stock para ' + p.nombre);
+        return;
       }
-      
+
       Sonidos.play('click');
       estado.carrito[id] = (estado.carrito[id] || 0) + 1;
       this.renderItem(id);
@@ -693,7 +583,7 @@
     },
     quitar(id) {
       if (!estado.carrito[id] || estado.carrito[id] <= 0) return;
-      
+
       Sonidos.play('click');
       estado.carrito[id]--;
       if (estado.carrito[id] === 0) delete estado.carrito[id];
@@ -705,20 +595,18 @@
       const stockDisp = estado.diaActivo? (estado.stockActual[id] || 0) : 0;
       const enCarrito = estado.carrito[id] || 0;
       const stockDisponible = stockDisp - enCarrito;
-      const sinStock = stockDisponible === 0 || !estado.diaActivo;
-      
-      // LÍNEA 707 REFORMADA SIN COMILLAS INVERTIDAS
+      const sinStock = stockDisponible === 0 ||!estado.diaActivo;
+
       const div = document.querySelector('[data-producto-id="' + id + '"]');
       if (!div) return;
-      
+
       div.className = 'producto' + (sinStock? ' sin-stock' : '') + (enCarrito > 0? ' activo' : '');
-      const precioUnitario = estado.liquidacionIds.includes(p.id) && p.tipo === 'empanada' ? 2000 : p.precio;
-      
+      const precioUnitario = estado.liquidacionIds.includes(p.id) && p.tipo === 'empanada'? 2000 : p.precio;
+
       if (enCarrito > 0 && estado.diaActivo) {
         div.onclick = null;
         div.style.cursor = 'default';
-        
-        // DISEÑO MAQUETADO CON TRADUCCIÓN COMPLETA A COMILLAS SIMPLES
+
         div.innerHTML = '<div class="producto-icono">' + p.icono + '</div>' +
                         '<h3>' + p.nombre + '</h3>' +
                         '<div class="precio">' + UI.formatearPrecio(precioUnitario) + '</div>' +
@@ -729,7 +617,7 @@
                           '<button onclick="Sonidos.play(\'click\');Productos.agregar(' + p.id + ');event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">+</button>' +
                         '</div>';
       } else {
-        div.style.cursor = sinStock ? 'not-allowed' : 'pointer';
+        div.style.cursor = sinStock? 'not-allowed' : 'pointer';
         div.innerHTML = '<div class="producto-icono">' + p.icono + '</div>' +
                         '<h3>' + p.nombre + '</h3>' +
                         '<div class="precio">' + UI.formatearPrecio(precioUnitario) + '</div>' +
@@ -761,12 +649,17 @@
 
   const Resumen = {
     calcular() {
-      const cajaInicial = parseInt(document.getElementById('cajaInicial').value) || 0;
+      const cajaInicial = parseInt(document.getElementById('cajaInicial').value) || DB.getCajaInicial() || 0;
       DB.setCajaInicial(cajaInicial);
       let totalDia = 0, totalEfectivo = 0, totalTransfer = 0;
       const desglose = {
-        empanadas: { cant: 0, total: 0 }, bebidas591: { cant: 0, total: 0 },
-        latas: { cant: 0, total: 0 }, cachantun: { cant: 0, total: 0 }, costo: { cant: 0, total: 0 }
+        pino: { cant: 0, total: 0 },
+        polloQueso: { cant: 0, total: 0 },
+        napolitana: { cant: 0, total: 0 },
+        bebidas591: { cant: 0, total: 0 },
+        latas: { cant: 0, total: 0 },
+        cachantun: { cant: 0, total: 0 },
+        costo: { cant: 0, total: 0 }
       };
       estado.ventas.forEach(v => {
         totalDia += v.total;
@@ -779,8 +672,12 @@
           const subtotal = enLiquidacion && p.tipo === 'empanada'? 2000 * cant : p.precio * cant;
           if (enLiquidacion && p.tipo === 'empanada') {
             desglose.costo.cant += cant; desglose.costo.total += subtotal;
-          } else if (p.tipo === 'empanada') {
-            desglose.empanadas.cant += cant; desglose.empanadas.total += subtotal;
+          } else if (p.id === 1) {
+            desglose.pino.cant += cant; desglose.pino.total += subtotal;
+          } else if (p.id === 2) {
+            desglose.polloQueso.cant += cant; desglose.polloQueso.total += subtotal;
+          } else if (p.id === 11) {
+            desglose.napolitana.cant += cant; desglose.napolitana.total += subtotal;
           } else if (p.tipo === '591') {
             desglose.bebidas591.cant += cant; desglose.bebidas591.total += subtotal;
           } else if (p.tipo === 'lata') {
@@ -803,7 +700,17 @@
       document.getElementById('mostrar-caja-inicial').textContent = UI.formatearPrecio(datos.cajaInicial);
       document.getElementById('total-caja').textContent = UI.formatearPrecio(datos.totalCaja);
       document.getElementById('num-ventas').textContent = datos.numVentas;
-      document.getElementById('total-empanadas').textContent = datos.desglose.empanadas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.empanadas.total);
+
+      const totalEmp = datos.desglose.pino.cant + datos.desglose.polloQueso.cant + datos.desglose.napolitana.cant;
+      const totalEmp$ = datos.desglose.pino.total + datos.desglose.polloQueso.total + datos.desglose.napolitana.total;
+      document.getElementById('total-empanadas').innerHTML =
+        totalEmp + ' und - ' + UI.formatearPrecio(totalEmp$) + '<br>' +
+        '<span style="font-size:11px;color:#aaa">' +
+        'Pino: ' + datos.desglose.pino.cant + ' | ' +
+        'Pollo-Queso: ' + datos.desglose.polloQueso.cant + ' | ' +
+        'Napolitana: ' + datos.desglose.napolitana.cant +
+        '</span>';
+
       document.getElementById('total-591').textContent = datos.desglose.bebidas591.cant + ' und - ' + UI.formatearPrecio(datos.desglose.bebidas591.total);
       document.getElementById('total-latas').textContent = datos.desglose.latas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.latas.total);
       document.getElementById('total-cachantun').textContent = datos.desglose.cachantun.cant + ' und - ' + UI.formatearPrecio(datos.desglose.cachantun.total);
@@ -827,7 +734,7 @@
         }
         detalle = detalle.slice(0, -2);
         const wspHtml = v.whatsapp? '<div class="wsp">📱 WhatsApp: ' + v.whatsapp + '</div>' : '';
-        
+
         div.innerHTML = '<div class="folio">Boleta: ' + v.folio + '</div>' +
           '<div class="vendedor">Vendedor: ' + v.vendedor + '</div>' +
           '<div class="fecha">' + fecha.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + ' - <span class="metodo">' + v.metodo.toUpperCase() + (v.tipo === 'costo'? ' - COSTO' : '') + '</span></div>' +
@@ -851,7 +758,12 @@
       msg += '├ 💳 Transferencia: ' + UI.formatearPrecio(datos.totalTransfer) + '%0A';
       msg += '└ 📊 N° de ventas: ' + datos.numVentas + '%0A%0A';
       msg += '📦 DESGLOSE POR PRODUCTO:%0A';
-      msg += '├ 🥟 Empanadas: ' + datos.desglose.empanadas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.empanadas.total) + '%0A';
+      const totalEmp = datos.desglose.pino.cant + datos.desglose.polloQueso.cant + datos.desglose.napolitana.cant;
+      const totalEmp$ = datos.desglose.pino.total + datos.desglose.polloQueso.total + datos.desglose.napolitana.total;
+      msg += '├ 🥟 Empanadas: ' + totalEmp + ' und - ' + UI.formatearPrecio(totalEmp$) + '%0A';
+      msg += '│ ├ Pino: ' + datos.desglose.pino.cant + '%0A';
+      msg += '│ ├ Pollo-Queso: ' + datos.desglose.polloQueso.cant + '%0A';
+      msg += '│ └ Napolitana: ' + datos.desglose.napolitana.cant + '%0A';
       msg += '├ 🍶 Bebidas 591: ' + datos.desglose.bebidas591.cant + ' und - ' + UI.formatearPrecio(datos.desglose.bebidas591.total) + '%0A';
       msg += '├ 🥫 Latas: ' + datos.desglose.latas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.latas.total) + '%0A';
       msg += '└ 💧 Cachantun: ' + datos.desglose.cachantun.cant + ' und - ' + UI.formatearPrecio(datos.desglose.cachantun.total) + '%0A';
@@ -873,7 +785,7 @@
       });
     },
     guardar() {
-      if (estado.ventas.length > 0 && !confirm('Ya hay ventas registradas hoy. Reconfigurar el stock inicial podría alterar el balance del día. ¿Continuar?')) return;
+      if (estado.ventas.length > 0 &&!confirm('Ya hay ventas registradas hoy. Reconfigurar el stock inicial podría alterar el balance del día. ¿Continuar?')) return;
       PRODUCTOS.forEach(p => {
         estado.stockInicial[p.id] = parseInt(document.getElementById('stock-' + p.id).value) || 0;
       });
@@ -936,7 +848,7 @@
     downloadObjectAsJson(exportObj, exportName){
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
       const downloadAnchorNode = document.createElement('a');
-      downloadAnchorNode.setAttribute("href",     dataStr);
+      downloadAnchorNode.setAttribute("href", dataStr);
       downloadAnchorNode.setAttribute("download", exportName + ".json");
       document.body.appendChild(downloadAnchorNode);
       downloadAnchorNode.click();
@@ -955,7 +867,7 @@
       reader.onload = (e) => {
         try {
           const datos = JSON.parse(e.target.result);
-          if (!datos.ventas || !datos.stockActual) throw new Error('Archivo corrupto');
+          if (!datos.ventas ||!datos.stockActual) throw new Error('Archivo corrupto');
           estado.stockInicial = datos.stockInicial || {};
           estado.stockActual = datos.stockActual || {};
           estado.ventas = datos.ventas || [];
@@ -994,6 +906,7 @@
     },
     init() {
       if (!Auth.verificar()) return;
+      document.getElementById('cajaInicial').value = DB.getCajaInicial();
       Productos.render();
       Stock.verificarDiaActivo();
       Resumen.actualizar();
@@ -1005,7 +918,7 @@
       });
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && document.getElementById('loginScreen').classList.contains('oculto')) {
-          if (document.activeElement.tagName !== 'INPUT') Ventas.ejecutar();
+          if (document.activeElement.tagName!== 'INPUT') Ventas.ejecutar();
         }
         if (e.key === 'Escape') Ventas.anular();
       });
