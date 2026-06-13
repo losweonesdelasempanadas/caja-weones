@@ -3,43 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Caja Emporio Don Nino - PREMIUM</title>
+  <title>Los Weones de las Empanadas - CAJA V2.0 PREMIUM</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh;overflow-x:hidden}
     .container{max-width:500px;margin:0 auto;position:relative;padding-top:240px;} 
-    .top-fijo { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; background: #0a0a0a; z-index: 1000; padding: 10px; }
-    .header{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:12px;border-radius:16px;margin-bottom:8px;border:1px solid #ff6600;text-align:center}
-    .header h1{font-size:20px;color:#ff6600;font-weight:bold}
+    .top-fijo { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; background: #0a0a0a; z-index: 1000; padding: 10px 10px 5px 10px; }
+    .header{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:12px 20px;border-radius:16px;margin-bottom:8px;border:1px solid #ff6600;text-align:center;position:relative;transition:all 0.4s ease;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .header h1{font-size:20px;color:#ff6600;text-shadow:0 0 20px rgba(255,102,0,0.5);transition:all 0.4s ease;font-weight:bold;letter-spacing:0.5px}
+    .logo-header { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #ff6600; margin-bottom: 5px; box-shadow: 0 0 15px rgba(255,102,0,0.4); }
+    .header.modo-costo { border-color: #00ff00; box-shadow: 0 0 25px rgba(0,255,0,0.3); }
+    .header.modo-costo h1 { color: #00ff00; text-shadow: 0 0 20px rgba(0,255,0,0.5); }
+    .header.modo-costo .logo-header { border-color: #00ff00; box-shadow: 0 0 15px rgba(0,255,0,0.4); }
+    .user-bar { display: flex; align-items: center; justify-content: space-between; background: #141414; padding: 6px 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #222; font-size: 12px; }
+    .status-dot { width: 8px; height: 8px; background-color: #00ff00; border-radius: 50%; box-shadow: 0 0 10px #00ff00; animation: parpadeo 1.8s infinite ease-in-out; }
+    @keyframes parpadeo { 0%, 100% { opacity: 0.4; box-shadow: 0 0 4px #00ff00; } 50% { opacity: 1; box-shadow: 0 0 12px #00ff00; } }
+    .btn-logout { background: none; border: none; color: #ff3333; font-size: 12px; font-weight: bold; cursor: pointer; }
     .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:5px}
-    .tab{padding:12px 4px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:12px;font-weight:bold;cursor:pointer}
-    .tab.activo{background:#ff6600;color:#000;border-color:#ff6600}
+    .tab{padding:12px 4px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:12px;font-weight:bold;cursor:pointer;transition:all 0.3s;text-align:center}
+    .tab.activo{background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);color:#000;border-color:#ff6600;box-shadow:0 4px 15px rgba(255,102,0,0.4)}
     .pantalla{display:none}.pantalla.activa{display:block}
-    .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-    .producto{background:#1a1a1a;border:2px solid #333;border-radius:14px;padding:16px;text-align:center;cursor:pointer}
-    .producto.activo{border-color:#ff6600}
-    .btn{width:100%;padding:16px;background:#ff6600;border:none;border-radius:14px;font-weight:bold;cursor:pointer;margin-top:10px;text-transform:uppercase}
-    .btn-anular{background:#ff3333}
-    .btn-costo{background:#00aa00}
-    .login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center}
-    .login-box{background:#1a1a1a;padding:40px;border-radius:20px;border:2px solid #ff6600;width:90%;max-width:400px;text-align:center}
-    .alerta{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff3333;color:#fff;padding:14px;border-radius:12px;z-index:99999}
+    .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+    .producto{background:linear-gradient(135deg, rgba(35,35,35,0.7) 0%, rgba(20,20,20,0.8) 100%);backdrop-filter: blur(5px);border: 2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
+    .producto.activo{border-color:#ff6600;background:linear-gradient(135deg,#2d1a00 0%,#3d2400 100%);}
+    .producto.sin-stock{opacity:.4;cursor:not-allowed}.producto-icono{font-size:40px;margin-bottom:8px;text-align:center;display:inline-block}
+    .producto h3{font-size:14px;color:#ff6600;margin-bottom:6px;font-weight:600}
+    .producto.precio{font-size:18px;color:#fff;font-weight:bold;margin-bottom:4px}
+    .total-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:20px;border-radius:16px;margin-bottom:15px;border:2px solid #ff6600;text-align:center}
+    .total-box.monto{font-size:36px;color:#ff6600;font-weight:bold}
+    .btn{width:100%;padding:16px;background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);border:none;border-radius:14px;color:#000;font-size:16px;font-weight:bold;cursor:pointer;text-transform:uppercase}
+    .alerta{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff3333;color:#fff;padding:14px 24px;border-radius:12px;z-index:9999}
     .oculto{display:none!important}
   </style>
 </head>
 <body>
-
-<div id="loginScreen" class="login-screen">
-  <div class="login-box">
-    <h1>🥟 EMPORIO DON NINO</h1>
-    <input type="password" id="loginPass" placeholder="Clave" style="padding:15px;width:100%;margin:20px 0;background:#000;color:#fff;border:1px solid #333;border-radius:10px">
-    <button class="btn" onclick="Auth.login()">ENTRAR</button>
+  <div id="loginScreen" class="login-screen">
+    <div class="login-box">
+      <h1>🥟 LOS WEONES 🥟</h1>
+      <div class="input-grupo">
+        <label>USUARIO</label>
+        <select id="loginUser">
+          <option value="">Selecciona tu nombre</option>
+          <option value="Marcelo">Marcelo</option>
+          <option value="Nataly">Nataly</option>
+          <option value="Invitado">Invitado</option>
+        </select>
+      </div>
+      <div class="input-grupo">
+        <label>CLAVE</label>
+        <input type="password" id="loginPass" placeholder="Ingresa la clave" inputmode="numeric">
+      </div>
+      <button class="btn" onclick="Auth.login(document.getElementById('loginUser').value, document.getElementById('loginPass').value)">ENTRAR</button>
+    </div>
   </div>
-</div>
 
-<div class="container" id="appContent" style="display:none;">
+  <div class="container">
     <div class="top-fijo">
-      <div class="header"><h1>EMPORIO DON NINO</h1></div>
+      <div id="headerApp" class="header">
+        <img src="logo.png" alt="Logo" class="logo-header" onerror="this.style.display='none'">
+        <h1>LOS WEONES DE LAS EMPANADAS</h1>
+      </div>
+      <div class="user-bar">
+        <div class="user-info-left"><div class="status-dot"></div><span id="userDisplay">Caja Cerrada</span></div>
+        <button onclick="Auth.logout()" class="btn-logout">Salir</button>
+      </div>
       <div class="tabs">
         <button class="tab activo" onclick="App.cambiarTab('vender')">VENDER</button>
         <button class="tab" onclick="App.cambiarTab('stock')">STOCK</button>
@@ -47,73 +74,101 @@
         <button class="tab" onclick="App.cambiarTab('respaldo')">RESPALDO</button>
       </div>
     </div>
+
     <div id="alerta" class="alerta oculto"></div>
-    <div id="vender" class="pantalla activa"><div id="productos-grid" class="productos-grid"></div><div id="total" style="font-size:24px;color:#ff6600;margin:20px 0">Total: $0</div><button class="btn" onclick="Ventas.ejecutar()">VENDER</button><button class="btn btn-anular" onclick="Ventas.anular()">ANULAR</button><button class="btn btn-costo" onclick="Ventas.liquidar()">COSTO $2.000</button></div>
-    <div id="stock" class="pantalla"><button class="btn btn-anular" onclick="StockGestion.cerrarDia()">CERRAR DÍA Y REINICIAR</button></div>
-    <div id="resumen" class="pantalla"><h3>HISTORIAL</h3><div id="historial-lista"></div></div>
-    <div id="respaldo" class="pantalla"><button class="btn" onclick="Respaldo.descargar()">DESCARGAR RESPALDO</button></div>
-</div>
+    <div id="mensajeVenta" class="mensaje-venta oculto">✅ VENTA GUARDADA</div>
 
-<script>
-  const CLAVE_HASH = 'MTk3MQ==';
-  const PRODUCTOS = [{id:1,nombre:"Empanada",precio:2500,tipo:"empanada",icono:"🥟"},{id:3,nombre:"Coca lata",precio:1000,tipo:"lata",icono:"🥫"}];
-  let estado = { carrito: {}, ventas: [], liquidacionIds: [] };
+    <div id="vender" class="pantalla activa">
+      <div id="bannerLiquidacion" class="banner-liquidacion oculto">🔥 MODO LIQUIDACIÓN 🔥</div>
+      <div id="aviso-dia-cerrado" class="aviso-cerrado oculto">⚠️ DÍA CERRADO ⚠️</div>
+      <div id="productos-grid" class="productos-grid"></div>
+      <div id="totalBox" class="total-box">
+        <h2>TOTAL A PAGAR</h2>
+        <div class="monto" id="total">$0</div>
+        <div class="vuelto oculto" id="vuelto"></div>
+      </div>
+      <div class="input-grupo">
+        <label>MÉTODO DE PAGO</label>
+        <select id="metodo-pago">
+          <option value="efectivo">💵 Efectivo</option>
+          <option value="transferencia">💳 Transferencia</option>
+        </select>
+      </div>
+      <button id="btnVender" class="btn" onclick="Ventas.ejecutar()">VENDER</button>
+      <button class="btn btn-anular" style="margin-top:10px" onclick="Ventas.anular()">ANULAR</button>
+    </div>
 
-  const Auth = {
-    login() {
-      const pass = document.getElementById('loginPass').value;
-      if (btoa(pass) !== CLAVE_HASH) { alert('Clave incorrecta'); return; }
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('appContent').style.display = 'block';
-      App.init();
-    }
-  };
+    <div id="stock" class="pantalla">
+      <div class="input-grupo"><label>💰 CAJA INICIAL</label><input type="number" id="cajaInicial" placeholder="0"></div>
+      <table class="stock-tabla"><tbody id="tabla-stock"></tbody></table>
+      <button class="btn" onclick="StockGestion.guardar()">GUARDAR STOCK</button>
+    </div>
 
-  const App = {
-    init() {
-      const grid = document.getElementById('productos-grid');
-      grid.innerHTML = PRODUCTOS.map(p => `<div class="producto" onclick="Productos.agregar(${p.id})"><div>${p.icono}</div><h3>${p.nombre}</h3><p>$${p.precio}</p></div>`).join('');
-    },
-    cambiarTab(tab) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
-      document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-      document.querySelector(`[onclick="App.cambiarTab('${tab}')"]`).classList.add('activo');
-      document.getElementById(tab).classList.add('activa');
-    }
-  };
+    <div id="resumen" class="pantalla">
+      <div id="historial-lista"></div>
+    </div>
+    
+    <div id="respaldo" class="pantalla">
+       <button class="btn" onclick="Respaldo.descargar()">DESCARGAR</button>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // --- CONEXIÓN SUPABASE ---
+    const supabase = supabase.createClient(
+      'https://ibiqpvfrwzlunvovixyf.supabase.co', 
+      'sb_publishable_WaCE6FvGEOIkFyGf0SCqqw_hNqt5uNz'
+    );
 
-  const Productos = {
-    agregar(id) {
-      estado.carrito[id] = (estado.carrito[id] || 0) + 1;
-      let total = 0;
-      for(let id in estado.carrito) {
-        const p = PRODUCTOS.find(pr => pr.id == id);
-        const precio = estado.liquidacionIds.includes(id) && p.tipo == 'empanada' ? 2000 : p.precio;
-        total += precio * estado.carrito[id];
+    // --- LÓGICA NUBE (Cloud) ---
+    const Cloud = {
+      async guardarVenta(venta) {
+        const { error } = await supabase.from('ventas').insert([venta]);
+        if (error) console.error("Error al sincronizar venta:", error);
+      },
+      
+      async actualizarStock(id, cantidad) {
+        await supabase.from('productos').update({ stock: cantidad }).eq('id', id);
+      },
+
+      initRealtime() {
+        supabase.channel('ventas-channel')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'ventas' }, payload => {
+            console.log("Sincronización recibida desde otro equipo");
+            estado.ventas.push(payload.new);
+            if(typeof Resumen !== 'undefined') Resumen.actualizar();
+            if(typeof Productos !== 'undefined') Productos.render();
+          })
+          .subscribe();
       }
-      document.getElementById('total').innerText = "Total: $" + total;
-    }
+    };
+    
+    // Iniciar escucha apenas cargue el script
+    Cloud.initRealtime();
+  </script>
+  // --- ADAPTACIÓN DE VENTAS Y APP ---
+  const VentasOriginal = Ventas.ejecutar; // Guardamos referencia
+  Ventas.ejecutar = async function() {
+      // 1. Ejecutar tu lógica original
+      await VentasOriginal.apply(this, arguments);
+      
+      // 2. Registrar en la Nube
+      const ultimaVenta = estado.ventas[estado.ventas.length - 1];
+      if (ultimaVenta) {
+          await Cloud.guardarVenta(ultimaVenta);
+          // Actualizar stock de productos en la nube según carrito
+          for (let id in ultimaVenta.carrito) {
+              await Cloud.actualizarStock(id, estado.stockActual[id]);
+          }
+      }
   };
 
-  const Ventas = {
-    ejecutar() { alert('Venta guardada'); estado.carrito = {}; document.getElementById('total').innerText = "Total: $0"; },
-    anular() { estado.carrito = {}; document.getElementById('total').innerText = "Total: $0"; },
-    liquidar() { alert('Modo liquidación a $2.000'); estado.liquidacionIds = PRODUCTOS.filter(p=>p.tipo=='empanada').map(p=>p.id); }
-  };
+  // --- CIERRE DEL SCRIPT ---
+  // [AQUÍ PEGA TU OBJETO "App" Y "window.onload" ORIGINAL]
+  
+  // Asegúrate de que tu Auth y App.init() estén aquí
+  // window.onload = () => { if (Auth.verificar()) App.init(); };
 
-  const StockGestion = {
-    cerrarDia() {
-      if(confirm('¿BORRAR TODO Y CERRAR SESIÓN?')) { localStorage.clear(); location.reload(); }
-    }
-  };
-
-  const Respaldo = {
-    descargar() {
-      const a = document.createElement('a');
-      a.href = "data:text/json," + encodeURIComponent(JSON.stringify(estado.ventas));
-      a.download = "respaldo.json"; a.click();
-    }
-  };
 </script>
 </body>
 </html>
