@@ -444,7 +444,7 @@ const Productos = {
       div.className = 'producto';
       if (stock === 0) div.classList.add('sin-stock');
       if (estado.carrito[p.id]) div.classList.add('activo');
-      div.innerHTML = <div class="producto-icono">${p.icono}</div><h3>${p.nombre}</h3><div class="precio">${UI.formatearPrecio(p.precio)}</div><div class="stock">Stock: ${stock}${estado.carrito[p.id]? ' | En carrito: ' + estado.carrito[p.id] : ''}</div>;
+      <div.innerHTML = <div class="producto-icono">${p.icono}</div><h3>${p.nombre}</h3><div class="precio">${UI.formatearPrecio(p.precio)}</div><div class="stock">Stock: ${stock}${estado.carrito[p.id]? ' | En carrito: ' + estado.carrito[p.id] : ''}</div>;
       if (stock > 0) div.onclick = () => Ventas.agregar(p.id);
       grid.appendChild(div);
     });
