@@ -48,7 +48,7 @@
    .btn:active{transform:scale(0.98)}.btn-anular{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;box-shadow:0 4px 15px rgba(255,51,0.3)}
    .btn-costo{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;box-shadow:0 4px 15px rgba(0,170,0,0.3)}
    .btn-eliminar{background:linear-gradient(135deg,#aa0000 0%,#cc0000 100%);color:#fff;padding:8px;font-size:12px;margin-top:8px}
-   .banner-liquidacion{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:16px;box-shadow:0 4px 15px rgba(0,170,0,0.4);animation:pulse 2s infinite}
+    .banner-liquidacion{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:16px;box-shadow:0 4px 15px rgba(0,170,0,0.4);animation:pulse 2s infinite}
     @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
    .aviso-cerrado{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:14px;box-shadow:0 4px 15px rgba(255,51,51,0.4)}
    .stock-tabla{width:100%;background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:15px}
@@ -120,6 +120,7 @@
         <button class="tab" onclick="App.cambiarTab('analisis')">ANÁLISIS</button>
         <button class="tab" onclick="App.cambiarTab('respaldo')">RESPALDO</button>
       </div>
+    </div>
     <div id="alerta" class="alerta oculto"></div>
     <div id="mensajeVenta" class="mensaje-venta oculto">✅ VENTA GUARDADA</div>
     <div id="vender" class="pantalla activa">
@@ -221,9 +222,10 @@
         <button class="btn" onclick="Respaldo.cargar()">CARGAR RESPALDO</button>
       </div>
     </div>
-      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-// CONFIGURACIÓN SUPABASE - YA CONFIGURADA CON TUS KEYS
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// CONFIGURACIÓN SUPABASE - ÚNICA DECLARACIÓN
 const SUPABASE_URL = 'https://ibiqpvfrwzlunvovixyf.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_WaCE6FvGEOIkFyGf0SCqqw_hNqt5uNz';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -417,7 +419,7 @@ const UI = {
       const distanciaX = -150 + Math.random() * 300;
       const distanciaY = -200 - Math.random() * 250;
       el.style.setProperty('--x', distanciaX + 'px');
-      el.style.setProperty('--y', distanciaY + 'px');
+     el.style.setProperty('--y', distanciaY + 'px');
       el.style.setProperty('--r', (Math.random() * 720) + 'deg');
       document.body.appendChild(el);
       setTimeout(() => el.remove(), 1200);
@@ -442,7 +444,7 @@ const Productos = {
       div.className = 'producto';
       if (stock === 0) div.classList.add('sin-stock');
       if (estado.carrito[p.id]) div.classList.add('activo');
-      div.innerHTML = `<div class="producto-icono">${p.icono}</div><h3>${p.nombre}</h3><div class="precio">${UI.formatearPrecio(p.precio)}</div><div class="stock">Stock: ${stock}${estado.carrito[p.id]? ' | En carrito: ' + estado.carrito[p.id] : ''}</div>`;
+      div.innerHTML = <div class="producto-icono">${p.icono}</div><h3>${p.nombre}</h3><div class="precio">${UI.formatearPrecio(p.precio)}</div><div class="stock">Stock: ${stock}${estado.carrito[p.id]? ' | En carrito: ' + estado.carrito[p.id] : ''}</div>;
       if (stock > 0) div.onclick = () => Ventas.agregar(p.id);
       grid.appendChild(div);
     });
@@ -469,7 +471,7 @@ const Productos = {
     const pago = parseInt(document.getElementById('pago').value) || 0;
     const vueltoEl = document.getElementById('vuelto');
     if (pago >= total && total > 0) {
-      vueltoEl.textContent = `VUELTO: ${UI.formatearPrecio(pago - total)}`;
+      vueltoEl.textContent = VUELTO: ${UI.formatearPrecio(pago - total)};
       vueltoEl.classList.remove('oculto');
     } else {
       vueltoEl.classList.add('oculto');
@@ -655,7 +657,7 @@ const StockGestion = {
         const inicial = estado.stockInicial[p.id] || 0;
         const actual = estado.stockActual[p.id] || 0;
         const vendido = inicial - actual;
-        html += `<tr><td>${p.icono} ${p.nombre}</td><td>${inicial}</td><td>${vendido}</td><td><strong>${actual}</strong></td></tr>`;
+        html += <tr><td>${p.icono} ${p.nombre}</td><td>${inicial}</td><td>${vendido}</td><td><strong>${actual}</strong></td></tr>;
       });
       html += '</tbody></table>';
       div.innerHTML = html;
@@ -670,12 +672,13 @@ const StockGestion = {
     PRODUCTOS.forEach(p => {
       const tr = document.createElement('tr');
       const stockActual = estado.stockInicial[p.id] || 0;
-      tr.innerHTML = `<td>${p.icono} ${p.nombre}</td><td><input type="number" data-id="${p.id}" value="${stockActual}" inputmode="numeric"></td>`;
+      tr.innerHTML = <td>${p.icono} ${p.nombre}</td><td><input type="number" data-id="${p.id}" value="${stockActual}" inputmode="numeric"></td>;
       tbody.appendChild(tr);
     });
     document.getElementById('cajaInicial').value = estado.cajaInicial || 0;
   }
 };
+
 const Resumen = {
   async actualizar() {
     const ventas = await DB.getVentas();
@@ -719,7 +722,7 @@ const Resumen = {
 
     let desgloseHTML = '';
     Object.entries(desgloseEmpanadas).sort((a,b) => b[1] - a[1]).forEach(([nombre, cant]) => {
-      desgloseHTML += `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #333;"><span>🥟 ${nombre}</span><strong>${cant}</strong></div>`;
+      desgloseHTML += <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #333;"><span>🥟 ${nombre}</span><strong>${cant}</strong></div>;
     });
     document.getElementById('r-desglose').innerHTML = desgloseHTML || '<span style="color:#888">Sin ventas</span>';
 
@@ -732,7 +735,7 @@ const Resumen = {
       let items = '';
       Object.entries(v.carrito).forEach(([id, cant]) => {
         const p = buscarProducto(id);
-        items += `${p.icono} ${p.nombre} x${cant}<br>`;
+        items += ${p.icono} ${p.nombre} x${cant}<br>;
       });
       div.innerHTML = `
         <div class="fecha">${fecha}</div>
@@ -740,7 +743,7 @@ const Resumen = {
         <div class="vendedor">Vendedor: ${v.vendedor}</div>
         <div style="font-size:13px;margin:6px 0;">${items}</div>
         <div class="metodo">${v.metodo === 'efectivo'? '💵 Efectivo' : '💳 Transferencia'} - ${UI.formatearPrecio(v.total)}</div>
-        ${v.whatsapp? `<div class="wsp">📱 ${v.whatsapp}</div>` : ''}
+        ${v.whatsapp? <div class="wsp">📱 ${v.whatsapp}</div> : ''}
         ${v.tipo === 'liquidacion'? '<div style="color:#00ff00;font-size:11px;margin-top:4px;">🔥 LIQUIDACIÓN</div>' : ''}
         <button class="btn btn-eliminar" onclick="Resumen.eliminarVenta(${v.id})">ELIMINAR</button>
       `;
@@ -789,25 +792,25 @@ const Resumen = {
     const totalCaja = cajaInicial + totalEfectivo;
     const fecha = new Date().toLocaleDateString('es-CL', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 
-    let mensaje = `🥟 *LOS WEONES DE LAS EMPANADAS* 🥟\n`;
-    mensaje += `📅 ${fecha}\n`;
-    mensaje += `👤 Vendedor: ${estado.usuarioActual}\n\n`;
-    mensaje += `💸 *TOTAL EN CAJA: ${UI.formatearPrecio(totalCaja)}*\n`;
+    let mensaje = 🥟 *LOS WEONES DE LAS EMPANADAS* 🥟\n;
+    mensaje += 📅 ${fecha}\n;
+    mensaje += 👤 Vendedor: ${estado.usuarioActual}\n\n;
+    mensaje += 💸 *TOTAL EN CAJA: ${UI.formatearPrecio(totalCaja)}*\n;
     mensaje += ` (Inicial: ${UI.formatearPrecio(cajaInicial)})\n\n`;
-    mensaje += `💰 *TOTAL VENDIDO: ${UI.formatearPrecio(totalDia)}*\n`;
-    mensaje += `💵 Efectivo: ${UI.formatearPrecio(totalEfectivo)}\n`;
-    mensaje += `💳 Transfer: ${UI.formatearPrecio(totalTransfer)}\n`;
-    mensaje += `📊 N° Ventas: ${ventas.length}\n\n`;
-    mensaje += `*DESGLOSE PRODUCTOS:*\n`;
-    mensaje += `🥟 Empanadas: ${totalEmpanadas}\n`;
+    mensaje += 💰 *TOTAL VENDIDO: ${UI.formatearPrecio(totalDia)}*\n;
+    mensaje += 💵 Efectivo: ${UI.formatearPrecio(totalEfectivo)}\n;
+    mensaje += 💳 Transfer: ${UI.formatearPrecio(totalTransfer)}\n;
+    mensaje += 📊 N° Ventas: ${ventas.length}\n\n;
+    mensaje += *DESGLOSE PRODUCTOS:*\n;
+    mensaje += 🥟 Empanadas: ${totalEmpanadas}\n;
     Object.entries(desgloseEmpanadas).sort((a,b) => b[1] - a[1]).forEach(([nombre, cant]) => {
       mensaje += ` • ${nombre}: ${cant}\n`;
     });
-    mensaje += `🍶 Bebidas 591: ${total591}\n`;
-    mensaje += `🥫 Latas: ${totalLatas}\n`;
-    mensaje += `💧 Cachantun: ${totalCachantun}\n`;
+    mensaje += 🍶 Bebidas 591: ${total591}\n;
+    mensaje += 🥫 Latas: ${totalLatas}\n;
+    mensaje += 💧 Cachantun: ${totalCachantun}\n;
 
-    const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+    const url = https://wa.me/?text=${encodeURIComponent(mensaje)};
     window.open(url, '_blank');
   }
 };
@@ -826,14 +829,14 @@ const Analisis = {
     let html = '';
     top.forEach(([id, cant], i) => {
       const p = buscarProducto(id);
-      html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #333;"><span>${i+1}. ${p.icono} ${p.nombre}</span><strong>${cant} vendidas</strong></div>`;
+      html += <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #333;"><span>${i+1}. ${p.icono} ${p.nombre}</span><strong>${cant} vendidas</strong></div>;
     });
     document.getElementById('top-productos').innerHTML = html || '<span style="color:#888">Sin datos</span>';
   },
   async cargarVentasPorDia() {
     const ventas = await DB.getVentasHistoricas();
     const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    const conteo = [0,0,0,0,0,0,0];
+    const conteo = [0,0,0,0,0];
     ventas.forEach(v => {
       const dia = new Date(v.fecha).getDay();
       conteo[dia]++;
@@ -841,7 +844,7 @@ const Analisis = {
     let html = '';
     conteo.forEach((cant, i) => {
       const porcentaje = ventas.length > 0? ((cant / ventas.length) * 100).toFixed(1) : 0;
-      html += `<div style="display:flex;justify-content:space-between;padding:4px 0;"><span>${dias[i]}</span><strong>${cant} ventas (${porcentaje}%)</strong></div>`;
+      html += <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>${dias[i]}</span><strong>${cant} ventas (${porcentaje}%)</strong></div>;
     });
     document.getElementById('ventas-por-dia').innerHTML = html;
   },
@@ -850,8 +853,8 @@ const Analisis = {
     const alertas = [];
     PRODUCTOS.forEach(p => {
       const s = stock[p.id] || 0;
-      if (s <= 3 && s > 0) alertas.push(`⚠️ ${p.icono} ${p.nombre}: ${s} unidades`);
-      if (s === 0) alertas.push(`🔴 ${p.icono} ${p.nombre}: SIN STOCK`);
+      if (s <= 3 && s > 0) alertas.push(⚠️ ${p.icono} ${p.nombre}: ${s} unidades);
+      if (s === 0) alertas.push(🔴 ${p.icono} ${p.nombre}: SIN STOCK);
     });
     document.getElementById('alertas-stock').innerHTML = alertas.length > 0? alertas.join('<br>') : '<span style="color:#00ff00">✅ Stock OK</span>';
   },
@@ -862,14 +865,14 @@ const Analisis = {
       Object.entries(v.carrito).forEach(([id, cant]) => {
         const p = buscarProducto(id);
         const precio = v.tipo === 'liquidacion' && v.liquidacionIds?.includes(parseInt(id))? 2000 : p.precio;
-        csv += `${v.folio},${v.fecha},${v.vendedor},"${p.nombre}",${cant},${precio},${precio*cant},${v.metodo},${v.whatsapp||''},${v.tipo}\n`;
+        csv += ${v.folio},${v.fecha},${v.vendedor},"${p.nombre}",${cant},${precio},${precio*cant},${v.metodo},${v.whatsapp||''},${v.tipo}\n;
       });
     });
     const blob = new Blob([csv], {type: 'text/csv'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `ventas_losweones_${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = ventas_losweones_${new Date().toISOString().split('T')[0]}.csv;
     a.click();
     UI.mostrarAlerta('CSV exportado', true);
   }
@@ -889,7 +892,7 @@ const Respaldo = {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `respaldo_losweones_${new Date().toISOString().split('T')[0]}.json`;
+    a.download = respaldo_losweones_${new Date().toISOString().split('T')[0]}.json;
     a.click();
     UI.mostrarAlerta('Respaldo descargado', true);
   },
@@ -977,28 +980,38 @@ const App = {
   },
   escucharCambios() {
     supabase.channel('ventas-changes')
-     .on('postgres_changes', { event: '*', schema: 'public', table: 'ventas' }, async (payload) => {
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'ventas' }, async (payload) => {
         console.log('Cambio en ventas:', payload);
         await Resumen.actualizar();
         Productos.render();
       })
-     .subscribe();
+    .subscribe();
 
     supabase.channel('config-changes')
-     .on('postgres_changes', { event: '*', schema: 'public', table: 'config' }, async (payload) => {
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'config' }, async (payload) => {
         console.log('Cambio en config:', payload);
         if (payload.new?.clave === 'stockActual') {
           estado.stockActual = payload.new.valor;
           Productos.render();
         }
       })
-     .subscribe();
+    .subscribe();
   },
   registrarEventos() {
     document.getElementById('pago').addEventListener('input', Productos.actualizarVuelto);
     document.getElementById('metodo-pago').addEventListener('change', (e) => {
       document.getElementById('grupo-pago').style.display = e.target.value === 'efectivo'? 'block' : 'none';
       Productos.actualizarVuelto();
+    });
+
+    // FIX: Login con Enter
+    document.getElementById('loginPass').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        Auth.login(
+          document.getElementById('loginUser').value,
+          document.getElementById('loginPass').value
+        );
+      }
     });
   }
 };
@@ -1009,4 +1022,3 @@ window.onload = async () => {
 </script>
 </body>
 </html>
-
