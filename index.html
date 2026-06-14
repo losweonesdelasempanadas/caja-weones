@@ -14,7 +14,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .logo-header{width:65px;height:65px;border-radius:50%;border:2px solid #ff6600;margin-bottom:5px;box-shadow:0 0 15px rgba(255,102,0,0.4);transition:all 0.4s ease;}
 .header.modo-costo{border-color:#00ff00;box-shadow:0 0 25px rgba(0,255,0,0.3);}
 .header.modo-costo h1{color:#00ff00;text-shadow:0 0 20px rgba(0,255,0,0.5);}
-.header.modo-costo .logo-header{border-color:#00ff00;box-shadow:0 0 15px rgba(0,255,0,0.4);}
+.header.modo-costo .logo-header{border-color:#00ff00;box-shadow:0 0 15px rgba(0,255,0.4);}
 .user-bar{display:flex;align-items:center;justify-content:space-between;background:#141414;padding:6px 12px;border-radius:8px;margin-bottom:8px;border:1px solid #222;font-size:12px;}
 .user-info-left{display:flex;align-items:center;gap:8px;color:#aaa;}
 .status-dot{width:8px;height:8px;background-color:#00ff00;border-radius:50%;box-shadow:0 0 10px #00ff00;animation:parpadeo 1.8s infinite ease-in-out;}
@@ -26,7 +26,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .tab.activo{background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);color:#000;border-color:#ff6600;box-shadow:0 4px 15px rgba(255,102,0,0.4)}
 .pantalla{display:none}.pantalla.activa{display:block}
 .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
-.producto{background:linear-gradient(135deg,rgba(35,35,35,0.7) 0%,rgba(20,20,20,0.8) 100%);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);border:2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden}
+.producto{background:linear-gradient(135deg,rgba(35,35,0.7) 0%,rgba(20,20,20,0.8) 100%);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);border:2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden}
 .producto:active{transform:scale(0.95)}
 .producto.activo{border-color:#ff6600;background:linear-gradient(135deg,#2d1a00 0%,#3d2400 100%);box-shadow:0 0 20px rgba(255,102,0,0.25);border:2px solid rgba(255,102,0,0.4);}
 .producto.sin-stock{opacity:.4;cursor:not-allowed}.producto-icono{font-size:40px;margin-bottom:8px;text-align:center;display:inline-block}
@@ -224,7 +224,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// CONFIGURACIÓN SUPABASE - USAMOS 'db' PARA EVITAR CONFLICTO
+// CONFIGURACIÓN SUPABASE
 const SUPABASE_URL = 'https://ibiqpvfrwzlunvovixyf.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_WaCE6FvGEOIkFyGf0SCqqw_hNqt5uNz';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -275,7 +275,7 @@ const Sonidos = {
   }
 };
 
-// TUS PRODUCTOS REALES - SACADOS DE TU CÓDIGO
+// TUS PRODUCTOS REALES
 const PRODUCTOS = [
   {id:1,nombre:'Empanada de pino',precio:2500,tipo:'empanada',icono:'🥟'},
   {id:2,nombre:'Empanada pollo queso',precio:2500,tipo:'empanada',icono:'🥟'},
@@ -432,29 +432,54 @@ const UI = {
     });
   }
 };
-
 const Productos = {
   render() {
     const grid = document.getElementById('productos-grid');
     grid.innerHTML = '';
     PRODUCTOS.forEach(p => {
       const stock = estado.stockActual[p.id] || 0;
+      const enCarrito = estado.carrito[p.id] || 0;
+      const disponible = stock - enCarrito;
+      const sinStock = disponible === 0 ||!estado.diaActivo;
+
       const div = document.createElement('div');
-      div.className = 'producto';
-      if (stock === 0) div.classList.add('sin-stock');
-      if (estado.carrito[p.id]) div.classList.add('activo');
-      div.innerHTML = `<div class="producto-icono">${p.icono}</div><h3>${p.nombre}</h3><div class="precio">${UI.formatearPrecio(p.precio)}</div><div class="stock">Stock: ${stock}${estado.carrito[p.id]? ' | En carrito: ' + estado.carrito[p.id] : ''}</div>`;
-      div.onclick = () => Productos.click(p.id, div);
+      div.className = 'producto' + (sinStock? ' sin-stock' : '') + (enCarrito > 0? ' activo' : '');
+
+      if (enCarrito > 0 && estado.diaActivo) {
+        div.innerHTML = `<div class="producto-icono">${p.icono}</div>
+          <h3>${p.nombre}</h3>
+          <div class="precio">${UI.formatearPrecio(p.precio)}</div>
+          <div class="stock">Stock: ${disponible}</div>
+          <div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">
+            <button onclick="Productos.quitar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">-</button>
+            <span style="font-size:18px;font-weight:bold;min-width:30px;text-align:center">${enCarrito}</span>
+            <button onclick="Productos.agregar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">+</button>
+          </div>`;
+      } else {
+        div.innerHTML = `<div class="producto-icono">${p.icono}</div>
+          <h3>${p.nombre}</h3>
+          <div class="precio">${UI.formatearPrecio(p.precio)}</div>
+          <div class="stock">Stock: ${disponible}</div>`;
+        if (estado.diaActivo && disponible > 0) {
+          div.onclick = () => Productos.agregar(p.id);
+        }
+      }
       grid.appendChild(div);
     });
   },
-  click(id, elemento) {
+  agregar(id) {
     const stock = estado.stockActual[id] || 0;
-    if (stock === 0) return UI.mostrarAlerta('Sin stock');
-    estado.carrito[id] = (estado.carrito[id] || 0) + 1;
-    estado.stockActual[id]--;
-    elemento.classList.add('animar-icono');
-    setTimeout(() => elemento.classList.remove('animar-icono'), 300);
+    const enCarrito = estado.carrito[id] || 0;
+    if (stock - enCarrito <= 0) return UI.mostrarAlerta('Sin stock');
+    estado.carrito[id] = enCarrito + 1;
+    Sonidos.play('click');
+    Ventas.actualizar();
+    Productos.render();
+  },
+  quitar(id) {
+    if (!estado.carrito[id]) return;
+    estado.carrito[id]--;
+    if (estado.carrito[id] === 0) delete estado.carrito[id];
     Sonidos.play('click');
     Ventas.actualizar();
     Productos.render();
@@ -606,15 +631,24 @@ const StockGestion = {
     const div = document.getElementById('desglose-stock');
     const inicial = await DB.getStockInicial();
     const actual = await DB.getStockActual();
-    let html = '<table class="stock-tabla"><thead><tr><th>Producto</th><th>Inicial</th><th>Actual</th><th>Vendido</th></tr></thead><tbody>';
+    let html = '<div class="total-box"><h2>STOCK ACTUAL</h2>' +
+      '<button class="btn btn-anular" style="margin-bottom:15px" onclick="StockGestion.cerrarDesglose()">❌ CERRAR DESGLOSE</button>';
     PRODUCTOS.forEach(p => {
       const ini = inicial[p.id] || 0;
       const act = actual[p.id] || 0;
-      html += `<tr><td>${p.icono} ${p.nombre}</td><td>${ini}</td><td>${act}</td><td>${ini - act}</td></tr>`;
+      html += `<div style="font-size:14px;margin:10px 0;padding:12px;background:#0a0a0a;border-radius:8px;border-left:3px solid #ff6600">
+        <b>${p.icono} ${p.nombre}</b><br>
+        <span style="color:#888">Inicial: ${ini} | Vendido: ${ini - act}</span><br>
+        <span style="color:${act < 5? '#ff3333' : '#00ff00'};font-weight:bold">Disponible: ${act}</span>
+      </div>`;
     });
-    html += '</tbody></table>';
+    html += '</div>';
     div.innerHTML = html;
     div.classList.remove('oculto');
+  },
+  cerrarDesglose() {
+    document.getElementById('desglose-stock').classList.add('oculto');
+    document.getElementById('stock').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 };
 
@@ -624,20 +658,21 @@ const Resumen = {
     let totalDia = 0, efectivo = 0, transfer = 0, empanadas = 0, lata = 0, beb591 = 0, cachantun = 0, costo = 0;
     const desglose = {};
     estado.ventas.forEach(v => {
-      totalDia += v.total;
-      if (v.metodo === 'efectivo') efectivo += v.total;
-      else transfer += v.total;
-      Object.entries(v.carrito).forEach(([id, cant]) => {
+      totalDia += v.total || 0;
+      if (v.metodo === 'efectivo') efectivo += v.total || 0;
+      else transfer += v.total || 0;
+      Object.entries(v.carrito || {}).forEach(([id, cant]) => {
         const p = buscarProducto(id);
         if (!p) return;
+        const esLiquidacion = v.liquidacionIds && v.liquidacionIds.includes(parseInt(id));
         if (p.tipo === 'empanada') {
           empanadas += cant;
           desglose[p.nombre] = (desglose[p.nombre] || 0) + cant;
+          if (esLiquidacion) costo += cant;
         }
         if (p.tipo === 'lata') lata += cant;
         if (p.tipo === '591') beb591 += cant;
         if (p.tipo === 'cachantun') cachantun += cant;
-        if (v.liquidacionIds && v.liquidacionIds.includes(parseInt(id))) costo += cant;
       });
     });
     const cajaInicial = await DB.getCajaInicial();
@@ -665,7 +700,7 @@ const Resumen = {
       div.className = 'historial-item';
       if (v.liquidacionIds && v.liquidacionIds.length > 0) div.classList.add('costo');
       const fecha = new Date(v.fecha).toLocaleString('es-CL', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
-      let items = Object.entries(v.carrito).map(([id, cant]) => {
+      let items = Object.entries(v.carrito || {}).map(([id, cant]) => {
         const p = buscarProducto(id);
         return p? `${cant}x ${p.nombre}` : '';
       }).join(', ');
@@ -674,6 +709,7 @@ const Resumen = {
     });
   },
   async mandarWSP() {
+    await Resumen.actualizar();
     const cajaInicial = await DB.getCajaInicial();
     const totalDia = parseInt(document.getElementById('total-dia').textContent.replace(/[^0-9]/g, '')) || 0;
     const efectivo = parseInt(document.getElementById('total-efectivo').textContent.replace(/[^0-9]/g, '')) || 0;
@@ -698,13 +734,15 @@ const Resumen = {
 const Analisis = {
   async render() {
     const ventas = await DB.getVentasHistoricas();
+    const ventasActuales = await DB.getVentas();
+    const todasVentas = [...ventas,...ventasActuales];
     const productos = {};
     const dias = {0:0,1:0,2:0,3:0,4:0,5:0,6:0};
     const diasNombres = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-    ventas.forEach(v => {
+    todasVentas.forEach(v => {
       const dia = new Date(v.fecha).getDay();
-      dias[dia] += v.total;
-      Object.entries(v.carrito).forEach(([id, cant]) => {
+      dias[dia] += v.total || 0;
+      Object.entries(v.carrito || {}).forEach(([id, cant]) => {
         const p = buscarProducto(id);
         if (p) productos[p.nombre] = (productos[p.nombre] || 0) + cant;
       });
@@ -733,7 +771,7 @@ const Analisis = {
     let csv = 'Folio,Fecha,Vendedor,Total,Método,Productos\n';
     ventas.forEach(v => {
       const fecha = new Date(v.fecha).toLocaleString('es-CL');
-      const productos = Object.entries(v.carrito).map(([id, cant]) => {
+      const productos = Object.entries(v.carrito || {}).map(([id, cant]) => {
         const p = buscarProducto(id);
         return p? `${cant}x ${p.nombre}` : '';
       }).join('; ');
