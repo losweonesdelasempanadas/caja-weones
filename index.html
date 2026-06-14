@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Los Weones - CAJA V2.3 SUPABASE</title>
+<title>Los Weones - CAJA V2.4 FIX</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh;overflow-x:hidden;overflow-y:auto}
@@ -14,7 +14,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .logo-header{width:65px;height:65px;border-radius:50%;border:2px solid #ff6600;margin-bottom:5px;box-shadow:0 0 15px rgba(255,102,0,0.4);transition:all 0.4s ease;}
 .header.modo-costo{border-color:#00ff00;box-shadow:0 0 25px rgba(0,255,0,0.3);}
 .header.modo-costo h1{color:#00ff00;text-shadow:0 0 20px rgba(0,255,0,0.5);}
-.header.modo-costo .logo-header{border-color:#00ff00;box-shadow:0 0 15px rgba(0,255,0.4);}
+.header.modo-costo .logo-header{border-color:#00ff00;box-shadow:0 0 15px rgba(0,255,0,0.4);}
 .user-bar{display:flex;align-items:center;justify-content:space-between;background:#141414;padding:6px 12px;border-radius:8px;margin-bottom:8px;border:1px solid #222;font-size:12px;}
 .user-info-left{display:flex;align-items:center;gap:8px;color:#aaa;}
 .status-dot{width:8px;height:8px;background-color:#00ff00;border-radius:50%;box-shadow:0 0 10px #00ff00;animation:parpadeo 1.8s infinite ease-in-out;}
@@ -26,7 +26,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .tab.activo{background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);color:#000;border-color:#ff6600;box-shadow:0 4px 15px rgba(255,102,0,0.4)}
 .pantalla{display:none}.pantalla.activa{display:block}
 .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
-.producto{background:linear-gradient(135deg,rgba(35,35,0.7) 0%,rgba(20,20,20,0.8) 100%);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);border:2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden}
+.producto{background:linear-gradient(135deg,rgba(35,35,35,0.7) 0%,rgba(20,20,20,0.8) 100%);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);border:2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden}
 .producto:active{transform:scale(0.95)}
 .producto.activo{border-color:#ff6600;background:linear-gradient(135deg,#2d1a00 0%,#3d2400 100%);box-shadow:0 0 20px rgba(255,102,0,0.25);border:2px solid rgba(255,102,0,0.4);}
 .producto.sin-stock{opacity:.4;cursor:not-allowed}.producto-icono{font-size:40px;margin-bottom:8px;text-align:center;display:inline-block}
@@ -230,19 +230,15 @@ const SUPABASE_ANON_KEY = 'sb_publishable_WaCE6FvGEOIkFyGf0SCqqw_hNqt5uNz';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const CLAVE_HASH = 'MTk3MQ==';
-const VERSION_APP = '2.3-supabase';
+const VERSION_APP = '2.4-fix';
 const FOLIO_PREFIX = 'LWE-';
 
 let alertaTimeout = null;
 
-console.log('🚀 Iniciando Los Weones v' + VERSION_APP);
-
 const Sonidos = {
   ctx: null,
   init() {
-    if (!this.ctx) {
-      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    }
+    if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
   },
   play(tipo) {
     this.init();
@@ -275,7 +271,6 @@ const Sonidos = {
   }
 };
 
-// TUS PRODUCTOS REALES
 const PRODUCTOS = [
   {id:1,nombre:'Empanada de pino',precio:2500,tipo:'empanada',icono:'🥟'},
   {id:2,nombre:'Empanada pollo queso',precio:2500,tipo:'empanada',icono:'🥟'},
@@ -306,39 +301,31 @@ let estado = {
 
 const DB = {
   getStockInicial: async () => {
-    const { data, error } = await db.from('config').select('valor').eq('clave', 'stockInicial').single();
-    if (error) console.log('Error getStockInicial:', error);
+    const { data } = await db.from('config').select('valor').eq('clave', 'stockInicial').single();
     return data?.valor || {};
   },
   getStockActual: async () => {
-    const { data, error } = await db.from('config').select('valor').eq('clave', 'stockActual').single();
-    if (error) console.log('Error getStockActual:', error);
+    const { data } = await db.from('config').select('valor').eq('clave', 'stockActual').single();
     return data?.valor || {};
   },
   getVentas: async () => {
-    const { data, error } = await db.from('ventas').select('*').order('fecha', { ascending: false });
-    if (error) console.log('Error getVentas:', error);
+    const { data } = await db.from('ventas').select('*').order('fecha', { ascending: false });
     return data || [];
   },
   getVentasHistoricas: async () => {
-    const { data, error } = await db.from('ventas_historicas').select('*').order('fecha', { ascending: false });
-    if (error) console.log('Error getVentasHistoricas:', error);
+    const { data } = await db.from('ventas_historicas').select('*').order('fecha', { ascending: false });
     return data || [];
   },
-  getUsuario: () => localStorage.getItem('usuarioActual'),
   getFolio: async () => {
-    const { data, error } = await db.from('config').select('valor').eq('clave', 'folioActual').single();
-    if (error) console.log('Error getFolio:', error);
+    const { data } = await db.from('config').select('valor').eq('clave', 'folioActual').single();
     return data?.valor || 1;
   },
   getCajaInicial: async () => {
-    const { data, error } = await db.from('config').select('valor').eq('clave', 'cajaInicial').single();
-    if (error) console.log('Error getCajaInicial:', error);
+    const { data } = await db.from('config').select('valor').eq('clave', 'cajaInicial').single();
     return data?.valor || 0;
   },
   getDiaActivo: async () => {
-    const { data, error } = await db.from('config').select('valor').eq('clave', 'diaActivo').single();
-    if (error) console.log('Error getDiaActivo:', error);
+    const { data } = await db.from('config').select('valor').eq('clave', 'diaActivo').single();
     return data?.valor === true;
   },
   setStockInicial: async (val) => await db.from('config').upsert({ clave: 'stockInicial', valor: val }),
@@ -352,13 +339,10 @@ const DB = {
 
 const Auth = {
   async login(user, pass) {
-    console.log('Intentando login:', user);
     if (btoa(pass)!== CLAVE_HASH) {
-      console.log('Clave incorrecta');
       UI.mostrarAlerta('Clave incorrecta');
       return false;
     }
-    console.log('Clave OK');
     Sonidos.init();
     estado.usuarioActual = user;
     DB.setUsuario(user);
@@ -366,9 +350,7 @@ const Auth = {
     document.getElementById('userDisplay').textContent = 'Vendedor: ' + user;
     document.getElementById('loginPass').value = '';
     document.body.style.overflow = 'auto';
-    console.log('Llamando App.init()...');
     await App.init();
-    console.log('App.init() completado');
     return true;
   },
   logout() {
@@ -377,7 +359,6 @@ const Auth = {
     location.reload();
   },
   verificar() {
-    console.log('Verificando auth, usuario:', estado.usuarioActual);
     if (!estado.usuarioActual) {
       document.getElementById('loginScreen').classList.remove('oculto');
       return false;
@@ -396,9 +377,7 @@ const UI = {
     a.style.background = ok? '#00aa00' : '#ff3333';
     a.classList.remove('oculto');
     Sonidos.play(ok? 'exito' : 'alerta');
-    alertaTimeout = setTimeout(() => {
-      a.classList.add('oculto');
-    }, 2000);
+    alertaTimeout = setTimeout(() => a.classList.add('oculto'), 2000);
   },
   mostrarVentaGuardada() {
     const m = document.getElementById('mensajeVenta');
@@ -426,9 +405,7 @@ const UI = {
   },
   scrollToTop() {
     requestAnimationFrame(() => {
-      setTimeout(() => {
-        window.scrollTo({top: 0, behavior: 'smooth'});
-      }, 100);
+      setTimeout(() => window.scrollTo({top: 0, behavior: 'smooth'}), 100);
     });
   }
 };
@@ -439,13 +416,13 @@ const Productos = {
     PRODUCTOS.forEach(p => {
       const stock = estado.stockActual[p.id] || 0;
       const enCarrito = estado.carrito[p.id] || 0;
-      const disponible = stock - enCarrito;
-      const sinStock = disponible === 0 ||!estado.diaActivo;
+      const disponible = stock;
+      const sinStock = disponible <= 0 ||!estado.diaActivo;
 
       const div = document.createElement('div');
       div.className = 'producto' + (sinStock? ' sin-stock' : '') + (enCarrito > 0? ' activo' : '');
 
-      if (enCarrito > 0 && estado.diaActivo) {
+      if (enCarrito > 0 && estado.diaActivo && disponible >= 0) {
         div.innerHTML = `<div class="producto-icono">${p.icono}</div>
           <h3>${p.nombre}</h3>
           <div class="precio">${UI.formatearPrecio(p.precio)}</div>
@@ -453,7 +430,7 @@ const Productos = {
           <div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px">
             <button onclick="Productos.quitar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">-</button>
             <span style="font-size:18px;font-weight:bold;min-width:30px;text-align:center">${enCarrito}</span>
-            <button onclick="Productos.agregar(${p.id});event.stopPropagation()" style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">+</button>
+            <button onclick="Productos.agregar(${p.id});event.stopPropagation()" ${disponible <= 0? 'disabled style="opacity:0.3"' : ''} style="padding:8px 14px;background:#ff6600;border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer">+</button>
           </div>`;
       } else {
         div.innerHTML = `<div class="producto-icono">${p.icono}</div>
@@ -469,9 +446,9 @@ const Productos = {
   },
   agregar(id) {
     const stock = estado.stockActual[id] || 0;
-    const enCarrito = estado.carrito[id] || 0;
-    if (stock - enCarrito <= 0) return UI.mostrarAlerta('Sin stock');
-    estado.carrito[id] = enCarrito + 1;
+    if (stock <= 0) return UI.mostrarAlerta('Sin stock');
+    estado.carrito[id] = (estado.carrito[id] || 0) + 1;
+    estado.stockActual[id]--;
     Sonidos.play('click');
     Ventas.actualizar();
     Productos.render();
@@ -479,6 +456,7 @@ const Productos = {
   quitar(id) {
     if (!estado.carrito[id]) return;
     estado.carrito[id]--;
+    estado.stockActual[id]++;
     if (estado.carrito[id] === 0) delete estado.carrito[id];
     Sonidos.play('click');
     Ventas.actualizar();
@@ -533,6 +511,8 @@ const Ventas = {
 
     UI.mostrarVentaGuardada();
     UI.lanzarConfeti();
+    UI.scrollToTop();
+
     estado.carrito = {};
     estado.liquidacionIds = [];
     document.getElementById('pago').value = '';
@@ -607,8 +587,9 @@ const StockGestion = {
   async reiniciar() {
     if (!confirm('¿Reiniciar stock del día? Se perderán las ventas actuales')) return;
     await db.from('ventas').delete().neq('folio', '');
-    await DB.setStockActual(await DB.getStockInicial());
-    estado.stockActual = await DB.getStockInicial();
+    const stockInicial = await DB.getStockInicial();
+    await DB.setStockActual(stockInicial);
+    estado.stockActual = {...stockInicial};
     estado.carrito = {};
     estado.ventas = [];
     Productos.render();
@@ -617,14 +598,16 @@ const StockGestion = {
     UI.mostrarAlerta('Stock reiniciado', true);
   },
   async cerrarDia() {
-    if (!confirm('¿Cerrar día? No podrás vender más')) return;
+    if (!confirm('¿Cerrar día? Se guardará el historial')) return;
     await DB.setDiaActivo(false);
     const ventasDia = await DB.getVentas();
     if (ventasDia.length > 0) await DB.setVentasHistoricas(ventasDia);
     await db.from('ventas').delete().neq('folio', '');
     estado.diaActivo = false;
     estado.ventas = [];
+    estado.carrito = {};
     App.verificarDiaActivo();
+    Productos.render();
     UI.mostrarAlerta('Día cerrado', true);
   },
   async verDesglose() {
@@ -636,9 +619,10 @@ const StockGestion = {
     PRODUCTOS.forEach(p => {
       const ini = inicial[p.id] || 0;
       const act = actual[p.id] || 0;
+      const vendido = ini - act;
       html += `<div style="font-size:14px;margin:10px 0;padding:12px;background:#0a0a0a;border-radius:8px;border-left:3px solid #ff6600">
         <b>${p.icono} ${p.nombre}</b><br>
-        <span style="color:#888">Inicial: ${ini} | Vendido: ${ini - act}</span><br>
+        <span style="color:#888">Inicial: ${ini} | Vendido: ${vendido}</span><br>
         <span style="color:${act < 5? '#ff3333' : '#00ff00'};font-weight:bold">Disponible: ${act}</span>
       </div>`;
     });
@@ -733,9 +717,9 @@ const Resumen = {
 
 const Analisis = {
   async render() {
-    const ventas = await DB.getVentasHistoricas();
-    const ventasActuales = await DB.getVentas();
-    const todasVentas = [...ventas,...ventasActuales];
+    const ventasHist = await DB.getVentasHistoricas();
+    const ventasHoy = await DB.getVentas();
+    const todasVentas = [...ventasHist,...ventasHoy];
     const productos = {};
     const dias = {0:0,1:0,2:0,3:0,4:0,5:0,6:0};
     const diasNombres = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
@@ -821,9 +805,9 @@ const Respaldo = {
         if (data.stockActual) await DB.setStockActual(data.stockActual);
         if (data.ventas) {
           await db.from('ventas').delete().neq('folio', '');
-          await db.from('ventas').insert(data.ventas);
+          if (data.ventas.length > 0) await db.from('ventas').insert(data.ventas);
         }
-        if (data.ventasHistoricas) await DB.setVentasHistoricas(data.ventasHistoricas);
+        if (data.ventasHistoricas && data.ventasHistoricas.length > 0) await db.from('ventas_historicas').insert(data.ventasHistoricas);
         if (data.folio) await DB.setFolio(data.folio);
         if (data.cajaInicial) await DB.setCajaInicial(data.cajaInicial);
         if (data.diaActivo!== undefined) await DB.setDiaActivo(data.diaActivo);
@@ -840,7 +824,6 @@ const Respaldo = {
 
 const App = {
   async init() {
-    console.log('App.init() iniciando...');
     if (!Auth.verificar()) return;
     estado.stockInicial = await DB.getStockInicial();
     estado.stockActual = await DB.getStockActual();
@@ -867,7 +850,6 @@ const App = {
       }
       Ventas.actualizar();
     });
-    console.log('✅ App iniciada correctamente');
   },
   async verificarDiaActivo() {
     const aviso = document.getElementById('aviso-dia-cerrado');
@@ -894,7 +876,6 @@ const App = {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM cargado, verificando auth...');
   if (Auth.verificar()) App.init();
 });
 </script>
