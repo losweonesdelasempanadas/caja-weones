@@ -395,7 +395,7 @@ const DB = {
     const ventasMes = [...DB.getVentasHistoricas(),...DB.getVentas()]
      .filter(v => {
         const fecha = new Date(v.fecha);
-        return v.metodo === 'Transferencia' &&
+        return v.metodo === 'transferencia' &&
                fecha.getMonth() === mesActual &&
                fecha.getFullYear() === anioActual;
       });
