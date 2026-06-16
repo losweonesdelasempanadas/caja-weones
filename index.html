@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Los Weones de las Empanadas - CAJA V2.5 SII</title>
+  <title>Los Weones de las Empanadas - CAJA V2.6 SII</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh;overflow-x:hidden;overflow-y:auto}
@@ -29,6 +29,8 @@
   @keyframes pulsoAmarillo{0%,100%{box-shadow:0 0 5px rgba(255,170,0,0.3);}50%{box-shadow:0 0 15px rgba(255,170,0,0.6);}}
   @keyframes pulsoRojo{0%,100%{box-shadow:0 0 5px rgba(255,0,0,0.5);}50%{box-shadow:0 0 20px rgba(255,0,0,0.8);}}
   @keyframes pulsoBloqueado{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+  .btn-reset-sii{font-size:10px;background:#dc3545;color:white;border:none;padding:2px 6px;border-radius:4px;margin-left:4px;cursor:pointer}
+  .btn-reset-sii:active{transform:scale(0.95)}
   .tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:5px}
   .tab{padding:10px 2px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:11px;font-weight:bold;cursor:pointer;transition:all 0.3s;text-align:center}
   .tab.activo{background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);color:#000;border-color:#ff6600;box-shadow:0 4px 15px rgba(255,102,0,0.4)}
@@ -103,6 +105,8 @@
   .modal-sii-box .btn-modal{width:100%;padding:14px;margin:8px 0;background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);border:none;border-radius:12px;color:#000;font-size:14px;font-weight:bold;cursor:pointer;transition:all 0.2s;}
   .modal-sii-box .btn-modal:active{transform:scale(0.95);}
   .modal-sii-box .input-clave{width:100%;padding:12px;margin:10px 0;background:#1a0000;border:2px solid #ff0000;border-radius:10px;color:#fff;font-size:16px;text-align:center;letter-spacing:3px;}
+  .btn-reset-dia{font-size:9px;background:#dc3545;color:white;border:none;padding:2px 6px;border-radius:4px;margin-left:8px;cursor:pointer}
+  .btn-reset-dia:active{transform:scale(0.95)}
   </style>
 </head>
 <body>
@@ -147,9 +151,12 @@
           <div class="status-dot"></div>
           <span id="userDisplay">Caja Cerrada</span>
         </div>
-        <div id="siiContador" class="sii-contador verde">
-          <span>🚨 SII:</span>
-          <span id="siiContadorTexto">0/50</span>
+        <div style="display:flex;align-items:center">
+          <div id="siiContador" class="sii-contador verde">
+            <span>🚨 SII:</span>
+            <span id="siiContadorTexto">0/50</span>
+          </div>
+          <button class="btn-reset-sii" onclick="SII.resetearManual()">Reset</button>
         </div>
         <button onclick="Auth.logout()" class="btn-logout">Salir</button>
       </div>
@@ -214,6 +221,10 @@
       <div id="desglose-stock" class="oculto" style="margin-top:15px"></div>
     </div>
     <div id="resumen" class="pantalla">
+      <div class="total-box" style="margin-bottom:15px;border-color:#00ff00">
+        <h2 style="color:#00ff00;margin-bottom:10px;font-size:16px">📊 CUADRE DE CAJA REAL</h2>
+        <div id="cuadre-caja" style="font-size:14px;color:#fff;text-align:left"></div>
+      </div>
       <div class="resumen-grid">
         <div class="resumen-item destacado">
           <h3>💸 TOTAL EN CAJA</h3>
@@ -308,7 +319,7 @@
   </div>
   <script>
 const CLAVE_HASH = 'MTk3MQ==';
-const VERSION_APP = '2.5-sii';
+const VERSION_APP = '2.6-sii-cuadre';
 const FOLIO_PREFIX = 'LWE-';
 let alertaTimeout = null;
 
@@ -393,7 +404,7 @@ const DB = {
     const mesActual = hoy.getMonth();
     const anioActual = hoy.getFullYear();
     const ventasMes = [...DB.getVentasHistoricas(),...DB.getVentas()]
-     .filter(v => {
+    .filter(v => {
         const fecha = new Date(v.fecha);
         return v.metodo === 'transferencia' &&
                fecha.getMonth() === mesActual &&
@@ -417,7 +428,7 @@ const SII = {
     const abonos = DB.getAbonosMes();
     const contador = document.getElementById('siiContador');
     const texto = document.getElementById('siiContadorTexto');
-    if (!contador || !texto) return;
+    if (!contador ||!texto) return;
     texto.textContent = abonos.cantidad + '/50';
     contador.classList.remove('verde', 'amarillo', 'rojo', 'bloqueado');
     if (abonos.cantidad >= 50) {
@@ -437,10 +448,10 @@ const SII = {
     }
   },
   verificarLimite(metodo) {
-    if (metodo !== 'Transferencia') return { permitir: true };
+    if (metodo!== 'transferencia') return { permitir: true };
     const abonos = DB.getAbonosMes();
     const desbloqueado = DB.getSIIDesbloqueado();
-    if (abonos.cantidad >= 50 && !desbloqueado) {
+    if (abonos.cantidad >= 50 &&!desbloqueado) {
       return { permitir: false, mostrarModal: true };
     }
     if (abonos.cantidad >= 40) {
@@ -490,11 +501,22 @@ const SII = {
       document.getElementById('claveSII').value = '';
     }
   },
+  resetearManual() {
+    const clave = prompt("¿Resetear contador SII a 0/50?\nIngresa clave:");
+    if (btoa(clave) === CLAVE_HASH) {
+      DB.setSIIDesbloqueado(false);
+      localStorage.setItem('mesSII', '');
+      UI.mostrarAlerta('Contador SII reseteado a 0/50', true);
+      SII.actualizarContador();
+    } else if (clave!== null) {
+      UI.mostrarAlerta('Clave incorrecta');
+    }
+  },
   resetearMes() {
     const hoy = new Date();
     const mesActual = hoy.getMonth() + '-' + hoy.getFullYear();
     const mesGuardado = DB.getMesSII();
-    if (mesGuardado !== mesActual) {
+    if (mesGuardado!== mesActual) {
       DB.setMesSII(mesActual);
       DB.setSIIDesbloqueado(false);
       console.log('🔄 Mes SII reseteado:', mesActual);
@@ -530,6 +552,7 @@ let estado = {
   gastos: DB.getGastos(),
   limiteAlertaStock: DB.getLimiteAlertaStock()
 };
+
 const Auth = {
   login(user, pass) {
     if (btoa(pass)!== CLAVE_HASH) {
@@ -877,6 +900,7 @@ const Ventas = {
     window.open('https://wa.me/' + venta.whatsapp.replace(/[^0-9]/g, '') + '?text=' + msg, '_blank');
   }
 };
+
 const Stock = {
   cambiarMetodoPago() {
     const metodo = document.getElementById('metodo-pago').value;
@@ -1086,6 +1110,23 @@ const Resumen = {
     document.getElementById('total-gastos').textContent = UI.formatearPrecio(datos.totalGastos);
     document.getElementById('ganancia-neta').textContent = UI.formatearPrecio(datos.gananciaNeta);
 
+    // CUADRE DE CAJA REAL - NUEVO
+    const cajaEsperada = datos.cajaInicial + datos.totalEfectivo - datos.totalGastos;
+    const diferencia = datos.totalCaja - cajaEsperada;
+    let htmlCuadre = `
+      <div style="margin:6px 0"><b>💰 Caja Inicial:</b> ${UI.formatearPrecio(datos.cajaInicial)}</div>
+      <div style="margin:6px 0;color:#00ff00"><b>+ Ventas Efectivo:</b> ${UI.formatearPrecio(datos.totalEfectivo)}</div>
+      <div style="margin:6px 0;color:#00aaff"><b>+ Transferencias:</b> ${UI.formatearPrecio(datos.totalTransfer)} <span style="font-size:10px;color:#888">(no va a caja física)</span></div>
+      <div style="margin:6px 0;color:#ff3333"><b>- Gastos:</b> ${UI.formatearPrecio(datos.totalGastos)}</div>
+      <div style="margin-top:10px;padding-top:10px;border-top:2px solid #00ff00;font-size:16px">
+        <b>💚 Caja Esperada:</b> ${UI.formatearPrecio(cajaEsperada)}
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:#888">
+        ${diferencia === 0? '✅ Cuadra perfecto' : diferencia > 0? '⚠️ Sobran ' + UI.formatearPrecio(diferencia) : '⚠️ Faltan ' + UI.formatearPrecio(Math.abs(diferencia))}
+      </div>
+    `;
+    document.getElementById('cuadre-caja').innerHTML = htmlCuadre;
+
     const totalEmp = datos.desglose.pino.cant + datos.desglose.polloQueso.cant + datos.desglose.napolitana.cant;
     const totalEmp$ = datos.desglose.pino.total + datos.desglose.polloQueso.total + datos.desglose.napolitana.total;
     document.getElementById('total-empanadas').innerHTML =
@@ -1192,6 +1233,7 @@ const Resumen = {
     window.open('https://wa.me/?text=' + msg, '_blank');
   }
 };
+
 const StockGestion = {
   render() {
     const tabla = document.getElementById('tabla-stock');
@@ -1286,6 +1328,38 @@ const StockGestion = {
   cerrarDesglose() {
     document.getElementById('desglose-stock').classList.add('oculto');
     document.getElementById('stock').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+  borrarVentasDia(diaSemana) {
+    const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const ventas = DB.getVentas();
+    const ventasDelDia = ventas.filter(v => new Date(v.fecha).getDay() === diaSemana);
+
+    if (ventasDelDia.length === 0) {
+      UI.mostrarAlerta(`No hay ventas el ${dias[diaSemana]}`);
+      return;
+    }
+
+    const confirma = confirm(`¿Borrar ${ventasDelDia.length} ventas del ${dias[diaSemana]}?\nEsta acción no se puede deshacer.`);
+    if (!confirma) return;
+
+    // Devolver stock
+    ventasDelDia.forEach(v => {
+      for (let id in v.carrito) {
+        estado.stockActual[id] = (estado.stockActual[id] || 0) + v.carrito[id];
+      }
+    });
+
+    const nuevasVentas = ventas.filter(v => new Date(v.fecha).getDay()!== diaSemana);
+    DB.setVentas(nuevasVentas);
+    DB.setStockActual(estado.stockActual);
+
+    estado.ventas = nuevasVentas;
+
+    UI.mostrarAlerta(`Se borraron ${ventasDelDia.length} ventas del ${dias[diaSemana]}`, true);
+    Resumen.actualizar();
+    Productos.render();
+    SII.actualizarContador();
+    Analisis.render();
   }
 };
 
@@ -1311,7 +1385,7 @@ const Analisis = {
   calcularVentasPorDia() {
     const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
     const ventasDia = [0,0,0,0,0,0,0];
-    const totalDia = [0,0,0,0,0];
+    const totalDia = [0,0,0,0,0,0,0];
 
     const ventasHist = DB.getVentasHistoricas();
     const ventasActuales = DB.getVentas();
@@ -1322,7 +1396,7 @@ const Analisis = {
       ventasDia[dia]++;
       totalDia[dia] += v.total;
     });
-    return dias.map((d,i) => ({ dia: d, ventas: ventasDia[i], total: totalDia[i] }));
+    return dias.map((d,i) => ({ dia: d, ventas: ventasDia[i], total: totalDia[i], diaNum: i }));
   },
 
   calcularAlertasStock() {
@@ -1380,8 +1454,11 @@ const Analisis = {
       const esMaximo = d.ventas === maxVentas && d.ventas > 0;
       const color = esMaximo? '#00ff00' : '#ff6600';
       htmlDia += `<div style="margin:10px 0">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-          <b>${d.dia} ${esMaximo? '🔥' : ''}</b>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <b>${d.dia} ${esMaximo? '🔥' : ''}</b>
+            <button class="btn-reset-dia" onclick="StockGestion.borrarVentasDia(${d.diaNum})">🗑️</button>
+          </div>
           <span>${d.ventas} ventas - ${UI.formatearPrecio(d.total)}</span>
         </div>
         <div style="background:#333;height:10px;border-radius:5px">
