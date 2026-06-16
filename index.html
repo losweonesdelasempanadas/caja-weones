@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Los Weones de las Empanadas - CAJA V2.6 SII</title>
+  <title>Los Weones de las Empanadas - CAJA V2.7 BANCOS</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#0a0a0a;color:#fff;padding:10px;min-height:100vh;overflow-x:hidden;overflow-y:auto}
@@ -14,7 +14,7 @@
   .logo-header{width:65px;height:65px;border-radius:50%;border:2px solid #ff6600;margin-bottom:5px;box-shadow:0 0 15px rgba(255,102,0,0.4);transition:all 0.4s ease;}
   .header.modo-costo{border-color:#00ff00;box-shadow:0 0 25px rgba(0,255,0,0.3);}
   .header.modo-costo h1{color:#00ff00;text-shadow:0 0 20px rgba(0,255,0,0.5);}
-  .header.modo-costo.logo-header{border-color:#00ff00;box-shadow:0 0 15px rgba(0,255,0,0.4);}
+  .header.modo-costo .logo-header{border-color:#00ff00;box-shadow:0 0 15px rgba(0,255,0,0.4);}
   .user-bar{display:flex;align-items:center;justify-content:space-between;background:#141414;padding:6px 12px;border-radius:8px;margin-bottom:8px;border:1px solid #222;font-size:12px;}
   .user-info-left{display:flex;align-items:center;gap:8px;color:#aaa;}
   .status-dot{width:8px;height:8px;background-color:#00ff00;border-radius:50%;box-shadow:0 0 10px #00ff00;animation:parpadeo 1.8s infinite ease-in-out;}
@@ -27,33 +27,50 @@
   .sii-contador.rojo{background:#2a0000;color:#ff0000;border:1px solid #ff0000;animation:pulsoRojo 1s infinite;}
   .sii-contador.bloqueado{background:#3a0000;color:#ff3333;border:1px solid #ff3333;animation:pulsoBloqueado 0.5s infinite;}
   @keyframes pulsoAmarillo{0%,100%{box-shadow:0 0 5px rgba(255,170,0,0.3);}50%{box-shadow:0 0 15px rgba(255,170,0,0.6);}}
-  @keyframes pulsoRojo{0%,100%{box-shadow:0 0 5px rgba(255,0,0,0.5);}50%{box-shadow:0 0 20px rgba(255,0,0,0.8);}}
+  @keyframes pulsoRojo{0%,100%{box-shadow:0 0 5px rgba(255,0,0,0.5);}50%{box-shadow:0 20px rgba(255,0,0,0.8);}}
   @keyframes pulsoBloqueado{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
   .btn-reset-sii{font-size:10px;background:#dc3545;color:white;border:none;padding:2px 6px;border-radius:4px;margin-left:4px;cursor:pointer}
   .btn-reset-sii:active{transform:scale(0.95)}
+  .semaforo-banco{background:#1a1a1a;border:2px solid #333;border-radius:12px;padding:12px;margin-bottom:10px}
+  .semaforo-banco.verde{border-color:#00ff00;background:#001a00}
+  .semaforo-banco.amarillo{border-color:#ffaa00;background:#2a1a00}
+  .semaforo-banco.rojo{border-color:#ff0000;background:#2a0000;animation:pulsoRojo 1s infinite}
+  .semaforo-banco.bloqueado{border-color:#ff3333;background:#3a0000;animation:pulsoBloqueado 0.5s infinite}
+  .semaforo-banco-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .semaforo-banco-titulo{font-size:14px;font-weight:bold;color:#ff6600}
+  .semaforo-banco-contador{font-size:12px;font-weight:bold;padding:4px 8px;border-radius:6px}
+  .semaforo-banco-barra{background:#333;height:8px;border-radius:4px;overflow:hidden;margin:6px 0}
+  .semaforo-banco-progreso{height:100%;transition:width 0.3s}
+  .semaforo-banco-progreso.verde{background:linear-gradient(90deg,#00ff00,#00cc00)}
+  .semaforo-banco-progreso.amarillo{background:linear-gradient(90deg,#ffaa00,#ff8800)}
+  .semaforo-banco-progreso.rojo{background:linear-gradient(90deg,#ff0000,#cc0000)}
+  .semaforo-banco-detalle{font-size:11px;color:#888;margin-top:4px}
+  .semaforo-banco-alerta{font-size:12px;font-weight:bold;margin-top:6px}
+  .btn-reset-banco{font-size:10px;background:#aa0000;color:white;border:none;padding:4px 8px;border-radius:4px;margin-top:6px;cursor:pointer}
+  .btn-reset-banco:active{transform:scale(0.95)}
   .tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:5px}
   .tab{padding:10px 2px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:11px;font-weight:bold;cursor:pointer;transition:all 0.3s;text-align:center}
   .tab.activo{background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);color:#000;border-color:#ff6600;box-shadow:0 4px 15px rgba(255,102,0,0.4)}
   .pantalla{display:none}.pantalla.activa{display:block}
   .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
-  .producto{background:linear-gradient(135deg,rgba(35,35,35,0.7) 0%,rgba(20,20,20,0.8) 100%);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);border:2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden}
+  .producto{background:linear-gradient(135deg,rgba(35,35,0.7) 0%,rgba(20,20,20,0.8) 100%);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);border:2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden}
   .producto:active{transform:scale(0.95)}
   .producto.activo{border-color:#ff6600;background:linear-gradient(135deg,#2d1a00 0%,#3d2400 100%);box-shadow:0 0 20px rgba(255,102,0,0.25);border:2px solid rgba(255,102,0,0.4);}
   .producto.sin-stock{opacity:.4;cursor:not-allowed}
   .producto.stock-bajo{border-color:#ff3333;animation:alertaStock 1.5s infinite;}
-   @keyframes alertaStock{0%,100%{box-shadow:0 0 10px rgba(255,51,0.3);}50%{box-shadow:0 0 20px rgba(255,51,0.6);}}
+   @keyframes alertaStock{0%,100%{box-shadow:0 0 10px rgba(255,51,51,0.3);}50%{box-shadow:0 0 20px rgba(255,51,51,0.6);}}
   .producto-icono{font-size:40px;margin-bottom:8px;text-align:center;display:inline-block}
   .producto h3{font-size:14px;color:#ff6600;margin-bottom:6px;font-weight:600;line-height:1.2}
-  .producto.precio{font-size:18px;color:#fff;font-weight:bold;margin-bottom:4px}
-  .producto.stock{font-size:11px;color:#888}
-  .banner-stock-bajo{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;padding:10px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:13px;box-shadow:0 4px 15px rgba(255,51,51,0.4);animation:pulse 2s infinite}
+  .producto .precio{font-size:18px;color:#fff;font-weight:bold;margin-bottom:4px}
+  .producto .stock{font-size:11px;color:#888}
+  .banner-stock-bajo{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;padding:10px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:13px;box-shadow:0 4px 15px rgba(255,51,0.4);animation:pulse 2s infinite}
   .total-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:20px;border-radius:16px;margin-bottom:15px;border:2px solid #ff6600;transition:all 0.4s ease}
   .total-box h2{font-size:14px;color:#888;margin-bottom:8px;text-transform:uppercase;transition:all 0.4s ease}
-  .total-box.monto{font-size:36px;color:#ff6600;font-weight:bold;text-shadow:0 0 20px rgba(255,102,0,0.5);transition:all 0.4s ease}
-  .total-box.vuelto{font-size:16px;color:#00ff00;margin-top:8px;font-weight:600}
+  .total-box .monto{font-size:36px;color:#ff6600;font-weight:bold;text-shadow:0 0 20px rgba(255,102,0,0.5);transition:all 0.4s ease}
+  .total-box .vuelto{font-size:16px;color:#00ff00;margin-top:8px;font-weight:600}
   .total-box.modo-costo-total{border-color:#00ff00;background:linear-gradient(135deg,#0d1a0d 0%,#1a331a 100%);box-shadow:0 0 20px rgba(0,255,0,0.25);}
   .total-box.modo-costo-total h2{color:#88ff88;}
-  .total-box.modo-costo-total.monto{color:#00ff00;text-shadow:0 0 20px rgba(0,255,0,0.5);}
+  .total-box.modo-costo-total .monto{color:#00ff00;text-shadow:0 0 20px rgba(0,255,0,0.5);}
   .input-grupo{margin-bottom:15px}.input-grupo label{display:block;color:#ff6600;font-size:13px;margin-bottom:6px;font-weight:600}
   .input-grupo input,.input-grupo select{width:100%;padding:14px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#fff;font-size:16px;outline:0;transition:all 0.3s}
   .input-grupo input:focus,.input-grupo select:focus{border-color:#ff6600;box-shadow:0 0 15px rgba(255,102,0,0.2)}
@@ -65,30 +82,27 @@
   .btn-secundario{background:linear-gradient(135deg,#444 0%,#666 100%);color:#fff;box-shadow:0 4px 15px rgba(0,0,0,0.3)}
   .banner-liquidacion{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:16px;box-shadow:0 4px 15px rgba(0,170,0,0.4);animation:pulse 2s infinite}
     @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
-  .aviso-cerrado{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:14px;box-shadow:0 4px 15px rgba(255,51,51,0.4)}
-  .stock-tabla{width:100%;background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:15px}
+  .aviso-cerrado{background:linear-gradient(135deg,#ff3333 0%,#ff5555 100%);color:#fff;padding:12px;border-radius:12px;margin-bottom:15px;text-align:center;font-weight:bold;font-size:14px;box-shadow:0 4px 15px rgba(255,51,0.4)}
+  .stock-tabla{width:100%;background:#1a1a;border-radius:12px;overflow:hidden;margin-bottom:15px}
   .stock-tabla th{background:#2d2d2d;padding:12px;text-align:left;font-size:12px;color:#ff6600;text-transform:uppercase}
   .stock-tabla td{padding:12px;border-top:1px solid #333;font-size:14px}
   .stock-tabla input{width:80px;padding:8px;background:#0a0a0a;border:1px solid #333;border-radius:8px;color:#fff;text-align:center}
   .resumen-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
   .resumen-item{background:#1a1a1a;padding:14px;border-radius:12px;border:1px solid #333}
   .resumen-item h3{font-size:11px;color:#888;margin-bottom:6px;text-transform:uppercase}
-  .resumen-item.valor{font-size:20px;color:#ff6600;font-weight:bold}
+  .resumen-item .valor{font-size:20px;color:#ff6600;font-weight:bold}
   .resumen-item.destacado{grid-column:span 2;background:linear-gradient(135deg,#1a1a1a 0%,#2d1a00 100%);border-color:#ff6600}
-  .resumen-item.destacado.valor{font-size:28px}
-  .resumen-item.ganancia{background:linear-gradient(135deg,#0d1a0d 0%,#1a331a 100%);border-color:#00ff00}
-  .resumen-item.ganancia.valor{color:#00ff00}
+  .resumen-item.destacado .valor{font-size:28px}
   .historial-item{background:#1a1a1a;padding:14px;border-radius:12px;margin-bottom:10px;border-left:4px solid #ff6600}
   .historial-item.costo{border-left-color:#00aa00}
-  .historial-item.gasto{border-left-color:#aa0000}
-  .historial-item.fecha{font-size:11px;color:#888;margin-bottom:6px}
-  .historial-item.folio{font-size:11px;color:#ff6600;font-weight:bold;margin-bottom:4px}
-  .historial-item.vendedor{font-size:11px;color:#00aaff;margin-bottom:4px}
-  .historial-item.metodo{color:#ff6600;font-weight:600}.historial-item.wsp{font-size:12px;color:#00ff00;margin-top:4px}
+  .historial-item .fecha{font-size:11px;color:#888;margin-bottom:6px}
+  .historial-item .folio{font-size:11px;color:#ff6600;font-weight:bold;margin-bottom:4px}
+  .historial-item .vendedor{font-size:11px;color:#00aaff;margin-bottom:4px}
+  .historial-item .metodo{color:#ff6600;font-weight:600}.historial-item .wsp{font-size:12px;color:#00ff00;margin-top:4px}
   .alerta{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff3333;color:#fff;padding:14px 24px;border-radius:12px;font-weight:bold;z-index:99999;box-shadow:0 8px 25px rgba(0,0,0,0.5);animation:slideDown 0.3s}
     @keyframes slideDown{from{transform:translateX(-50%) translateY(-100px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
   .oculto{display:none!important}
-  .login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;z-index:9999;display:flex;align-items:center;justify-content:center}
+  .login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a;z-index:9999;display:flex;align-items:center;justify-content:center}
   .login-box{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);padding:40px;border-radius:20px;border:2px solid #ff6600;max-width:400px;width:90%;text-align:center}
   .login-box h1{color:#ff6600;margin-bottom:20px;font-size:28px}
   .mensaje-venta{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;padding:30px 50px;border-radius:20px;font-size:24px;font-weight:bold;z-index:1001;box-shadow:0 10px 40px rgba(0,170,0,0.5);animation:popIn 0.3s}
@@ -133,6 +147,7 @@
     <div class="modal-sii-box">
       <h2>⛔ LÍMITE SII ALCANZADO</h2>
       <p id="modalSIIMsg">Llevas 50/50 abonos este mes.<br>El SII monitorea +50 transferencias.</p>
+      <p id="modalSIIDetalle" style="font-size:13px;color:#ffaa00;margin:10px 0;font-weight:bold"></p>
       <p style="font-size:12px;color:#ffaa00;margin:15px 0">⚠️ Usar solo si tienes 2da cuenta bancaria</p>
       <button class="btn-modal" onclick="SII.desbloquearDobleClick()">DESBLOQUEAR CON DOBLE CLICK</button>
       <input type="password" id="claveSII" class="input-clave" placeholder="INGRESA CLAVE" inputmode="numeric" maxlength="4">
@@ -160,15 +175,14 @@
         </div>
         <button onclick="Auth.logout()" class="btn-logout">Salir</button>
       </div>
-      <div class="tabs">
+            <div class="tabs">
         <button class="tab activo" onclick="App.cambiarTab('vender')">VENDER</button>
         <button class="tab" onclick="App.cambiarTab('stock')">STOCK</button>
         <button class="tab" onclick="App.cambiarTab('resumen')">RESUMEN</button>
         <button class="tab" onclick="App.cambiarTab('analisis')">ANÁLISIS</button>
-        <button class="tab" onclick="App.cambiarTab('gastos')">GASTOS</button>
+        <button class="tab" onclick="App.cambiarTab('bancos')">BANCOS</button>
         <button class="tab" onclick="App.cambiarTab('respaldo')">RESPALDO</button>
       </div>
-    </div>
     <div id="alerta" class="alerta oculto"></div>
     <div id="mensajeVenta" class="mensaje-venta oculto">✅ VENTA GUARDADA</div>
     <div id="vender" class="pantalla activa">
@@ -186,6 +200,17 @@
         <select id="metodo-pago">
           <option value="efectivo">💵 Efectivo</option>
           <option value="transferencia">💳 Transferencia</option>
+        </select>
+      </div>
+      <div class="input-grupo oculto" id="grupo-banco-transfer">
+        <label>BANCO DESTINO</label>
+        <select id="bancoTransfer">
+          <option value="">Selecciona banco</option>
+          <option value="cuenta_rut">🏦 Cuenta RUT</option>
+          <option value="banco_estado">🏦 Banco Estado</option>
+          <option value="tenpo">💳 Tenpo</option>
+          <option value="mercado_pago">💰 Mercado Pago</option>
+          <option value="copec_pay">⛽ Copec Pay</option>
         </select>
       </div>
       <div class="input-grupo" id="grupo-pago">
@@ -243,16 +268,14 @@
         <div class="resumen-item"><h3>🥫 Latas</h3><div class="valor" id="total-latas">0</div></div>
         <div class="resumen-item"><h3>💧 Cachantun</h3><div class="valor" id="total-cachantun">0</div></div>
         <div class="resumen-item"><h3>🏷️ Costo</h3><div class="valor" id="total-costo">0</div></div>
-        <div class="resumen-item"><h3>💸 Gastos</h3><div class="valor" id="total-gastos">$0</div></div>
-        <div class="resumen-item ganancia"><h3>💚 Ganancia Neta</h3><div class="valor" id="ganancia-neta">$0</div></div>
       </div>
       <div class="total-box" style="margin-bottom:15px">
         <h2 style="color:#ff6600;margin-bottom:10px;font-size:16px">DESGLOSE EMPANADAS</h2>
         <div id="r-desglose" style="font-size:14px;color:#fff;text-align:left"></div>
       </div>
       <div class="total-box" style="margin-bottom:15px">
-        <h2 style="color:#ff6600;margin-bottom:10px;font-size:16px">DESGLOSE GASTOS</h2>
-        <div id="r-gastos" style="font-size:14px;color:#fff;text-align:left"></div>
+        <h2 style="color:#ff6600;margin-bottom:10px;font-size:16px">DESGLOSE POR BANCO</h2>
+        <div id="r-bancos" style="font-size:14px;color:#fff;text-align:left"></div>
       </div>
       <button class="btn" onclick="Resumen.mandarWSP()">MANDAR RESUMEN A WSP</button>
       <h2 style="color:#ff6600;margin:20px 0 10px;font-size:16px">HISTORIAL DE VENTAS</h2>
@@ -273,37 +296,14 @@
       </div>
       <button class="btn" style="margin-top:15px" onclick="Analisis.exportarCSV()">📊 EXPORTAR A EXCEL</button>
     </div>
-    <div id="gastos" class="pantalla">
+    <div id="bancos" class="pantalla">
       <div class="total-box">
-        <h2>💸 AGREGAR GASTO</h2>
-        <div class="input-grupo">
-          <label>CATEGORÍA</label>
-          <select id="gasto-categoria">
-            <option value="">Selecciona o escribe nueva</option>
-          </select>
-        </div>
-        <div class="input-grupo">
-          <label>NUEVA CATEGORÍA (opcional)</label>
-          <input type="text" id="gasto-nueva-categoria" placeholder="Ej: Publicidad">
-        </div>
-        <div class="input-grupo">
-          <label>MONTO</label>
-          <input type="number" id="gasto-monto" placeholder="0" inputmode="numeric">
-        </div>
-        <div class="input-grupo">
-          <label>DESCRIPCIÓN</label>
-          <input type="text" id="gasto-descripcion" placeholder="Ej: Compré queso">
-        </div>
-        <button class="btn" onclick="Gastos.agregar()">AGREGAR GASTO</button>
+        <h2 style="color:#ff6600;margin-bottom:10px;font-size:16px">🚨 MONITOR SII POR BANCO</h2>
+        <div style="font-size:11px;color:#888;margin-bottom:15px;text-align:center">Límite SII: 50 depósitos/mes o 100/semestre por cuenta</div>
+        <div id="listaBancos"></div>
       </div>
-      <div class="total-box" style="margin-top:15px">
-        <h2 style="color:#ff6600;margin-bottom:10px;font-size:16px">CATEGORÍAS</h2>
-        <div id="lista-categorias" style="font-size:14px;color:#fff;text-align:left"></div>
-      </div>
-      <h2 style="color:#ff6600;margin:20px 0 10px;font-size:16px">GASTOS DEL DÍA</h2>
-      <div id="historial-gastos"></div>
     </div>
-    <div id="respaldo" class="pantalla">
+        <div id="respaldo" class="pantalla">
       <div class="total-box">
         <h2>💾 RESPALDO DE DATOS</h2>
         <p style="color:#888;font-size:13px;margin-bottom:15px">Descarga un respaldo JSON de todas las ventas y stock</p>
@@ -316,10 +316,9 @@
         <button class="btn" onclick="Respaldo.cargar()">CARGAR RESPALDO</button>
       </div>
     </div>
-  </div>
   <script>
 const CLAVE_HASH = 'MTk3MQ==';
-const VERSION_APP = '2.6-sii-cuadre';
+const VERSION_APP = '2.7-bancos';
 const FOLIO_PREFIX = 'LWE-';
 let alertaTimeout = null;
 
@@ -385,8 +384,6 @@ const DB = {
   getFolio: () => parseInt(localStorage.getItem('folioActual') || '1'),
   getCajaInicial: () => parseInt(localStorage.getItem('cajaInicial') || '0'),
   getDiaActivo: () => localStorage.getItem('diaActivo') === 'true',
-  getGastos: () => DB.get('gastosDia', []),
-  getCategoriasGastos: () => DB.get('categoriasGastos', ['Compras', 'Sueldos', 'Arriendo', 'Servicios', 'Otros']),
   getLimiteAlertaStock: () => parseInt(localStorage.getItem('limiteAlertaStock') || '3'),
   setStockInicial: (val) => DB.set('stockInicial', val),
   setStockActual: (val) => DB.set('stockActual', val),
@@ -396,17 +393,17 @@ const DB = {
   setFolio: (val) => localStorage.setItem('folioActual', val),
   setCajaInicial: (val) => localStorage.setItem('cajaInicial', val),
   setDiaActivo: (val) => localStorage.setItem('diaActivo', val),
-  setGastos: (val) => DB.set('gastosDia', val),
-  setCategoriasGastos: (val) => DB.set('categoriasGastos', val),
   setLimiteAlertaStock: (val) => localStorage.setItem('limiteAlertaStock', val),
-  getAbonosMes() {
+  getAbonosMes(banco = null) {
     const hoy = new Date();
     const mesActual = hoy.getMonth();
     const anioActual = hoy.getFullYear();
     const ventasMes = [...DB.getVentasHistoricas(),...DB.getVentas()]
-    .filter(v => {
+.filter(v => {
         const fecha = new Date(v.fecha);
+        const esBanco = banco? v.banco === banco : true;
         return v.metodo === 'transferencia' &&
+               esBanco &&
                fecha.getMonth() === mesActual &&
                fecha.getFullYear() === anioActual;
       });
@@ -415,8 +412,38 @@ const DB = {
       monto: ventasMes.reduce((sum, v) => sum + v.total, 0)
     };
   },
-  getSIIDesbloqueado: () => localStorage.getItem('siiDesbloqueado') === 'true',
-  setSIIDesbloqueado: (val) => localStorage.setItem('siiDesbloqueado', val),
+  getAbonosSemestre(banco = null) {
+    const hoy = new Date();
+    const anioActual = hoy.getFullYear();
+    const mesActual = hoy.getMonth();
+    const semestreInicio = mesActual < 6? 0 : 6;
+    const ventasSemestre = [...DB.getVentasHistoricas(),...DB.getVentas()]
+.filter(v => {
+        const fecha = new Date(v.fecha);
+        const esBanco = banco? v.banco === banco : true;
+        return v.metodo === 'transferencia' &&
+               esBanco &&
+               fecha.getFullYear() === anioActual &&
+               fecha.getMonth() >= semestreInicio &&
+               fecha.getMonth() < semestreInicio + 6;
+      });
+    return {
+      cantidad: ventasSemestre.length,
+      monto: ventasSemestre.reduce((sum, v) => sum + v.total, 0)
+    };
+  },
+  getSIIContadores: () => DB.get('siiContadores', {}),
+  setSIIContadores: (val) => DB.set('siiContadores', val),
+  getSIIDesbloqueado: (banco) => {
+    const contadores = DB.getSIIContadores();
+    return contadores[banco]?.desbloqueado || false;
+  },
+  setSIIDesbloqueado: (banco, val) => {
+    const contadores = DB.getSIIContadores();
+    if (!contadores[banco]) contadores[banco] = { mensual: 0, semestral: 0, desbloqueado: false };
+    contadores[banco].desbloqueado = val;
+    DB.setSIIContadores(contadores);
+  },
   getMesSII: () => localStorage.getItem('mesSII'),
   setMesSII: (val) => localStorage.setItem('mesSII', val)
 };
@@ -424,6 +451,7 @@ const DB = {
 const SII = {
   clicks: 0,
   clickTimeout: null,
+  bancoActual: null,
   actualizarContador() {
     const abonos = DB.getAbonosMes();
     const contador = document.getElementById('siiContador');
@@ -432,13 +460,8 @@ const SII = {
     texto.textContent = abonos.cantidad + '/50';
     contador.classList.remove('verde', 'amarillo', 'rojo', 'bloqueado');
     if (abonos.cantidad >= 50) {
-      if (DB.getSIIDesbloqueado()) {
-        contador.classList.add('amarillo');
-        texto.textContent = abonos.cantidad + '/50 ⚠️';
-      } else {
-        contador.classList.add('bloqueado');
-        texto.textContent = abonos.cantidad + '/50 ⛔';
-      }
+      contador.classList.add('bloqueado');
+      texto.textContent = abonos.cantidad + '/50 ⛔';
     } else if (abonos.cantidad >= 40) {
       contador.classList.add('rojo');
     } else if (abonos.cantidad >= 30) {
@@ -447,42 +470,62 @@ const SII = {
       contador.classList.add('verde');
     }
   },
-  verificarLimite(metodo) {
-    if (metodo!== 'transferencia') return { permitir: true };
-    const abonos = DB.getAbonosMes();
-    const desbloqueado = DB.getSIIDesbloqueado();
-    if (abonos.cantidad >= 50 &&!desbloqueado) {
-      return { permitir: false, mostrarModal: true };
+  actualizarContadorGlobal() {
+    this.actualizarContador();
+    if (typeof Bancos!== 'undefined' && Bancos.render) Bancos.render();
+  },
+  verificarLimite(metodo, banco) {
+    if (metodo!== 'transferencia' ||!banco) return { permitir: true };
+
+    const abonosMes = DB.getAbonosMes(banco);
+    const abonosSemestre = DB.getAbonosSemestre(banco);
+    const desbloqueado = DB.getSIIDesbloqueado(banco);
+
+    if ((abonosMes.cantidad >= 50 || abonosSemestre.cantidad >= 100) &&!desbloqueado) {
+      this.bancoActual = banco;
+      return { permitir: false, mostrarModal: true, banco: banco, mes: abonosMes.cantidad, semestre: abonosSemestre.cantidad };
     }
-    if (abonos.cantidad >= 40) {
+
+    if (abonosMes.cantidad >= 40 || abonosSemestre.cantidad >= 80) {
       Sonidos.play('bipFuerte');
-      UI.mostrarAlerta('⛔ PELIGRO: ' + abonos.cantidad + '/50 abonos SII', false);
-    } else if (abonos.cantidad >= 30) {
+      UI.mostrarAlerta(`⛔ PELIGRO ${banco}: ${abonosMes.cantidad}/50 mes | ${abonosSemestre.cantidad}/100 semestre`, false);
+    } else if (abonosMes.cantidad >= 30 || abonosSemestre.cantidad >= 60) {
       Sonidos.play('bip');
-      UI.mostrarAlerta('⚠️ ALERTA: ' + abonos.cantidad + '/50 abonos SII', false);
+      UI.mostrarAlerta(`⚠️ ALERTA ${banco}: ${abonosMes.cantidad}/50 mes | ${abonosSemestre.cantidad}/100 semestre`, false);
     }
     return { permitir: true };
   },
-  mostrarModal() {
-    const abonos = DB.getAbonosMes();
+  mostrarModal(banco, mes, semestre) {
+    const nombresBancos = {
+      'cuenta_rut': 'Cuenta RUT',
+      'banco_estado': 'Banco Estado',
+      'tenpo': 'Tenpo',
+      'mercado_pago': 'Mercado Pago',
+      'copec_pay': 'Copec Pay'
+    };
     document.getElementById('modalSIIMsg').innerHTML =
-      'Llevas ' + abonos.cantidad + '/50 abonos este mes.<br>El SII monitorea +50 transferencias.';
+      `Llevas ${mes}/50 abonos este mes en ${nombresBancos[banco]}.<br>Semestre: ${semestre}/100<br>El SII monitorea límites por cuenta.`;
+    document.getElementById('modalSIIDetalle').textContent = `Banco: ${nombresBancos[banco]}`;
     document.getElementById('modalSII').classList.remove('oculto');
     document.getElementById('claveSII').value = '';
+    this.bancoActual = banco;
     Sonidos.play('bipFuerte');
   },
   cerrarModal() {
     document.getElementById('modalSII').classList.add('oculto');
     this.clicks = 0;
+    this.bancoActual = null;
   },
   desbloquearDobleClick() {
     this.clicks++;
     if (this.clickTimeout) clearTimeout(this.clickTimeout);
     if (this.clicks >= 2) {
-      DB.setSIIDesbloqueado(true);
-      UI.mostrarAlerta('✅ Desbloqueado por esta venta', true);
+      if (this.bancoActual) {
+        DB.setSIIDesbloqueado(this.bancoActual, true);
+        UI.mostrarAlerta(`✅ ${this.bancoActual} desbloqueado por esta venta`, true);
+      }
       this.cerrarModal();
-      SII.actualizarContador();
+      this.actualizarContadorGlobal();
       this.clicks = 0;
     } else {
       UI.mostrarAlerta('Doble click para desbloquear', true);
@@ -492,22 +535,38 @@ const SII = {
   desbloquearConClave() {
     const clave = document.getElementById('claveSII').value;
     if (btoa(clave) === CLAVE_HASH) {
-      DB.setSIIDesbloqueado(true);
-      UI.mostrarAlerta('✅ Desbloqueado hasta fin de mes', true);
+      if (this.bancoActual) {
+        DB.setSIIDesbloqueado(this.bancoActual, true);
+        UI.mostrarAlerta(`✅ ${this.bancoActual} desbloqueado hasta fin de mes`, true);
+      }
       this.cerrarModal();
-      SII.actualizarContador();
+      this.actualizarContadorGlobal();
     } else {
       UI.mostrarAlerta('Clave incorrecta');
       document.getElementById('claveSII').value = '';
     }
   },
   resetearManual() {
-    const clave = prompt("¿Resetear contador SII a 0/50?\nIngresa clave:");
+    const clave = prompt("¿Resetear contador SII GLOBAL a 0/50?\nIngresa clave:");
     if (btoa(clave) === CLAVE_HASH) {
-      DB.setSIIDesbloqueado(false);
+      DB.setSIIContadores({});
       localStorage.setItem('mesSII', '');
-      UI.mostrarAlerta('Contador SII reseteado a 0/50', true);
-      SII.actualizarContador();
+      UI.mostrarAlerta('Contador SII de todos los bancos reseteado', true);
+      this.actualizarContadorGlobal();
+    } else if (clave!== null) {
+      UI.mostrarAlerta('Clave incorrecta');
+    }
+  },
+  resetearBanco(banco) {
+    const clave = prompt(`¿Resetear contador de ${banco}?\nIngresa clave:`);
+    if (btoa(clave) === CLAVE_HASH) {
+      const contadores = DB.getSIIContadores();
+      if (contadores[banco]) {
+        contadores[banco].desbloqueado = false;
+        DB.setSIIContadores(contadores);
+      }
+      UI.mostrarAlerta(`Contador de ${banco} reseteado`, true);
+      this.actualizarContadorGlobal();
     } else if (clave!== null) {
       UI.mostrarAlerta('Clave incorrecta');
     }
@@ -518,7 +577,11 @@ const SII = {
     const mesGuardado = DB.getMesSII();
     if (mesGuardado!== mesActual) {
       DB.setMesSII(mesActual);
-      DB.setSIIDesbloqueado(false);
+      const contadores = DB.getSIIContadores();
+      Object.keys(contadores).forEach(b => {
+        contadores[b].desbloqueado = false;
+      });
+      DB.setSIIContadores(contadores);
       console.log('🔄 Mes SII reseteado:', mesActual);
     }
   }
@@ -549,7 +612,6 @@ let estado = {
   liquidacionIds: [],
   usuarioActual: DB.getUsuario(),
   folioActual: DB.getFolio(),
-  gastos: DB.getGastos(),
   limiteAlertaStock: DB.getLimiteAlertaStock()
 };
 
@@ -629,110 +691,6 @@ const UI = {
     });
   }
 };
-
-const Gastos = {
-  agregar() {
-    const categoriaSelect = document.getElementById('gasto-categoria').value;
-    const nuevaCategoria = document.getElementById('gasto-nueva-categoria').value.trim();
-    const monto = parseInt(document.getElementById('gasto-monto').value) || 0;
-    const descripcion = document.getElementById('gasto-descripcion').value.trim();
-
-    if (!categoriaSelect &&!nuevaCategoria) {
-      UI.mostrarAlerta('Selecciona o crea una categoría');
-      return;
-    }
-    if (monto <= 0) {
-      UI.mostrarAlerta('Ingresa un monto válido');
-      return;
-    }
-
-    let categoria = nuevaCategoria || categoriaSelect;
-
-    if (nuevaCategoria) {
-      const categorias = DB.getCategoriasGastos();
-      if (!categorias.includes(nuevaCategoria)) {
-        categorias.push(nuevaCategoria);
-        DB.setCategoriasGastos(categorias);
-      }
-    }
-
-    const gasto = {
-      id: Date.now(),
-      fecha: new Date().toISOString(),
-      categoria: categoria,
-      monto: monto,
-      descripcion: descripcion || 'Sin descripción',
-      usuario: estado.usuarioActual
-    };
-
-    estado.gastos.push(gasto);
-    DB.setGastos(estado.gastos);
-
-    document.getElementById('gasto-monto').value = '';
-    document.getElementById('gasto-descripcion').value = '';
-    document.getElementById('gasto-nueva-categoria').value = '';
-    document.getElementById('gasto-categoria').value = '';
-
-    this.render();
-    Resumen.actualizar();
-    UI.mostrarAlerta('Gasto agregado', true);
-  },
-  eliminar(id) {
-    if (!confirm('¿Eliminar este gasto?')) return;
-    estado.gastos = estado.gastos.filter(g => g.id!== id);
-    DB.setGastos(estado.gastos);
-    this.render();
-    Resumen.actualizar();
-    UI.mostrarAlerta('Gasto eliminado', true);
-  },
-  eliminarCategoria(cat) {
-    if (!confirm('¿Eliminar categoría "' + cat + '"? Los gastos quedarán sin categoría.')) return;
-    const categorias = DB.getCategoriasGastos().filter(c => c!== cat);
-    DB.setCategoriasGastos(categorias);
-    this.render();
-    UI.mostrarAlerta('Categoría eliminada', true);
-  },
-  render() {
-    const lista = document.getElementById('historial-gastos');
-    lista.innerHTML = '';
-
-    if (estado.gastos.length === 0) {
-      lista.innerHTML = '<div style="text-align:center;color:#888;padding:20px">No hay gastos registrados hoy</div>';
-    } else {
-      let total = 0;
-      [...estado.gastos].reverse().forEach(g => {
-        total += g.monto;
-        const fecha = new Date(g.fecha);
-        const div = document.createElement('div');
-        div.className = 'historial-item gasto';
-        div.innerHTML = '<div class="folio">' + g.categoria + '</div>' +
-          '<div class="fecha">' + fecha.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + '</div>' +
-          '<div>' + g.descripcion + '</div>' +
-          '<div style="font-weight:bold;color:#ff3333;margin-top:4px">-' + UI.formatearPrecio(g.monto) + '</div>' +
-          '<button class="btn btn-eliminar" onclick="Gastos.eliminar(' + g.id + ')">ELIMINAR</button>';
-        lista.appendChild(div);
-      });
-      lista.innerHTML = '<div style="text-align:center;padding:15px;background:#1a0000;border-radius:12px;margin-bottom:15px;border:2px solid #ff3333"><b>TOTAL GASTOS: ' + UI.formatearPrecio(total) + '</b></div>' + lista.innerHTML;
-    }
-
-    const categorias = DB.getCategoriasGastos();
-    const selectCat = document.getElementById('gasto-categoria');
-    selectCat.innerHTML = '<option value="">Selecciona o escribe nueva</option>';
-    categorias.forEach(c => {
-      selectCat.innerHTML += '<option value="' + c + '">' + c + '</option>';
-    });
-
-    const listaCat = document.getElementById('lista-categorias');
-    listaCat.innerHTML = '';
-    categorias.forEach(c => {
-      const div = document.createElement('div');
-      div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px;background:#0a;border-radius:8px;margin:5px 0';
-      div.innerHTML = '<span>' + c + '</span><button onclick="Gastos.eliminarCategoria(\'' + c + '\')" style="padding:5px 10px;background:#aa0000;border:none;border-radius:6px;color:#fff;font-size:11px;cursor:pointer">X</button>';
-      listaCat.appendChild(div);
-    });
-  }
-};
-
 const Ventas = {
   generarFolio() {
     const folio = FOLIO_PREFIX + String(estado.folioActual).padStart(6, '0');
@@ -779,10 +737,16 @@ const Ventas = {
     if (!this.validarStock()) return;
 
     const metodo = document.getElementById('metodo-pago').value;
+    const banco = metodo === 'transferencia'? document.getElementById('bancoTransfer').value : null;
 
-    const verificacion = SII.verificarLimite(metodo);
+    if (metodo === 'transferencia' &&!banco) {
+      UI.mostrarAlerta('Selecciona un banco para transferencia');
+      return;
+    }
+
+    const verificacion = SII.verificarLimite(metodo, banco);
     if (!verificacion.permitir) {
-      SII.mostrarModal();
+      SII.mostrarModal(verificacion.banco, verificacion.mes, verificacion.semestre);
       return;
     }
 
@@ -808,6 +772,7 @@ const Ventas = {
       vendedor: estado.usuarioActual,
       carrito: JSON.parse(JSON.stringify(estado.carrito)),
       total, pago, vuelto, metodo,
+      banco: banco,
       whatsapp: wsp || null,
       fecha: new Date().toISOString(),
       tipo: estado.liquidacionIds.length > 0? 'costo' : 'venta',
@@ -822,7 +787,7 @@ const Ventas = {
     Productos.render();
     Stock.actualizarTotal();
     Resumen.actualizar();
-    SII.actualizarContador();
+    SII.actualizarContadorGlobal();
     UI.scrollToTop();
   },
   liquidar() {
@@ -862,6 +827,7 @@ const Ventas = {
     document.getElementById('pago').value = '';
     document.getElementById('wsp').value = '';
     document.getElementById('metodo-pago').value = 'efectivo';
+    document.getElementById('bancoTransfer').value = '';
     Stock.cambiarMetodoPago();
 
     UI.scrollToTop();
@@ -877,7 +843,7 @@ const Ventas = {
     DB.setStockActual(estado.stockActual);
     Productos.render();
     Resumen.actualizar();
-    SII.actualizarContador();
+    SII.actualizarContadorGlobal();
     UI.mostrarAlerta('Venta eliminada y stock devuelto', true);
   },
   mandarWspVenta(venta) {
@@ -892,7 +858,14 @@ const Ventas = {
       msg += venta.carrito[id] + 'x ' + p.nombre + ' - $' + (precioUnit * venta.carrito[id]).toLocaleString('es-CL') + '%0A';
     }
     msg += '%0A*TOTAL: $' + venta.total.toLocaleString('es-CL') + '*%0A';
-    msg += 'Pago: ' + (venta.metodo === 'transferencia'? 'Transferencia' : 'Efectivo $' + venta.pago.toLocaleString('es-CL')) + '%0A';
+    const nombresBancos = {
+      'cuenta_rut': 'Cuenta RUT',
+      'banco_estado': 'Banco Estado',
+      'tenpo': 'Tenpo',
+      'mercado_pago': 'Mercado Pago',
+      'copec_pay': 'Copec Pay'
+    };
+    msg += 'Pago: ' + (venta.metodo === 'transferencia'? 'Transferencia ' + (nombresBancos[venta.banco] || venta.banco) : 'Efectivo $' + venta.pago.toLocaleString('es-CL')) + '%0A';
     if (venta.metodo === 'efectivo' && venta.vuelto > 0) {
       msg += 'Vuelto: $' + venta.vuelto.toLocaleString('es-CL') + '%0A';
     }
@@ -900,16 +873,19 @@ const Ventas = {
     window.open('https://wa.me/' + venta.whatsapp.replace(/[^0-9]/g, '') + '?text=' + msg, '_blank');
   }
 };
-
 const Stock = {
   cambiarMetodoPago() {
     const metodo = document.getElementById('metodo-pago').value;
     const grupoPago = document.getElementById('grupo-pago');
+    const grupoBanco = document.getElementById('grupo-banco-transfer');
     if (metodo === 'transferencia') {
       grupoPago.classList.add('oculto');
+      grupoBanco.classList.remove('oculto');
       document.getElementById('pago').value = '';
     } else {
       grupoPago.classList.remove('oculto');
+      grupoBanco.classList.add('oculto');
+      document.getElementById('bancoTransfer').value = '';
     }
     this.actualizarTotal();
   },
@@ -955,7 +931,6 @@ const Stock = {
     }
   }
 };
-
 const Productos = {
   agregar(id) {
     if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado. Carga stock inicial'); return; }
@@ -1039,7 +1014,6 @@ const Productos = {
     });
   }
 };
-
 const Resumen = {
   calcular() {
     const cajaInicial = parseInt(document.getElementById('cajaInicial').value) || DB.getCajaInicial() || 0;
@@ -1054,10 +1028,18 @@ const Resumen = {
       cachantun: { cant: 0, total: 0 },
       costo: { cant: 0, total: 0 }
     };
+    const desgloseBancos = {};
     estado.ventas.forEach(v => {
       totalDia += v.total;
       if (v.metodo === 'efectivo') totalEfectivo += v.total;
-      if (v.metodo === 'transferencia') totalTransfer += v.total;
+      if (v.metodo === 'transferencia') {
+        totalTransfer += v.total;
+                if (v.banco) {
+          if (!desgloseBancos[v.banco]) desgloseBancos[v.banco] = { cant: 0, total: 0 };
+          desgloseBancos[v.banco].cant++;
+          desgloseBancos[v.banco].total += v.total;
+        }
+      }
       for (let id in v.carrito) {
         const p = buscarProducto(id);
         const cant = v.carrito[id];
@@ -1081,22 +1063,12 @@ const Resumen = {
       }
     });
 
-    let totalGastos = 0;
-    const gastosPorCategoria = {};
-    estado.gastos.forEach(g => {
-      totalGastos += g.monto;
-      if (!gastosPorCategoria[g.categoria]) gastosPorCategoria[g.categoria] = 0;
-      gastosPorCategoria[g.categoria] += g.monto;
-    });
-
     return {
       cajaInicial, totalDia, totalEfectivo, totalTransfer,
-      totalCaja: cajaInicial + totalEfectivo - totalGastos,
+      totalCaja: cajaInicial + totalEfectivo,
       numVentas: estado.ventas.length,
       desglose,
-      totalGastos,
-      gastosPorCategoria,
-      gananciaNeta: totalDia - totalGastos
+      desgloseBancos
     };
   },
   actualizar() {
@@ -1107,17 +1079,13 @@ const Resumen = {
     document.getElementById('mostrar-caja-inicial').textContent = UI.formatearPrecio(datos.cajaInicial);
     document.getElementById('total-caja').textContent = UI.formatearPrecio(datos.totalCaja);
     document.getElementById('num-ventas').textContent = datos.numVentas;
-    document.getElementById('total-gastos').textContent = UI.formatearPrecio(datos.totalGastos);
-    document.getElementById('ganancia-neta').textContent = UI.formatearPrecio(datos.gananciaNeta);
 
-    // CUADRE DE CAJA REAL - NUEVO
-    const cajaEsperada = datos.cajaInicial + datos.totalEfectivo - datos.totalGastos;
+    const cajaEsperada = datos.cajaInicial + datos.totalEfectivo;
     const diferencia = datos.totalCaja - cajaEsperada;
     let htmlCuadre = `
       <div style="margin:6px 0"><b>💰 Caja Inicial:</b> ${UI.formatearPrecio(datos.cajaInicial)}</div>
       <div style="margin:6px 0;color:#00ff00"><b>+ Ventas Efectivo:</b> ${UI.formatearPrecio(datos.totalEfectivo)}</div>
       <div style="margin:6px 0;color:#00aaff"><b>+ Transferencias:</b> ${UI.formatearPrecio(datos.totalTransfer)} <span style="font-size:10px;color:#888">(no va a caja física)</span></div>
-      <div style="margin:6px 0;color:#ff3333"><b>- Gastos:</b> ${UI.formatearPrecio(datos.totalGastos)}</div>
       <div style="margin-top:10px;padding-top:10px;border-top:2px solid #00ff00;font-size:16px">
         <b>💚 Caja Esperada:</b> ${UI.formatearPrecio(cajaEsperada)}
       </div>
@@ -1153,16 +1121,24 @@ const Resumen = {
     }
     document.getElementById('r-desglose').innerHTML = htmlDesglose;
 
-    let htmlGastos = '';
-    if (datos.totalGastos === 0) {
-      htmlGastos = '<span style="color:#888">Sin gastos registrados hoy</span>';
+    let htmlBancos = '';
+    const nombresBancos = {
+      'cuenta_rut': '🏦 Cuenta RUT',
+      'banco_estado': '🏦 Banco Estado',
+      'tenpo': '💳 Tenpo',
+      'mercado_pago': '💰 Mercado Pago',
+      'copec_pay': '⛽ Copec Pay'
+    };
+    if (Object.keys(datos.desgloseBancos).length === 0) {
+      htmlBancos = '<span style="color:#888">Sin transferencias registradas hoy</span>';
     } else {
-      for (let cat in datos.gastosPorCategoria) {
-        htmlGastos += '<div style="margin:5px 0">💸 <b>' + cat + ':</b> ' + UI.formatearPrecio(datos.gastosPorCategoria[cat]) + '</div>';
+      for (let banco in datos.desgloseBancos) {
+        const b = datos.desgloseBancos[banco];
+        htmlBancos += '<div style="margin:5px 0">💳 <b>' + (nombresBancos[banco] || banco) + ':</b> ' + b.cant + ' abonos - ' + UI.formatearPrecio(b.total) + '</div>';
       }
-      htmlGastos += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #000"><b>TOTAL GASTOS:</b> ' + UI.formatearPrecio(datos.totalGastos) + '</div>';
+      htmlBancos += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #000"><b>TOTAL TRANSFER:</b> ' + UI.formatearPrecio(datos.totalTransfer) + '</div>';
     }
-    document.getElementById('r-gastos').innerHTML = htmlGastos;
+    document.getElementById('r-bancos').innerHTML = htmlBancos;
 
     this.renderHistorial();
   },
@@ -1183,10 +1159,18 @@ const Resumen = {
       }
       detalle = detalle.slice(0, -2);
       const wspHtml = v.whatsapp? '<div class="wsp">📱 WhatsApp: ' + v.whatsapp + '</div>' : '';
+      const nombresBancos = {
+        'cuenta_rut': 'Cuenta RUT',
+        'banco_estado': 'Banco Estado',
+        'tenpo': 'Tenpo',
+        'mercado_pago': 'Mercado Pago',
+        'copec_pay': 'Copec Pay'
+      };
+      const bancoTxt = v.banco? ' - ' + (nombresBancos[v.banco] || v.banco) : '';
 
       div.innerHTML = '<div class="folio">Boleta: ' + v.folio + '</div>' +
         '<div class="vendedor">Vendedor: ' + v.vendedor + '</div>' +
-        '<div class="fecha">' + fecha.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + ' - <span class="metodo">' + v.metodo.toUpperCase() + (v.tipo === 'costo'? ' - COSTO' : '') + '</span></div>' +
+        '<div class="fecha">' + fecha.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + ' - <span class="metodo">' + v.metodo.toUpperCase() + bancoTxt + (v.tipo === 'costo'? ' - COSTO' : '') + '</span></div>' +
         '<div>' + detalle + '</div>' +
         '<div style="font-weight:bold;color:#ff6600;margin-top:4px">' + UI.formatearPrecio(v.total) + '</div>' +
         wspHtml +
@@ -1204,9 +1188,8 @@ const Resumen = {
     msg += '💸 TOTAL EN CAJA: ' + UI.formatearPrecio(datos.totalCaja) + '%0A';
     msg += '├ 💰 Caja inicial: ' + UI.formatearPrecio(datos.cajaInicial) + '%0A';
     msg += '├ 💵 Efectivo ventas: ' + UI.formatearPrecio(datos.totalEfectivo) + '%0A';
-    msg += '└ 💸 Gastos: -' + UI.formatearPrecio(datos.totalGastos) + '%0A%0A';
+    msg += '└ 💳 Transferencias: ' + UI.formatearPrecio(datos.totalTransfer) + '%0A%0A';
     msg += '💰 TOTAL VENDIDO: ' + UI.formatearPrecio(datos.totalDia) + '%0A';
-    msg += '├ 💳 Transferencia: ' + UI.formatearPrecio(datos.totalTransfer) + ' (' + abonosSII.cantidad + ' abonos)%0A';
     msg += '└ 📊 N° de ventas: ' + datos.numVentas + '%0A%0A';
     msg += '🚨 MONITOR SII: ' + abonosSII.cantidad + '/50 abonos - ' + UI.formatearPrecio(abonosSII.monto) + '%0A%0A';
     msg += '📦 DESGLOSE POR PRODUCTO:%0A';
@@ -1221,19 +1204,26 @@ const Resumen = {
     msg += '└ 💧 Cachantun: ' + datos.desglose.cachantun.cant + ' und - ' + UI.formatearPrecio(datos.desglose.cachantun.total) + '%0A';
     if (datos.desglose.costo.cant > 0) msg += '%0A🏷️ LIQUIDACIÓN: ' + datos.desglose.costo.cant + ' und - ' + UI.formatearPrecio(datos.desglose.costo.total) + '%0A';
 
-    msg += '%0A💸 TOTAL GASTOS: ' + UI.formatearPrecio(datos.totalGastos) + '%0A';
-    if (datos.totalGastos > 0) {
-      for (let cat in datos.gastosPorCategoria) {
-        msg += '├ ' + cat + ': ' + UI.formatearPrecio(datos.gastosPorCategoria[cat]) + '%0A';
+    msg += '%0A💳 DESGLOSE POR BANCO:%0A';
+    const nombresBancos = {
+      'cuenta_rut': 'Cuenta RUT',
+      'banco_estado': 'Banco Estado',
+      'tenpo': 'Tenpo',
+      'mercado_pago': 'Mercado Pago',
+      'copec_pay': 'Copec Pay'
+    };
+    if (Object.keys(datos.desgloseBancos).length === 0) {
+      msg += 'Sin transferencias hoy%0A';
+    } else {
+      for (let banco in datos.desgloseBancos) {
+        const b = datos.desgloseBancos[banco];
+        msg += '├ ' + (nombresBancos[banco] || banco) + ': ' + b.cant + ' abonos - ' + UI.formatearPrecio(b.total) + '%0A';
       }
     }
-
-    msg += '%0A💚 GANANCIA NETA: ' + UI.formatearPrecio(datos.gananciaNeta) + '%0A';
     msg += '%0A_Generado desde Caja Weones v' + VERSION_APP + '_ 🥟';
     window.open('https://wa.me/?text=' + msg, '_blank');
   }
 };
-
 const StockGestion = {
   render() {
     const tabla = document.getElementById('tabla-stock');
@@ -1286,16 +1276,13 @@ const StockGestion = {
     estado.diaActivo = false;
     estado.carrito = {};
     estado.liquidacionIds = [];
-    estado.gastos = [];
     DB.setVentas([]);
     DB.setStockActual(estado.stockActual);
     DB.setDiaActivo(false);
-    DB.setGastos([]);
     Resumen.actualizar();
     Productos.render();
     Stock.verificarDiaActivo();
-    Gastos.render();
-    SII.actualizarContador();
+    SII.actualizarContadorGlobal();
     UI.mostrarAlerta('Día cerrado. Historial guardado.', true);
   },
   verDesglose() {
@@ -1358,7 +1345,7 @@ const StockGestion = {
     UI.mostrarAlerta(`Se borraron ${ventasDelDia.length} ventas del ${dias[diaSemana]}`, true);
     Resumen.actualizar();
     Productos.render();
-    SII.actualizarContador();
+    SII.actualizarContadorGlobal();
     Analisis.render();
   }
 };
@@ -1474,7 +1461,7 @@ const Analisis = {
       htmlAlertas = '<span style="color:#00ff00">✅ Todos los productos tienen stock para 2+ días</span>';
     } else {
       alertas.forEach(a => {
-        htmlAlertas += `<div style="margin:10px 0;padding:10px;background:#1a0000;border-radius:8px;border-left:3px solid #ff3333">
+                htmlAlertas += `<div style="margin:10px 0;padding:10px;background:#1a0000;border-radius:8px;border-left:3px solid #ff3333">
           ⚠️ <b>${a.nombre}</b><br>
           Stock actual: ${a.stock} unidades<br>
           Vendes: ${a.promedio} por día en promedio<br>
@@ -1564,6 +1551,70 @@ const Analisis = {
   }
 };
 
+const Bancos = {
+  render() {
+    const bancos = [
+      { id: 'cuenta_rut', nombre: '🏦 Cuenta RUT' },
+      { id: 'banco_estado', nombre: '🏦 Banco Estado' },
+      { id: 'tenpo', nombre: '💳 Tenpo' },
+      { id: 'mercado_pago', nombre: '💰 Mercado Pago' },
+      { id: 'copec_pay', nombre: '⛽ Copec Pay' }
+    ];
+
+    const lista = document.getElementById('listaBancos');
+    if (!lista) return;
+    lista.innerHTML = '';
+
+    bancos.forEach(b => {
+      const abonosMes = DB.getAbonosMes(b.id);
+      const abonosSemestre = DB.getAbonosSemestre(b.id);
+      const desbloqueado = DB.getSIIDesbloqueado(b.id);
+
+      const porcentajeMes = (abonosMes.cantidad / 50) * 100;
+      const porcentajeSemestre = (abonosSemestre.cantidad / 100) * 100;
+      const porcentajeMax = Math.max(porcentajeMes, porcentajeSemestre);
+
+      let clase = 'verde';
+      let alerta = '✅ Todo bien';
+      let colorTexto = '#00ff00';
+
+      if (abonosMes.cantidad >= 50 || abonosSemestre.cantidad >= 100) {
+        clase = desbloqueado? 'amarillo' : 'bloqueado';
+        alerta = desbloqueado? '⚠️ DESBLOQUEADO - Usar con cuidado' : '⛔ BLOQUEADO - Límite alcanzado';
+        colorTexto = desbloqueado? '#ffaa00' : '#ff3333';
+      } else if (abonosMes.cantidad >= 40 || abonosSemestre.cantidad >= 80) {
+        clase = 'rojo';
+        alerta = '⛔ PELIGRO - Cambia de cuenta YA';
+        colorTexto = '#ff0000';
+      } else if (abonosMes.cantidad >= 30 || abonosSemestre.cantidad >= 60) {
+        clase = 'amarillo';
+        alerta = '⚠️ ALERTA - Cerca del límite';
+        colorTexto = '#ffaa00';
+      }
+
+      const div = document.createElement('div');
+      div.className = `semaforo-banco ${clase}`;
+      div.innerHTML = `
+        <div class="semaforo-banco-header">
+          <div class="semaforo-banco-titulo">${b.nombre}</div>
+          <div class="semaforo-banco-contador" style="color:${colorTexto};background:rgba(0,0,0,0.3)">
+            ${abonosMes.cantidad}/50 | ${abonosSemestre.cantidad}/100
+          </div>
+        </div>
+        <div class="semaforo-banco-barra">
+          <div class="semaforo-banco-progreso ${clase}" style="width:${Math.min(porcentajeMax, 100)}%"></div>
+        </div>
+        <div class="semaforo-banco-detalle">
+          Mes: ${UI.formatearPrecio(abonosMes.monto)} | Semestre: ${UI.formatearPrecio(abonosSemestre.monto)}
+        </div>
+        <div class="semaforo-banco-alerta" style="color:${colorTexto}">${alerta}</div>
+        <button class="btn-reset-banco" onclick="SII.resetearBanco('${b.id}')">🗑️ RESET ${b.nombre.split(' ')[1]}</button>
+      `;
+      lista.appendChild(div);
+    });
+  }
+};
+
 const Respaldo = {
   downloadObjectAsJson(exportObj, exportName){
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
@@ -1585,11 +1636,9 @@ const Respaldo = {
       ventas: estado.ventas,
       ventasHistoricas: DB.getVentasHistoricas(),
       folioActual: estado.folioActual,
-      gastos: estado.gastos,
-      categoriasGastos: DB.getCategoriasGastos(),
       limiteAlertaStock: estado.limiteAlertaStock,
       mesSII: DB.getMesSII(),
-      siiDesbloqueado: DB.getSIIDesbloqueado()
+      siiContadores: DB.getSIIContadores()
     };
     this.downloadObjectAsJson(datos, 'respaldo-weones-' + new Date().toISOString().split('T')[0]);
     UI.mostrarAlerta('Respaldo descargado', true);
@@ -1608,7 +1657,6 @@ const Respaldo = {
         estado.ventas = datos.ventas || [];
         estado.folioActual = datos.folioActual || 1;
         estado.diaActivo = true;
-        estado.gastos = datos.gastos || [];
         estado.limiteAlertaStock = datos.limiteAlertaStock || 3;
         DB.setStockInicial(estado.stockInicial);
         DB.setStockActual(estado.stockActual);
@@ -1616,19 +1664,16 @@ const Respaldo = {
         DB.setFolio(estado.folioActual);
         DB.setCajaInicial(datos.cajaInicial || 0);
         DB.setDiaActivo(true);
-        DB.setGastos(estado.gastos);
-        if (datos.categoriasGastos) DB.setCategoriasGastos(datos.categoriasGastos);
         DB.setLimiteAlertaStock(estado.limiteAlertaStock);
         if (datos.ventasHistoricas) DB.setVentasHistoricas(datos.ventasHistoricas);
         if (datos.mesSII) DB.setMesSII(datos.mesSII);
-        if (datos.siiDesbloqueado!== undefined) DB.setSIIDesbloqueado(datos.siiDesbloqueado);
+        if (datos.siiContadores) DB.setSIIContadores(datos.siiContadores);
         document.getElementById('cajaInicial').value = datos.cajaInicial || 0;
         document.getElementById('limiteAlertaStock').value = estado.limiteAlertaStock;
         Productos.render();
         Resumen.actualizar();
         Stock.verificarDiaActivo();
-        Gastos.render();
-        SII.actualizarContador();
+        SII.actualizarContadorGlobal();
         UI.mostrarAlerta('Respaldo cargado', true);
       } catch (err) { UI.mostrarAlerta('Error al cargar: ' + err.message); }
       input.value = '';
@@ -1651,8 +1696,8 @@ const App = {
       Resumen.actualizar();
     } else if (tab === 'analisis') {
       Analisis.render();
-    } else if (tab === 'gastos') {
-      Gastos.render();
+    } else if (tab === 'bancos') {
+      Bancos.render();
     }
   },
   init() {
@@ -1664,7 +1709,7 @@ const App = {
     Stock.verificarDiaActivo();
     Stock.verificarStockBajo();
     Resumen.actualizar();
-    SII.actualizarContador();
+    SII.actualizarContadorGlobal();
     document.getElementById('pago').addEventListener('input', Stock.actualizarTotal);
     document.getElementById('metodo-pago').addEventListener('change', Stock.cambiarMetodoPago);
     document.getElementById('cajaInicial').addEventListener('input', () => {
@@ -1688,6 +1733,6 @@ const App = {
 };
 
 window.onload = () => { if (Auth.verificar()) App.init(); };
-</script>
+  </script>
 </body>
 </html>
