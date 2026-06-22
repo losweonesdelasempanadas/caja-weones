@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CAJA WEONES QR PRO v3.3</title>
+  <title>CAJA WEONES QR PRO v3.4</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
@@ -148,6 +148,355 @@
       0% { transform: translateX(-50%) translateY(0) rotate(0deg); opacity: 1; }
       100% { transform: translateX(-50%) translateY(var(--y)) translateX(var(--x)) rotate(var(--r)); opacity: 0; }
     }
+
+    /* === NUEVOS ESTILOS v3.4 - ANIMACIONES Y TRANSFERENCIA === */
+    
+    /* VENTA EN EFECTIVO - Monedas y billetes cayendo */
+    @keyframes caidaDinero {
+      0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    @keyframes brilloEfectivo {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.5) drop-shadow(0 0 20px #ffd700); }
+    }
+    .efectivo-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 99998;
+      overflow: hidden;
+    }
+    .moneda {
+      position: absolute;
+      font-size: 40px;
+      animation: caidaDinero 2s linear forwards;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    }
+    .billete {
+      position: absolute;
+      font-size: 50px;
+      animation: caidaDinero 2.5s linear forwards;
+      animation-delay: 0.3s;
+    }
+    @keyframes flashDorado {
+      0% { background: transparent; }
+      20% { background: rgba(255, 215, 0, 0.3); }
+      100% { background: transparent; }
+    }
+    .flash-efectivo {
+      animation: flashDorado 0.8s ease;
+    }
+
+    /* VENTA EN TRANSFERENCIA - Digital */
+    @keyframes flujoDigital {
+      0% { transform: translateX(-100%) scale(0.5); opacity: 0; }
+      30% { opacity: 1; }
+      70% { opacity: 1; }
+      100% { transform: translateX(100vw) scale(1); opacity: 0; }
+    }
+    @keyframes pulsoDigital {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+    @keyframes escaneoQR {
+      0% { clip-path: inset(0 100% 0 0); }
+      50% { clip-path: inset(0 0 0 0); }
+      100% { clip-path: inset(0 0 0 100%); }
+    }
+    .transferencia-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 99998;
+      overflow: hidden;
+      background: rgba(0, 100, 255, 0.05);
+    }
+    .digital-bit {
+      position: absolute;
+      font-size: 20px;
+      color: #00aaff;
+      font-family: monospace;
+      font-weight: bold;
+      animation: flujoDigital 1.5s linear forwards;
+      text-shadow: 0 0 10px rgba(0, 170, 255, 0.8);
+    }
+    .qr-scan-line {
+      position: absolute;
+      left: 50%;
+      top: 30%;
+      width: 200px;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, #00ff00, transparent);
+      transform: translateX(-50%);
+      animation: escaneoQR 1s ease-in-out 3;
+      box-shadow: 0 0 20px #00ff00;
+    }
+    .circulo-digital {
+      position: absolute;
+      border: 3px solid #00aaff;
+      border-radius: 50%;
+      animation: pulsoDigital 0.8s ease infinite;
+    }
+    .banner-transfer-ok {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: linear-gradient(135deg, #001a33, #003d7a);
+      border: 3px solid #00aaff;
+      border-radius: 24px;
+      padding: 40px 60px;
+      z-index: 99999;
+      text-align: center;
+      animation: popInTransfer 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      box-shadow: 0 0 60px rgba(0, 170, 255, 0.5), inset 0 0 40px rgba(0, 170, 255, 0.1);
+    }
+    @keyframes popInTransfer {
+      to { transform: translate(-50%, -50%) scale(1); }
+    }
+    .banner-transfer-ok .icono-big {
+      font-size: 80px;
+      margin-bottom: 16px;
+      animation: pulsoDigital 1s ease infinite;
+    }
+    .banner-transfer-ok .texto {
+      font-size: 28px;
+      font-weight: 800;
+      color: #00aaff;
+      text-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
+    }
+
+    /* BOTÓN CONFIRMAR TRANSFERENCIA */
+    .btn-confirmar-transfer {
+      background: linear-gradient(135deg, #00aaff 0%, #0066cc 100%) !important;
+      color: #fff !important;
+      box-shadow: 0 4px 20px rgba(0, 170, 255, 0.4), 0 0 30px rgba(0, 170, 255, 0.2) !important;
+      animation: pulsoConfirmar 1.5s infinite ease-in-out !important;
+      border: 2px solid #00ffff !important;
+    }
+    @keyframes pulsoConfirmar {
+      0%, 100% { transform: scale(1); box-shadow: 0 4px 20px rgba(0, 170, 255, 0.4), 0 0 30px rgba(0, 170, 255, 0.2); }
+      50% { transform: scale(1.02); box-shadow: 0 6px 30px rgba(0, 170, 255, 0.6), 0 0 50px rgba(0, 170, 255, 0.4); }
+    }
+    .btn-confirmar-transfer:active {
+      transform: scale(0.97) !important;
+      animation: none !important;
+    }
+
+    /* BANNER ESPERANDO TRANSFERENCIA */
+    .banner-esperando-transfer {
+      background: linear-gradient(135deg, #001a33 0%, #003366 100%);
+      border: 2px solid #00aaff;
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 15px;
+      text-align: center;
+      animation: pulsoAzul 2s infinite ease-in-out;
+    }
+    @keyframes pulsoAzul {
+      0%, 100% { box-shadow: 0 0 10px rgba(0, 170, 255, 0.3); }
+      50% { box-shadow: 0 0 25px rgba(0, 170, 255, 0.6); }
+    }
+    .banner-esperando-transfer .titulo {
+      font-size: 18px;
+      font-weight: bold;
+      color: #00aaff;
+      margin-bottom: 8px;
+    }
+    .banner-esperando-transfer .detalle {
+      font-size: 13px;
+      color: #88ccff;
+      line-height: 1.5;
+    }
+    .banner-esperando-transfer .monto {
+      font-size: 28px;
+      font-weight: 800;
+      color: #00ffff;
+      text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      margin: 8px 0;
+    }
+
+    /* BOTÓN CANCELAR TRANSFERENCIA */
+    .btn-cancelar-transfer {
+      background: linear-gradient(135deg, #333 0%, #555 100%) !important;
+      color: #ff6666 !important;
+      border: 2px solid #ff3333 !important;
+      box-shadow: 0 4px 15px rgba(255, 51, 51, 0.2) !important;
+      margin-top: 10px !important;
+    }
+
+    /* BANNER SII MEJORADO */
+    .banner-sii-peligro {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: linear-gradient(135deg, #2a0000, #4a0000);
+      border: 3px solid #ff0000;
+      border-radius: 24px;
+      padding: 30px 40px;
+      z-index: 99999;
+      text-align: center;
+      animation: popInBanner 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      box-shadow: 0 0 60px rgba(255, 0, 0, 0.6), inset 0 0 40px rgba(255, 0, 0, 0.1);
+      max-width: 90%;
+      width: 400px;
+    }
+    .banner-sii-amarillo {
+      background: linear-gradient(135deg, #2a1a00, #4a2a00) !important;
+      border-color: #ffaa00 !important;
+      box-shadow: 0 0 60px rgba(255, 170, 0, 0.5) !important;
+    }
+    @keyframes popInBanner {
+      to { transform: translate(-50%, -50%) scale(1); }
+    }
+    @keyframes shakeBanner {
+      0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+      10% { transform: translate(-50%, -50%) scale(1) rotate(-2deg); }
+      20% { transform: translate(-50%, -50%) scale(1) rotate(2deg); }
+      30% { transform: translate(-50%, -50%) scale(1) rotate(-2deg); }
+      40% { transform: translate(-50%, -50%) scale(1) rotate(2deg); }
+      50% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    }
+    .banner-sii-peligro.shake {
+      animation: popInBanner 0.5s ease forwards, shakeBanner 0.5s ease 0.5s;
+    }
+    .banner-sii-peligro .icono-sii {
+      font-size: 60px;
+      margin-bottom: 12px;
+    }
+    .banner-sii-peligro .titulo {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ff0000;
+      margin-bottom: 8px;
+      text-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    }
+    .banner-sii-peligro .detalle {
+      font-size: 14px;
+      color: #ff8888;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .banner-sii-peligro .btn-accion {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #ff0000;
+      background: #1a0000;
+      color: #ff0000;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.3s;
+    }
+    .banner-sii-peligro .btn-accion:hover {
+      background: #ff0000;
+      color: #000;
+    }
+    .sii-progress-container {
+      width: 100%;
+      height: 12px;
+      background: #1a0000;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 12px 0;
+      border: 1px solid #ff3333;
+    }
+    .sii-progress-bar {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .sii-progress-bar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    .sii-progress-bar.peligro {
+      background: linear-gradient(90deg, #ff0000, #ff3333);
+      width: 90%;
+    }
+    .sii-progress-bar.alerta {
+      background: linear-gradient(90deg, #ffaa00, #ffcc00);
+      width: 70%;
+    }
+
+    /* VIBRACIÓN VISUAL */
+    @keyframes vibrarPantalla {
+      0%, 100% { transform: translate(0); }
+      10% { transform: translate(-3px, 3px); }
+      20% { transform: translate(3px, -3px); }
+      30% { transform: translate(-3px, -3px); }
+      40% { transform: translate(3px, 3px); }
+      50% { transform: translate(-2px, 2px); }
+      60% { transform: translate(2px, -2px); }
+      70% { transform: translate(-2px, -2px); }
+      80% { transform: translate(2px, 2px); }
+      90% { transform: translate(-1px, 1px); }
+    }
+    .vibrar-pantalla {
+      animation: vibrarPantalla 0.5s ease;
+    }
+
+    /* DATOS BANCO ANIMADOS */
+    @keyframes flotarDato {
+      0%, 100% { transform: translateY(0); opacity: 0.7; }
+      50% { transform: translateY(-5px); opacity: 1; }
+    }
+    .dato-banco-animado {
+      animation: flotarDato 2s infinite ease-in-out;
+    }
+
+    /* FLASH VERDE CONFIRMACIÓN */
+    @keyframes flashVerde {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes popOut {
+      from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      to { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+    }
+
+    /* BANNER CONFIRMACIÓN TRANSFERENCIA */
+    .banner-confirmacion-transfer {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: linear-gradient(135deg, #00aa00, #00cc00);
+      border-radius: 24px;
+      padding: 40px 60px;
+      z-index: 99999;
+      text-align: center;
+      animation: popInTransfer 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      box-shadow: 0 20px 60px rgba(0, 170, 0, 0.5);
+    }
+    .banner-confirmacion-transfer .icono {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+    .banner-confirmacion-transfer .texto {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .banner-confirmacion-transfer .monto {
+      font-size: 36px;
+      font-weight: bold;
+      color: #ccffcc;
+      margin-top: 12px;
+    }
   </style>
 </head>
 <body>
@@ -200,6 +549,17 @@
       <div id="bannerLiquidacion" class="banner-liquidacion oculto">🔥 MODO LIQUIDACIÓN ACTIVO - EMPANADAS A $2.000 🔥</div>
       <div id="aviso-dia-cerrado" class="aviso-cerrado oculto">⚠️ DÍA CERRADO - Carga stock inicial para activar ventas ⚠️</div>
       <div id="bannerStockBajo" class="banner-stock-bajo oculto"></div>
+      
+      <!-- NUEVO: Banner esperando transferencia -->
+      <div id="bannerEsperandoTransfer" class="banner-esperando-transfer oculto">
+        <div class="titulo">⏳ ESPERANDO TRANSFERENCIA</div>
+        <div class="monto" id="montoEsperandoTransfer">$0</div>
+        <div class="detalle">
+          <span id="bancoEsperandoTransfer">Banco</span><br>
+          <span style="font-size: 11px; color: #6699cc;">La venta NO se contabiliza hasta confirmar</span>
+        </div>
+      </div>
+      
       <div id="productos-grid" class="productos-grid"></div>
       <div id="totalBox" class="total-box">
         <h2>TOTAL A PAGAR</h2>
@@ -230,6 +590,8 @@
         <input type="tel" id="wsp" placeholder="+56912345678" inputmode="tel">
       </div>
       <button id="btnVender" class="btn" onclick="Ventas.ejecutar()">VENDER</button>
+      <!-- NUEVO: Botón cancelar transferencia (oculto por defecto) -->
+      <button id="btnCancelarTransfer" class="btn btn-cancelar-transfer oculto" onclick="Ventas.cancelarEsperaTransferencia()">❌ CANCELAR - No llegó la plata</button>
       <button class="btn btn-cobrar" style="margin-top:10px" onclick="App.irACobrar()">VER COBROS DEL DÍA</button>
       <button class="btn btn-anular" style="margin-top:10px" onclick="Ventas.anular()">ANULAR PEDIDO</button>
       <button class="btn btn-costo" style="margin-top:10px" onclick="Ventas.liquidar()">COSTO $2.000</button>
@@ -396,10 +758,17 @@
 
 <script>
 const CLAVE_HASH = 'MTk3MQ==';
-const VERSION_APP = '3.3';
+const VERSION_APP = '3.4';
 const FOLIO_PREFIX = 'LWE-';
 let alertaTimeout = null;
 
+// NUEVO v3.4: Variables para modo confirmación transferencia
+let ventaPendienteConfirmacion = null;
+let modoConfirmacionTransferencia = false;
+
+// ============================================
+// NUEVO v3.4: SONIDOS MEJORADOS Y MÁS AUDIBLES
+// ============================================
 const Sonidos = {
   ctx: null,
   init() {
@@ -410,31 +779,305 @@ const Sonidos = {
   play(tipo) {
     this.init();
     if (!this.ctx) return;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    const ahora = this.ctx.currentTime;
+    const ctx = this.ctx;
+    const t = ctx.currentTime;
+    
+    const crearNota = (freq, duracion, tipoOnda = 'sine', volumen = 0.4, cuando = 0) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = tipoOnda;
+      osc.frequency.setValueAtTime(freq, t + cuando);
+      gain.gain.setValueAtTime(0, t + cuando);
+      gain.gain.linearRampToValueAtTime(volumen, t + cuando + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + cuando + duracion);
+      osc.start(t + cuando);
+      osc.stop(t + cuando + duracion);
+      return { osc, gain };
+    };
+    
     if (tipo === 'click') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(600, ahora);
-      gain.gain.setValueAtTime(0.1, ahora);
-      gain.gain.exponentialRampToValueAtTime(0.01, ahora + 0.1);
-      osc.start(ahora); osc.stop(ahora + 0.1);
+      crearNota(800, 0.08, 'sine', 0.3);
     } else if (tipo === 'exito') {
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(523.25, ahora);
-      osc.frequency.setValueAtTime(659.25, ahora + 0.1);
-      gain.gain.setValueAtTime(0.15, ahora);
-      gain.gain.exponentialRampToValueAtTime(0.01, ahora + 0.3);
-      osc.start(ahora); osc.stop(ahora + 0.3);
+      crearNota(523.25, 0.25, 'triangle', 0.35, 0);
+      crearNota(659.25, 0.25, 'triangle', 0.35, 0.15);
+      crearNota(783.99, 0.35, 'triangle', 0.4, 0.30);
+      crearNota(1046.50, 0.5, 'triangle', 0.35, 0.50);
+    } else if (tipo === 'efectivo') {
+      crearNota(1200, 0.1, 'sine', 0.3, 0);
+      crearNota(900, 0.15, 'sine', 0.25, 0.05);
+      crearNota(1500, 0.2, 'sine', 0.35, 0.2);
+      crearNota(2000, 0.3, 'triangle', 0.3, 0.25);
+      crearNota(2500, 0.4, 'sine', 0.25, 0.4);
+    } else if (tipo === 'transferencia') {
+      crearNota(880, 0.12, 'square', 0.2, 0);
+      crearNota(880, 0.12, 'square', 0.2, 0.18);
+      crearNota(1100, 0.15, 'square', 0.25, 0.38);
+      crearNota(1320, 0.2, 'sine', 0.3, 0.55);
+      crearNota(1760, 0.35, 'sine', 0.35, 0.75);
     } else if (tipo === 'alerta') {
+      for (let i = 0; i < 4; i++) {
+        crearNota(800, 0.15, 'sawtooth', 0.3, i * 0.25);
+        crearNota(600, 0.15, 'sawtooth', 0.3, i * 0.25 + 0.12);
+      }
+    } else if (tipo === 'sii-peligro') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(150, ahora);
-      gain.gain.setValueAtTime(0.2, ahora);
-      gain.gain.exponentialRampToValueAtTime(0.01, ahora + 0.4);
-      osc.start(ahora); osc.stop(ahora + 0.4);
+      osc.frequency.setValueAtTime(400, t);
+      osc.frequency.linearRampToValueAtTime(900, t + 0.3);
+      osc.frequency.linearRampToValueAtTime(400, t + 0.6);
+      osc.frequency.linearRampToValueAtTime(900, t + 0.9);
+      osc.frequency.linearRampToValueAtTime(400, t + 1.2);
+      gain.gain.setValueAtTime(0.35, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 1.3);
+      osc.start(t);
+      osc.stop(t + 1.3);
+    } else if (tipo === 'sii-ok') {
+      crearNota(600, 0.2, 'sine', 0.3, 0);
+      crearNota(800, 0.3, 'sine', 0.35, 0.2);
+    } else if (tipo === 'stock-bajo') {
+      crearNota(700, 0.15, 'square', 0.3, 0);
+      crearNota(700, 0.15, 'square', 0.3, 0.2);
+      crearNota(700, 0.25, 'square', 0.35, 0.4);
+      crearNota(500, 0.3, 'sawtooth', 0.25, 0.55);
     }
+  }
+};
+
+// ============================================
+// NUEVO v3.4: ANIMACIONES DE VENTA
+// ============================================
+const Animaciones = {
+  efectivo(total) {
+    Sonidos.play('efectivo');
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200, 100, 300]);
+    
+    document.body.classList.add('flash-efectivo');
+    setTimeout(() => document.body.classList.remove('flash-efectivo'), 800);
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'efectivo-overlay';
+    
+    const simbolos = ['💵', '💴', '💶', '💷', '💰', '🪙', '💲', '💸'];
+    const colores = ['#ffd700', '#ffed4e', '#daa520', '#b8860b'];
+    
+    for (let i = 0; i < 25; i++) {
+      const el = document.createElement('div');
+      const esBillete = Math.random() > 0.5;
+      el.className = esBillete ? 'billete' : 'moneda';
+      el.textContent = simbolos[Math.floor(Math.random() * simbolos.length)];
+      el.style.left = Math.random() * 100 + '%';
+      el.style.animationDelay = (Math.random() * 1.5) + 's';
+      el.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+      el.style.fontSize = (30 + Math.random() * 30) + 'px';
+      el.style.color = colores[Math.floor(Math.random() * colores.length)];
+      overlay.appendChild(el);
+    }
+    
+    const monto = document.createElement('div');
+    monto.style.cssText = `
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 48px;
+      font-weight: 800;
+      color: #ffd700;
+      text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 4px 8px rgba(0,0,0,0.5);
+      z-index: 10;
+      animation: popIn 0.5s ease;
+    `;
+    monto.textContent = '$' + total.toLocaleString('es-CL');
+    overlay.appendChild(monto);
+    
+    document.body.appendChild(overlay);
+    setTimeout(() => overlay.remove(), 3000);
+  },
+  
+  transferencia(total, cuenta) {
+    Sonidos.play('transferencia');
+    if (navigator.vibrate) navigator.vibrate([50, 30, 50, 30, 100, 50, 200]);
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'transferencia-overlay';
+    
+    const bits = ['1', '0', '1', '0', '✓', '⟳', '⚡', '💳', '📱'];
+    for (let i = 0; i < 30; i++) {
+      const el = document.createElement('div');
+      el.className = 'digital-bit';
+      el.textContent = bits[Math.floor(Math.random() * bits.length)];
+      el.style.left = Math.random() * 100 + '%';
+      el.style.top = Math.random() * 100 + '%';
+      el.style.animationDelay = (Math.random() * 2) + 's';
+      el.style.animationDuration = (1 + Math.random() * 2) + 's';
+      el.style.opacity = 0.3 + Math.random() * 0.7;
+      overlay.appendChild(el);
+    }
+    
+    for (let i = 0; i < 3; i++) {
+      const circulo = document.createElement('div');
+      circulo.className = 'circulo-digital';
+      const size = 100 + i * 80;
+      circulo.style.cssText = `
+        width: ${size}px;
+        height: ${size}px;
+        left: 50%;
+        top: 50%;
+        margin-left: -${size/2}px;
+        margin-top: -${size/2}px;
+        animation-delay: ${i * 0.3}s;
+        opacity: ${0.3 - i * 0.1};
+      `;
+      overlay.appendChild(circulo);
+    }
+    
+    const scanLine = document.createElement('div');
+    scanLine.className = 'qr-scan-line';
+    overlay.appendChild(scanLine);
+    
+    document.body.appendChild(overlay);
+    
+    setTimeout(() => {
+      const banner = document.createElement('div');
+      banner.className = 'banner-transfer-ok';
+      banner.innerHTML = `
+        <div class="icono-big">💳✓</div>
+        <div class="texto">TRANSFERENCIA<br>REGISTRADA</div>
+        <div style="font-size: 18px; color: #00ff00; margin-top: 12px; font-weight: bold;">
+          $${total.toLocaleString('es-CL')}
+        </div>
+        <div style="font-size: 13px; color: #88ccff; margin-top: 8px;">
+          ${cuenta ? cuenta.banco : ''}
+        </div>
+      `;
+      document.body.appendChild(banner);
+      
+      setTimeout(() => Sonidos.play('exito'), 200);
+      
+      setTimeout(() => {
+        banner.style.animation = 'popOut 0.3s ease forwards';
+        setTimeout(() => banner.remove(), 300);
+      }, 2500);
+    }, 800);
+    
+    setTimeout(() => overlay.remove(), 3500);
+  },
+  
+  transferenciaConfirmada(total) {
+    Sonidos.play('exito');
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 300]);
+    
+    const flash = document.createElement('div');
+    flash.style.cssText = `
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 255, 100, 0.3);
+      z-index: 99998;
+      pointer-events: none;
+      animation: flashVerde 0.6s ease forwards;
+    `;
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 600);
+    
+    const banner = document.createElement('div');
+    banner.className = 'banner-confirmacion-transfer';
+    banner.innerHTML = `
+      <div class="icono">✅</div>
+      <div class="texto">TRANSFERENCIA<br>CONFIRMADA</div>
+      <div class="monto">$${total.toLocaleString('es-CL')}</div>
+      <div style="font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 12px;">
+        Contabilizado en SII ✓
+      </div>
+    `;
+    document.body.appendChild(banner);
+    
+    setTimeout(() => {
+      banner.style.animation = 'popOut 0.3s ease forwards';
+      setTimeout(() => banner.remove(), 300);
+    }, 2000);
+  },
+  
+  siiPeligro(cuenta, abonosMes, abonosSem) {
+    Sonidos.play('sii-peligro');
+    if (navigator.vibrate) {
+      navigator.vibrate([500, 200, 500, 200, 500, 200, 1000]);
+    }
+    
+    document.body.classList.add('vibrar-pantalla');
+    setTimeout(() => document.body.classList.remove('vibrar-pantalla'), 500);
+    
+    const esBloqueado = abonosMes.cantidad >= 50 || abonosSem.cantidad >= 100;
+    const esPeligro = abonosMes.cantidad >= 45 || abonosSem.cantidad >= 90;
+    const esAlerta = abonosMes.cantidad >= 35 || abonosSem.cantidad >= 70;
+    
+    const claseBanner = esBloqueado ? '' : esPeligro ? '' : 'banner-sii-amarillo';
+    const colorTitulo = esBloqueado ? '#ff0000' : esPeligro ? '#ff0000' : '#ffaa00';
+    const icono = esBloqueado ? '⛔' : esPeligro ? '🚨' : '⚠️';
+    const titulo = esBloqueado ? 'CUENTA BLOQUEADA' : esPeligro ? '¡PELIGRO SII!' : 'ALERTA SII';
+    const mensaje = esBloqueado 
+      ? `No puedes recibir más abonos en ${cuenta.banco}`
+      : esPeligro
+        ? `Cambia de cuenta YA en ${cuenta.banco}`
+        : `Te estás acercando al límite en ${cuenta.banco}`;
+    
+    const porcentaje = Math.min((abonosMes.cantidad / 50) * 100, 100);
+    
+    const banner = document.createElement('div');
+    banner.className = `banner-sii-peligro ${esPeligro || esBloqueado ? 'shake' : ''} ${claseBanner}`;
+    banner.innerHTML = `
+      <div class="icono-sii">${icono}</div>
+      <div class="titulo" style="color: ${colorTitulo}">${titulo}</div>
+      <div class="detalle">${mensaje}</div>
+      
+      <div style="font-size: 13px; color: #fff; margin-bottom: 4px;">
+        <b>${cuenta.banco}</b> - ${cuenta.tipo}
+      </div>
+      
+      <div class="sii-progress-container">
+        <div class="sii-progress-bar ${esPeligro || esBloqueado ? 'peligro' : 'alerta'}" style="width: ${porcentaje}%"></div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; color: #aaa; margin-bottom: 12px;">
+        <div>📅 Mes: <span style="color: ${colorTitulo}; font-weight: bold;">${abonosMes.cantidad}/50</span></div>
+        <div>📊 Sem: <span style="color: ${colorTitulo}; font-weight: bold;">${abonosSem.cantidad}/100</span></div>
+      </div>
+      
+      <div style="font-size: 11px; color: #888; margin-bottom: 12px;">
+        Monto mes: $${abonosMes.monto.toLocaleString('es-CL')}<br>
+        Monto semestre: $${abonosSem.monto.toLocaleString('es-CL')}
+      </div>
+      
+      <button class="btn-accion" onclick="App.cambiarTab('cuentas'); this.parentElement.remove();">
+        IR A CUENTAS BANCARIAS
+      </button>
+      <button class="btn-accion" onclick="SII.resetearBanco('${cuenta.id}'); this.parentElement.remove();" 
+        style="border-color: #ff6600; color: #ff6600; margin-top: 6px;">
+        🔐 RESET CON CLAVE
+      </button>
+      <button onclick="this.parentElement.remove()" style="position:absolute; top:12px; right:16px; background:none; border:none; color:#fff; font-size:24px; cursor:pointer; opacity:0.5;">×</button>
+    `;
+    
+    document.body.appendChild(banner);
+    
+    if (esBloqueado || esPeligro) {
+      const intervalo = setInterval(() => {
+        if (!banner.parentElement) {
+          clearInterval(intervalo);
+          return;
+        }
+        Sonidos.play('sii-peligro');
+        if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+      }, 3000);
+    }
+  },
+  
+  stockBajo(productos) {
+    Sonidos.play('stock-bajo');
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
   }
 };
 
@@ -460,7 +1103,6 @@ const DB = {
   setDiaActivo: (val) => localStorage.setItem('diaActivo', val),
   setLimiteAlertaStock: (val) => localStorage.setItem('limiteAlertaStock', val),
   
-  // CUENTAS SEPARADAS POR USUARIO
   getCuentasKey: () => 'cuentas_' + (estado.usuarioActual || 'default'),
   getCuentas: function() { return DB.get(this.getCuentasKey(), []); },
   setCuentas: function(val) { DB.set(this.getCuentasKey(), val); },
@@ -476,7 +1118,6 @@ const DB = {
     this.setCuentas(cuentas);
   },
   
-  // ABONOS FILTRADOS POR USUARIO
   getAbonosMes: function(bancoId) {
     const hoy = new Date();
     const mesActual = hoy.getMonth();
@@ -670,13 +1311,35 @@ const SII = {
       const porcentajeSem = (abonosSem.cantidad / 100) * 100;
       const porcentaje = Math.max(porcentajeMes, porcentajeSem);
       let clase = 'verde', alerta = '✅ Todo bien', colorTexto = '#00ff00';
+      let mostrarBanner = false;
+      
       if (abonosMes.cantidad >= 50 || abonosSem.cantidad >= 100) {
-        clase = 'bloqueado'; alerta = '⛔ BLOQUEADO - Límite alcanzado'; colorTexto = '#ff3333';
+        clase = 'bloqueado'; 
+        alerta = '⛔ BLOQUEADO - Límite alcanzado'; 
+        colorTexto = '#ff3333';
+        mostrarBanner = true;
       } else if (abonosMes.cantidad >= 45 || abonosSem.cantidad >= 90) {
-        clase = 'rojo'; alerta = '⛔ PELIGRO - Cambia de cuenta YA'; colorTexto = '#ff0000';
+        clase = 'rojo'; 
+        alerta = '⛔ PELIGRO - Cambia de cuenta YA'; 
+        colorTexto = '#ff0000';
+        mostrarBanner = true;
       } else if (abonosMes.cantidad >= 35 || abonosSem.cantidad >= 70) {
-        clase = 'amarillo'; alerta = '⚠️ ALERTA - Cerca del límite'; colorTexto = '#ffaa00';
+        clase = 'amarillo'; 
+        alerta = '⚠️ ALERTA - Cerca del límite'; 
+        colorTexto = '#ffaa00';
       }
+      
+      // NUEVO v3.4: Mostrar banner SII con sonido y vibración
+      if (mostrarBanner) {
+        const keyBanner = 'sii_banner_' + c.id + '_' + new Date().getHours();
+        if (!sessionStorage.getItem(keyBanner)) {
+          sessionStorage.setItem(keyBanner, '1');
+          setTimeout(() => {
+            Animaciones.siiPeligro(c, abonosMes, abonosSem);
+          }, 500);
+        }
+      }
+      
       const div = document.createElement('div');
       div.className = `semaforo-banco ${clase}`;
       div.innerHTML = `
@@ -769,6 +1432,9 @@ const SII = {
   }
 };
 
+// ============================================
+// NUEVO v3.4: VENTAS MODIFICADO CON CONFIRMACIÓN DE TRANSFERENCIA
+// ============================================
 const Ventas = {
   generarFolio() {
     const folio = FOLIO_PREFIX + String(estado.folioActual).padStart(6, '0');
@@ -807,6 +1473,12 @@ const Ventas = {
     const metodo = document.getElementById('metodo-pago').value;
     const grupoPago = document.getElementById('grupo-pago');
     const grupoBanco = document.getElementById('grupo-cuenta-banco');
+    
+    // NUEVO v3.4: Si estaba en modo confirmación, limpiar
+    if (modoConfirmacionTransferencia) {
+      this.limpiarModoConfirmacion();
+    }
+    
     if (metodo === 'transferencia') {
       grupoPago.classList.add('oculto');
       grupoBanco.classList.remove('oculto');
@@ -848,7 +1520,16 @@ const Ventas = {
     else if (abonos.cantidad >= 35) div.classList.add('amarillo');
     else div.classList.add('verde');
   },
+  
+  // ============================================
+  // NUEVO v3.4: EJECUTAR CON MODO CONFIRMACIÓN
+  // ============================================
   ejecutar() {
+    // Si estamos en modo confirmación, confirmar la transferencia
+    if (modoConfirmacionTransferencia && ventaPendienteConfirmacion) {
+      return this.confirmarTransferencia();
+    }
+
     if (!estado.diaActivo) {
       UI.mostrarAlerta('Día cerrado. Carga stock inicial');
       return;
@@ -861,12 +1542,17 @@ const Ventas = {
 
     const metodo = document.getElementById('metodo-pago').value;
     const total = this.calcularTotal();
-    const { pago, vuelto } = this.calcularVuelto(total);
-    if (metodo === 'efectivo' && pago < total) {
-      UI.mostrarAlerta('Pago insuficiente');
-      return;
+    
+    // Validar pago en efectivo
+    if (metodo === 'efectivo') {
+      const { pago, vuelto } = this.calcularVuelto(total);
+      if (pago < total) {
+        UI.mostrarAlerta('Pago insuficiente');
+        return;
+      }
     }
 
+    // Validar transferencia
     let bancoId = null, cuenta = null;
     if (metodo === 'transferencia') {
       bancoId = document.getElementById('cuenta-banco').value;
@@ -888,32 +1574,232 @@ const Ventas = {
       return;
     }
 
-    UI.lanzarConfeti();
+    // SI ES TRANSFERENCIA: MODO ESPERA
+    if (metodo === 'transferencia') {
+      return this.iniciarEsperaTransferencia(total, bancoId, cuenta, wsp);
+    }
 
+    // SI ES EFECTIVO: VENDER DIRECTO CON ANIMACIÓN
+    this.procesarVenta({
+      metodo: 'efectivo',
+      total,
+      pago: parseInt(document.getElementById('pago').value) || total,
+      vuelto: (parseInt(document.getElementById('pago').value) || total) - total,
+      bancoId: null,
+      whatsapp: wsp || null
+    });
+  },
+  
+  // NUEVO v3.4: Procesar venta efectiva (después de confirmación o directo)
+  procesarVenta(datos) {
+    const metodo = datos.metodo;
+    const total = datos.total;
+    
+    // Animación según método
+    if (metodo === 'efectivo') {
+      Animaciones.efectivo(total);
+    }
+    
+    // Descontar stock
     for (let id in estado.carrito) {
       estado.stockActual[id] = (estado.stockActual[id] || 0) - estado.carrito[id];
     }
+    
+    // Crear venta
     const venta = {
       folio: this.generarFolio(),
       vendedor: estado.usuarioActual,
       carrito: JSON.parse(JSON.stringify(estado.carrito)),
-      total, pago, vuelto, metodo,
-      bancoId: bancoId,
-      whatsapp: wsp || null,
+      total: datos.total,
+      pago: datos.pago || datos.total,
+      vuelto: datos.vuelto || 0,
+      metodo: datos.metodo,
+      bancoId: datos.bancoId,
+      whatsapp: datos.whatsapp || null,
       fecha: new Date().toISOString(),
       tipo: estado.liquidacionIds.length > 0 ? 'costo' : 'venta',
       liquidacionIds: [...estado.liquidacionIds]
     };
-        estado.ventas.push(venta);
+    
+    estado.ventas.push(venta);
     DB.setVentas(estado.ventas);
     DB.setStockActual(estado.stockActual);
     
-    // Preparar datos para copiar si es transferencia
-    if (metodo === 'transferencia' && cuenta) {
-      ventaPendiente = { ...venta, cuenta: cuenta };
-    }
+    if (datos.whatsapp) this.mandarWspVenta(venta);
     
-    if (wsp) this.mandarWspVenta(venta);
+    UI.mostrarVentaGuardada();
+    this.limpiar();
+    Productos.render();
+    Stock.actualizarTotal();
+    Resumen.actualizar();
+    SII.render();
+    Cobrar.render();
+    UI.scrollToTop();
+  },
+  
+  // NUEVO v3.4: Iniciar espera de transferencia
+  iniciarEsperaTransferencia(total, bancoId, cuenta, wsp) {
+    ventaPendienteConfirmacion = {
+      carrito: JSON.parse(JSON.stringify(estado.carrito)),
+      total,
+      metodo: 'transferencia',
+      bancoId,
+      cuenta,
+      whatsapp: wsp || null,
+      fecha: new Date().toISOString(),
+      tipo: estado.liquidacionIds.length > 0 ? 'costo' : 'venta',
+      liquidacionIds: [...estado.liquidacionIds],
+      folioPendiente: this.generarFolio()
+    };
+
+    modoConfirmacionTransferencia = true;
+    
+    // Mostrar banner de espera
+    const banner = document.getElementById('bannerEsperandoTransfer');
+    document.getElementById('montoEsperandoTransfer').textContent = UI.formatearPrecio(total);
+    document.getElementById('bancoEsperandoTransfer').textContent = `${cuenta.banco} - ${cuenta.tipo}`;
+    banner.classList.remove('oculto');
+    
+    // Cambiar botón principal
+    const btnVender = document.getElementById('btnVender');
+    btnVender.textContent = '✅ CONFIRMAR TRANSFERENCIA RECIBIDA';
+    btnVender.className = 'btn btn-confirmar-transfer';
+    btnVender.onclick = () => Ventas.confirmarTransferencia();
+    
+    // Mostrar botón cancelar
+    const btnCancelar = document.getElementById('btnCancelarTransfer');
+    btnCancelar.classList.remove('oculto');
+    
+    // Bloquear carrito
+    this.bloquearCarrito(true);
+    
+    // Animación de transferencia
+    Animaciones.transferencia(total, cuenta);
+    
+    // Mostrar datos bancarios
+    this.mostrarDatosBancarios(cuenta, total);
+    
+    UI.scrollToTop();
+  },
+  
+  // NUEVO v3.4: Mostrar datos bancarios en modal
+  mostrarDatosBancarios(cuenta, total) {
+    const userData = getUsuarioData();
+    
+    const modal = document.createElement('div');
+    modal.id = 'modalDatosBanco';
+    modal.style.cssText = `
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #0d1b2a, #1b2838);
+      border: 2px solid #00aaff;
+      border-radius: 20px;
+      padding: 24px;
+      z-index: 10000;
+      max-width: 90%;
+      width: 380px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(0, 170, 255, 0.3);
+      font-family: 'Montserrat', sans-serif;
+    `;
+    
+    modal.innerHTML = `
+      <div style="text-align: center; margin-bottom: 16px;">
+        <div style="font-size: 48px; margin-bottom: 8px;">💳</div>
+        <div style="font-size: 20px; font-weight: 800; color: #00aaff;">DATOS TRANSFERENCIA</div>
+        <div style="font-size: 28px; font-weight: bold; color: #00ffff; margin: 8px 0;">
+          $${total.toLocaleString('es-CL')}
+        </div>
+      </div>
+      
+      <div style="background: rgba(0,0,0,0.4); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+        <div class="dato-banco-animado" style="font-size: 14px; color: #88ccff; margin: 6px 0;">
+          <span style="color: #446688;">Banco:</span> <b style="color: #fff;">${cuenta.banco}</b>
+        </div>
+        <div class="dato-banco-animado" style="font-size: 14px; color: #88ccff; margin: 6px 0; animation-delay: 0.2s;">
+          <span style="color: #446688;">Tipo:</span> <b style="color: #fff;">${cuenta.tipo}</b>
+        </div>
+        <div class="dato-banco-animado" style="font-size: 14px; color: #88ccff; margin: 6px 0; animation-delay: 0.4s;">
+          <span style="color: #446688;">Cuenta:</span> 
+          <b style="color: #00ffff; font-size: 18px; letter-spacing: 1px;">${cuenta.numero}</b>
+        </div>
+        <div class="dato-banco-animado" style="font-size: 14px; color: #88ccff; margin: 6px 0; animation-delay: 0.6s;">
+          <span style="color: #446688;">Titular:</span> <b style="color: #fff;">${estado.usuarioActual}</b>
+        </div>
+        <div class="dato-banco-animado" style="font-size: 14px; color: #88ccff; margin: 6px 0; animation-delay: 0.8s;">
+          <span style="color: #446688;">RUT:</span> <b style="color: #fff;">${userData.rut}</b>
+        </div>
+        <div class="dato-banco-animado" style="font-size: 14px; color: #88ccff; margin: 6px 0; animation-delay: 1s;">
+          <span style="color: #446688;">Ref:</span> <b style="color: #ff6600;">${ventaPendienteConfirmacion.folioPendiente}</b>
+        </div>
+      </div>
+      
+      <div style="font-size: 12px; color: #6699cc; text-align: center; margin-bottom: 16px;">
+        Mostrá esta pantalla al cliente para que transfiera<br>
+        <b style="color: #ff6600;">NO CIERRES ESTA PANTALLA</b> hasta confirmar
+      </div>
+      
+      <button onclick="document.getElementById('modalDatosBanco').remove()" 
+        style="width: 100%; padding: 14px; background: #00aaff; color: #000; border: none; 
+               border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer;">
+        👍 CLIENTE YA TRANSFIRIÓ
+      </button>
+    `;
+    
+    document.body.appendChild(modal);
+  },
+  
+  // NUEVO v3.4: Confirmar transferencia recibida
+  confirmarTransferencia() {
+    if (!ventaPendienteConfirmacion) return;
+    
+    // Verificar que la cuenta no se bloqueó mientras esperaba
+    const abonos = DB.getAbonosMes(ventaPendienteConfirmacion.bancoId);
+    const cuenta = ventaPendienteConfirmacion.cuenta;
+    if (abonos.cantidad >= cuenta.limite) {
+      UI.mostrarAlerta(`⛔ ${cuenta.banco} se bloqueó mientras esperabas. Usa otra cuenta.`);
+      this.cancelarEsperaTransferencia();
+      return;
+    }
+
+    // Procesar la venta definitiva
+    const venta = {
+      folio: ventaPendienteConfirmacion.folioPendiente,
+      vendedor: estado.usuarioActual,
+      carrito: ventaPendienteConfirmacion.carrito,
+      total: ventaPendienteConfirmacion.total,
+      pago: ventaPendienteConfirmacion.total,
+      vuelto: 0,
+      metodo: 'transferencia',
+      bancoId: ventaPendienteConfirmacion.bancoId,
+      whatsapp: ventaPendienteConfirmacion.whatsapp,
+      fecha: new Date().toISOString(),
+      tipo: ventaPendienteConfirmacion.tipo,
+      liquidacionIds: ventaPendienteConfirmacion.liquidacionIds,
+      confirmadaEn: new Date().toISOString()
+    };
+
+    // Descontar stock
+    for (let id in venta.carrito) {
+      estado.stockActual[id] = (estado.stockActual[id] || 0) - venta.carrito[id];
+    }
+
+    // Guardar venta
+    estado.ventas.push(venta);
+    DB.setVentas(estado.ventas);
+    DB.setStockActual(estado.stockActual);
+
+    // Limpiar modo confirmación
+    this.limpiarModoConfirmacion();
+
+    // Animación de confirmación
+    Animaciones.transferenciaConfirmada(venta.total);
+
+    // Enviar WhatsApp si hay número
+    if (venta.whatsapp) {
+      this.mandarWspVenta(venta);
+    }
 
     UI.mostrarVentaGuardada();
     this.limpiar();
@@ -924,6 +1810,54 @@ const Ventas = {
     Cobrar.render();
     UI.scrollToTop();
   },
+  
+  // NUEVO v3.4: Cancelar espera de transferencia
+  cancelarEsperaTransferencia() {
+    if (!confirm('¿Cancelar esta venta? El cliente no transfirió o canceló.')) return;
+    
+    this.limpiarModoConfirmacion();
+    UI.mostrarAlerta('Venta cancelada. Stock no se movió.', true);
+    this.bloquearCarrito(false);
+  },
+  
+  // NUEVO v3.4: Limpiar modo confirmación
+  limpiarModoConfirmacion() {
+    modoConfirmacionTransferencia = false;
+    ventaPendienteConfirmacion = null;
+    
+    // Ocultar banner
+    document.getElementById('bannerEsperandoTransfer').classList.add('oculto');
+    
+    // Restaurar botón
+    const btnVender = document.getElementById('btnVender');
+    btnVender.textContent = 'VENDER';
+    btnVender.className = 'btn';
+    btnVender.onclick = () => Ventas.ejecutar();
+    
+    // Ocultar botón cancelar
+    const btnCancelar = document.getElementById('btnCancelarTransfer');
+    if (btnCancelar) btnCancelar.classList.add('oculto');
+    
+    // Quitar modal si existe
+    const modal = document.getElementById('modalDatosBanco');
+    if (modal) modal.remove();
+    
+    // Desbloquear carrito
+    this.bloquearCarrito(false);
+  },
+  
+  // NUEVO v3.4: Bloquear/desbloquear carrito
+  bloquearCarrito(bloquear) {
+    const grid = document.getElementById('productos-grid');
+    if (bloquear) {
+      grid.style.pointerEvents = 'none';
+      grid.style.opacity = '0.6';
+    } else {
+      grid.style.pointerEvents = '';
+      grid.style.opacity = '';
+    }
+  },
+  
   liquidar() {
     if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado'); return; }
     if (Object.keys(estado.carrito).length === 0) { UI.mostrarAlerta('Agrega empanadas al carrito'); return; }
@@ -941,6 +1875,12 @@ const Ventas = {
     UI.mostrarAlerta('Precio liquidación: $2.000', true);
   },
   anular() {
+    // NUEVO v3.4: Si está en modo confirmación, cancelar
+    if (modoConfirmacionTransferencia) {
+      this.cancelarEsperaTransferencia();
+      return;
+    }
+    
     if (Object.keys(estado.carrito).length === 0) { UI.mostrarAlerta('No hay nada en el carrito'); return; }
     if (!confirm('¿Anular pedido?')) return;
     this.limpiar();
@@ -957,6 +1897,12 @@ const Ventas = {
     document.getElementById('pago').value = '';
     document.getElementById('wsp').value = '';
     document.getElementById('metodo-pago').value = 'efectivo';
+    
+    // NUEVO v3.4: Limpiar modo confirmación si estaba activo
+    if (modoConfirmacionTransferencia) {
+      this.limpiarModoConfirmacion();
+    }
+    
     Ventas.cambiarMetodo();
     UI.scrollToTop();
   },
@@ -976,7 +1922,7 @@ const Ventas = {
     UI.mostrarAlerta('Venta eliminada y stock devuelto', true);
   },
   mandarWspVenta(venta) {
-       let msg = 'LOS WEONES DE LAS EMPANADAS';
+    let msg = 'LOS WEONES DE LAS EMPANADAS';
     msg += venta.tipo === 'costo' ? ' - LIQUIDACIÓN' : '';
     msg += '%0A%0A*Boleta: ' + venta.folio + '*%0A';
     msg += 'Atendido por: ' + venta.vendedor + '%0A%0A';
@@ -1000,7 +1946,6 @@ const Ventas = {
     window.open('https://wa.me/' + venta.whatsapp.replace(/[^0-9]/g, '') + '?text=' + msg, '_blank');
   }
 };
-
 const Stock = {
   actualizarTotal() {
     const total = Ventas.calcularTotal();
@@ -1028,17 +1973,30 @@ const Stock = {
   verificarStockBajo() {
     const limite = estado.limiteAlertaStock;
     const productosBajos = [];
+    const criticos = [];
+    
     for (let id in estado.stockActual) {
       const stock = estado.stockActual[id] || 0;
       if (stock > 0 && stock <= limite) {
         const p = buscarProducto(id);
         productosBajos.push(p.nombre + ' (' + stock + ')');
+        if (stock <= 2) criticos.push(p);
       }
     }
+    
     const banner = document.getElementById('bannerStockBajo');
     if (productosBajos.length > 0) {
       banner.textContent = '⚠️ STOCK BAJO: ' + productosBajos.join(', ');
       banner.classList.remove('oculto');
+      
+      // NUEVO v3.4: Alerta sonora y vibración para críticos
+      if (criticos.length > 0) {
+        const keyAlerta = 'stock_critico_' + new Date().getHours() + '_' + new Date().getMinutes();
+        if (!sessionStorage.getItem(keyAlerta)) {
+          sessionStorage.setItem(keyAlerta, '1');
+          Animaciones.stockBajo(criticos);
+        }
+      }
     } else {
       banner.classList.add('oculto');
     }
@@ -1047,6 +2005,12 @@ const Stock = {
 
 const Productos = {
   agregar(id) {
+    // NUEVO v3.4: No permitir modificar si está en modo confirmación
+    if (modoConfirmacionTransferencia) {
+      UI.mostrarAlerta('⚠️ Termina la transferencia pendiente primero');
+      return;
+    }
+    
     if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado. Carga stock inicial'); return; }
     const stockDisp = (estado.stockActual[id] || 0) - (estado.carrito[id] || 0);
     if (stockDisp <= 0) {
@@ -1166,6 +2130,12 @@ const StockGestion = {
     estado.diaActivo = false;
     estado.carrito = {};
     estado.liquidacionIds = [];
+    
+    // NUEVO v3.4: Limpiar modo confirmación si estaba activo
+    if (modoConfirmacionTransferencia) {
+      Ventas.limpiarModoConfirmacion();
+    }
+    
     DB.setVentas([]);
     DB.setStockActual(estado.stockActual);
     DB.setDiaActivo(false);
@@ -1207,7 +2177,6 @@ const StockGestion = {
 const Cobrar = {
   render() {
     const lista = document.getElementById('listaCobrosDia');
-    // FILTRAR COBROS POR USUARIO ACTUAL
     const cobros = estado.ventas.filter(v => v.metodo === 'transferencia' && v.vendedor === estado.usuarioActual);
     if (cobros.length === 0) {
       lista.innerHTML = '<div style="text-align:center;color:#888;padding:20px">Sin cobros con transferencia hoy</div>';
@@ -1264,7 +2233,6 @@ const Resumen = {
     const cajaInicial = parseInt(document.getElementById('cajaInicial').value) || DB.getCajaInicial() || 0;
     DB.setCajaInicial(cajaInicial);
     
-    // FILTRAR VENTAS SOLO DEL USUARIO ACTUAL
     const ventasUsuario = estado.ventas.filter(v => v.vendedor === estado.usuarioActual);
     
     let totalDia = 0, totalEfectivo = 0, totalTransfer = 0;
@@ -1330,7 +2298,6 @@ const Resumen = {
     document.getElementById('total-caja').textContent = UI.formatearPrecio(datos.totalCaja);
     document.getElementById('num-ventas').textContent = datos.numVentas;
 
-    // SII TOTAL SOLO DEL USUARIO
     let totalAbonos = 0, totalMontoAbonos = 0;
     estado.cuentas.forEach(c => {
       const ab = DB.getAbonosMes(c.id);
@@ -1392,7 +2359,6 @@ const Resumen = {
     }
     document.getElementById('r-bancos').innerHTML = htmlBancos;
 
-    // HISTORIAL FILTRADO POR USUARIO
     const historial = document.getElementById('historial-lista');
     historial.innerHTML = '';
     if (datos.ventasUsuario.length === 0) {
@@ -1497,6 +2463,12 @@ const Resumen = {
 
 const App = {
   cambiarTab(tab) {
+    // NUEVO v3.4: No permitir cambiar tab si está en modo confirmación
+    if (modoConfirmacionTransferencia && tab !== 'vender') {
+      UI.mostrarAlerta('⚠️ Termina la transferencia pendiente antes de cambiar de pestaña');
+      return;
+    }
+    
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
     document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
     document.querySelector(`[onclick="App.cambiarTab('${tab}')"]`).classList.add('activo');
@@ -1524,7 +2496,6 @@ const App = {
   init() {
     if (!Auth.verificar()) return;
     
-    // CARGAR CUENTAS DEL USUARIO
     estado.cuentas = DB.getCuentas();
     
     document.getElementById('cajaInicial').value = DB.getCajaInicial();
@@ -1554,7 +2525,70 @@ const App = {
       }
       if (e.key === 'Escape') Ventas.anular();
     });
+    
+    // NUEVO v3.4: Botón para activar notificaciones
+    this.crearBotonNotificaciones();
+    
     console.log('🥟 Los Weones QR PRO v' + VERSION_APP + ' iniciado - Usuario: ' + estado.usuarioActual);
+  },
+  
+  // NUEVO v3.4: Botón flotante para notificaciones
+  crearBotonNotificaciones() {
+    const btnNotif = document.createElement('button');
+    btnNotif.id = 'btnActivarNotif';
+    btnNotif.innerHTML = '🔕';
+    btnNotif.title = 'Activar notificaciones';
+    btnNotif.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #333;
+      border: 2px solid #ff6600;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      transition: all 0.3s;
+    `;
+    
+    btnNotif.onclick = async () => {
+      if (!('Notification' in window)) {
+        UI.mostrarAlerta('Tu dispositivo no soporta notificaciones');
+        return;
+      }
+      
+      const permiso = await Notification.requestPermission();
+      
+      if (permiso === 'granted') {
+        btnNotif.innerHTML = '🔔';
+        btnNotif.style.background = '#00aa00';
+        btnNotif.style.borderColor = '#00ff00';
+        UI.mostrarAlerta('🔔 Notificaciones activadas', true);
+        
+        setTimeout(() => {
+          new Notification('🥟 ¡Listo!', {
+            body: 'Recibirás alertas de ventas, stock y pedidos listos',
+            icon: '/icon-192.png'
+          });
+        }, 500);
+      } else {
+        UI.mostrarAlerta('Permiso denegado. Actívalo en configuración del navegador.');
+      }
+    };
+    
+    if (Notification.permission === 'granted') {
+      btnNotif.innerHTML = '🔔';
+      btnNotif.style.background = '#00aa00';
+    }
+    
+    document.body.appendChild(btnNotif);
   }
 };
 
@@ -1622,9 +2656,9 @@ function generarTarjetaHTML(cuenta, incluirMonto = false, monto = 0) {
 
 function getUsuarioData() {
   const usuarios = {
-    'Marcelo': { rut: '12.082.344-2', correo: 'mperez@emporiodonnino.cl' },
-    'Nataly': { rut: '17.292.913-3', correo: 'mperez@emporiodonnino.cl' },
-    'Krishna': { rut: '22.437.927-7', correo: 'mperez@emporiodonnino.cl' }
+    'Marcelo': { rut: '12.082.344-2', correo: 'hola@emporiodonnino.cl' },
+    'Nataly': { rut: '17.292.913-3', correo: 'hola@emporiodonnino.cl' },
+    'Krishna': { rut: '22.437.927-7', correo: 'hola@emporiodonnino.cl' }
   };
   return usuarios[estado.usuarioActual] || usuarios['Marcelo'];
 }
