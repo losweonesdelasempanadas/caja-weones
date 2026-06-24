@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CAJA WEONES QR PRO v3.4</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght=400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -40,9 +40,20 @@
     .semaforo-banco-alerta{font-size:12px;font-weight:bold;margin-top:6px}
     @keyframes pulsoRojo{0%,100%{box-shadow:0 0 5px rgba(255,0,0,0.5);}50%{box-shadow:0 0 20px rgba(255,0,0,0.8);}}
     @keyframes pulsoBloqueado{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
-    .tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:5px}
+    .tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:5px}
     .tab{padding:10px 2px;background:#1a1a1a;border:2px solid #333;border-radius:12px;color:#888;font-size:10px;font-weight:bold;cursor:pointer;transition:all 0.3s;text-align:center}
     .tab.activo{background:linear-gradient(135deg,#ff6600 0%,#ff8533 100%);color:#000;border-color:#ff6600;box-shadow:0 4px 15px rgba(255,102,0,0.4)}
+    .tab[data-color="naranja"]{border-color:rgba(255,102,0,0.4);color:#ff8533}
+    .tab[data-color="azul"]{border-color:rgba(0,153,255,0.4);color:#0099ff}
+    .tab[data-color="verde"]{border-color:rgba(0,255,0,0.4);color:#00ff00}
+    .tab[data-color="amarillo"]{border-color:rgba(255,170,0,0.4);color:#ffaa00}
+    .tab[data-color="morado"]{border-color:rgba(170,0,255,0.4);color:#aa00ff}
+    .tab[data-color="rojo"]{border-color:rgba(255,0,0,0.4);color:#ff3333}
+    .tab.activo[data-color="azul"]{background:linear-gradient(135deg,#0099ff 0%,#0066cc 100%);color:#fff;border-color:#0099ff;box-shadow:0 4px 15px rgba(0,153,255,0.4)}
+    .tab.activo[data-color="verde"]{background:linear-gradient(135deg,#00aa00 0%,#00cc00 100%);color:#fff;border-color:#00ff00;box-shadow:0 4px 15px rgba(0,255,0,0.4)}
+    .tab.activo[data-color="amarillo"]{background:linear-gradient(135deg,#ffaa00 0%,#ffcc00 100%);color:#000;border-color:#ffaa00;box-shadow:0 4px 15px rgba(255,170,0,0.4)}
+    .tab.activo[data-color="morado"]{background:linear-gradient(135deg,#aa00ff 0%,#8800cc 100%);color:#fff;border-color:#aa00ff;box-shadow:0 4px 15px rgba(170,0,255,0.4)}
+    .tab.activo[data-color="rojo"]{background:linear-gradient(135deg,#ff3333 0%,#cc0000 100%);color:#fff;border-color:#ff0000;box-shadow:0 4px 15px rgba(255,0,0,0.4)}
     .pantalla{display:none}.pantalla.activa{display:block}
     .productos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
     .producto{background:linear-gradient(135deg,rgba(35,35,0.7) 0%,rgba(20,20,20,0.8) 100%);backdrop-filter:blur(5px);border:2px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
@@ -97,8 +108,7 @@
     .historial-item .fecha{font-size:11px;color:#888;margin-bottom:6px}
     .historial-item .folio{font-size:11px;color:#ff6600;font-weight:bold;margin-bottom:4px}
     .historial-item .vendedor{font-size:11px;color:#00aaff;margin-bottom:4px}
-    .historial-item .metodo{color:#ff6600;font-weight:600}.historial-item .wsp{font-size:12px;color:#00ff00;margin-top:4px}
-    .btn-eliminar{background:linear-gradient(135deg,#aa0000 0%,#cc0000 100%);color:#fff;padding:8px;font-size:12px;margin-top:8px}
+    .historial-item .metodo">Total: ' + v.total.toLocaleString('es-CL') + ' - ' + (v.metodo === 'transferencia' ? 'Transfer ' + banco : 'Efectivo') + '</div>';
     .tarjeta-preview{width:100%;max-width:400px;margin:10px auto;border-radius:18px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.6);position:relative;overflow:hidden;font-family:'Montserrat',sans-serif}
     .tarjeta-azul{background:linear-gradient(135deg,#1e5aa8,#0d3a7a)}
     .tarjeta-verde{background:linear-gradient(135deg,#00a650,#007a3d)}
@@ -148,10 +158,6 @@
       0% { transform: translateX(-50%) translateY(0) rotate(0deg); opacity: 1; }
       100% { transform: translateX(-50%) translateY(var(--y)) translateX(var(--x)) rotate(var(--r)); opacity: 0; }
     }
-
-    /* === NUEVOS ESTILOS v3.4 - ANIMACIONES Y TRANSFERENCIA === */
-    
-    /* VENTA EN EFECTIVO - Monedas y billetes cayendo */
     @keyframes caidaDinero {
       0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
       100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
@@ -187,8 +193,6 @@
     .flash-efectivo {
       animation: flashDorado 0.8s ease;
     }
-
-    /* VENTA EN TRANSFERENCIA - Digital */
     @keyframes flujoDigital {
       0% { transform: translateX(-100%) scale(0.5); opacity: 0; }
       30% { opacity: 1; }
@@ -266,8 +270,6 @@
       color: #00aaff;
       text-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
     }
-
-    /* BOTÓN CONFIRMAR TRANSFERENCIA */
     .btn-confirmar-transfer {
       background: linear-gradient(135deg, #00aaff 0%, #0066cc 100%) !important;
       color: #fff !important;
@@ -283,8 +285,6 @@
       transform: scale(0.97) !important;
       animation: none !important;
     }
-
-    /* BANNER ESPERANDO TRANSFERENCIA */
     .banner-esperando-transfer {
       background: linear-gradient(135deg, #001a33 0%, #003366 100%);
       border: 2px solid #00aaff;
@@ -316,8 +316,6 @@
       text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
       margin: 8px 0;
     }
-
-    /* BOTÓN CANCELAR TRANSFERENCIA */
     .btn-cancelar-transfer {
       background: linear-gradient(135deg, #333 0%, #555 100%) !important;
       color: #ff6666 !important;
@@ -325,8 +323,6 @@
       box-shadow: 0 4px 15px rgba(255, 51, 51, 0.2) !important;
       margin-top: 10px !important;
     }
-
-    /* BANNER SII MEJORADO */
     .banner-sii-peligro {
       position: fixed;
       top: 50%;
@@ -431,8 +427,6 @@
       background: linear-gradient(90deg, #ffaa00, #ffcc00);
       width: 70%;
     }
-
-    /* VIBRACIÓN VISUAL */
     @keyframes vibrarPantalla {
       0%, 100% { transform: translate(0); }
       10% { transform: translate(-3px, 3px); }
@@ -448,8 +442,6 @@
     .vibrar-pantalla {
       animation: vibrarPantalla 0.5s ease;
     }
-
-    /* DATOS BANCO ANIMADOS */
     @keyframes flotarDato {
       0%, 100% { transform: translateY(0); opacity: 0.7; }
       50% { transform: translateY(-5px); opacity: 1; }
@@ -457,8 +449,6 @@
     .dato-banco-animado {
       animation: flotarDato 2s infinite ease-in-out;
     }
-
-    /* FLASH VERDE CONFIRMACIÓN */
     @keyframes flashVerde {
       0% { opacity: 1; }
       100% { opacity: 0; }
@@ -467,8 +457,6 @@
       from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
       to { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
     }
-
-    /* BANNER CONFIRMACIÓN TRANSFERENCIA */
     .banner-confirmacion-transfer {
       position: fixed;
       top: 50%;
@@ -496,6 +484,84 @@
       font-weight: bold;
       color: #ccffcc;
       margin-top: 12px;
+    }
+    .banner-promo-lata {
+      background: linear-gradient(135deg, #1a0d33 0%, #2d1a5c 100%);
+      border: 2px solid #aa00ff;
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 15px;
+      text-align: center;
+      animation: pulsoMorado 1.5s infinite ease-in-out;
+      box-shadow: 0 0 25px rgba(170, 0, 255, 0.3);
+    }
+    @keyframes pulsoMorado {
+      0%, 100% { box-shadow: 0 0 10px rgba(170, 0, 255, 0.3); transform: scale(1); }
+      50% { box-shadow: 0 0 30px rgba(170, 0, 255, 0.6); transform: scale(1.02); }
+    }
+    .banner-promo-lata .titulo {
+      font-size: 20px;
+      font-weight: 800;
+      color: #aa00ff;
+      margin-bottom: 8px;
+      text-shadow: 0 0 15px rgba(170, 0, 255, 0.5);
+    }
+    .banner-promo-lata .detalle {
+      font-size: 14px;
+      color: #cc99ff;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .promo-botones {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .btn-promo-aceptar {
+      padding: 12px;
+      background: linear-gradient(135deg, #00aa00, #00cc00);
+      border: 2px solid #00ff00;
+      border-radius: 12px;
+      color: #fff;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3);
+    }
+    .btn-promo-aceptar:active {
+      transform: scale(0.95);
+    }
+    .btn-promo-cancelar {
+      padding: 12px;
+      background: #1a1a1a;
+      border: 2px solid #ff3333;
+      border-radius: 12px;
+      color: #ff6666;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-promo-cancelar:active {
+      transform: scale(0.95);
+      background: #2a0000;
+    }
+    .precio-promo {
+      color: #00ff00 !important;
+      font-size: 14px !important;
+    }
+    .badge-promo {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: linear-gradient(135deg, #aa00ff, #6600cc);
+      color: #fff;
+      font-size: 9px;
+      font-weight: bold;
+      padding: 3px 6px;
+      border-radius: 6px;
+      z-index: 10;
     }
   </style>
 </head>
@@ -534,12 +600,11 @@
         <button onclick="Auth.logout()" class="btn-logout">Salir</button>
       </div>
       <div class="tabs">
-        <button class="tab activo" onclick="App.cambiarTab('vender')">VENDER</button>
-        <button class="tab" onclick="App.cambiarTab('stock')">STOCK</button>
-        <button class="tab" onclick="App.cambiarTab('cobrar')">COBRAR</button>
-        <button class="tab" onclick="App.cambiarTab('sii')">SII</button>
-        <button class="tab" onclick="App.cambiarTab('resumen')">RESUMEN</button>
-        <button class="tab" onclick="App.cambiarTab('cuentas')">CUENTAS</button>
+        <button class="tab activo" data-color="naranja" onclick="App.cambiarTab('vender')">🛒 VENDER</button>
+        <button class="tab" data-color="azul" onclick="App.cambiarTab('cuentas')">🏦 CUENTAS</button>
+        <button class="tab" data-color="verde" onclick="App.cambiarTab('stock')">📦 STOCK</button>
+        <button class="tab" data-color="amarillo" onclick="App.cambiarTab('resumen')">📊 RESUMEN</button>
+        <button class="tab" data-color="rojo" onclick="App.cambiarTab('sii')">🚨 SII</button>
       </div>
     </div>
     <div id="alerta" class="alerta oculto"></div>
@@ -550,13 +615,24 @@
       <div id="aviso-dia-cerrado" class="aviso-cerrado oculto">⚠️ DÍA CERRADO - Carga stock inicial para activar ventas ⚠️</div>
       <div id="bannerStockBajo" class="banner-stock-bajo oculto"></div>
       
-      <!-- NUEVO: Banner esperando transferencia -->
       <div id="bannerEsperandoTransfer" class="banner-esperando-transfer oculto">
         <div class="titulo">⏳ ESPERANDO TRANSFERENCIA</div>
         <div class="monto" id="montoEsperandoTransfer">$0</div>
         <div class="detalle">
           <span id="bancoEsperandoTransfer">Banco</span><br>
           <span style="font-size: 11px; color: #6699cc;">La venta NO se contabiliza hasta confirmar</span>
+        </div>
+      </div>
+
+      <div id="bannerPromoLata" class="banner-promo-lata oculto">
+        <div class="titulo">🥤 ¡PROMO LATA!</div>
+        <div class="detalle">
+          🥤 Lata por solo <b style="color:#00ff00;font-size:20px;">$500</b> <span style="text-decoration:line-through;color:#888;">$1.000</span> <span style="color:#00ff00;">50% OFF</span><br>
+          <span style="font-size:13px;color:#cc99ff;">Agrega 1 lata a elección por $500 (con 2 empanadas)</span>
+        </div>
+        <div class="promo-botones">
+          <button class="btn-promo-aceptar" onclick="Ventas.aceptarPromoLata()">✅ ACEPTAR PROMO</button>
+          <button class="btn-promo-cancelar" onclick="Ventas.cancelarPromoLata()">❌ RECHAZAR</button>
         </div>
       </div>
       
@@ -569,7 +645,7 @@
       <div class="input-grupo">
         <label>MÉTODO DE PAGO</label>
         <select id="metodo-pago" onchange="Ventas.cambiarMetodo()">
-          <option value="efectivo">💵 Efectivo</option>
+          <option value="efectivo" selected>💵 Efectivo</option>
           <option value="transferencia">💳 Transferencia</option>
         </select>
       </div>
@@ -581,7 +657,7 @@
           <div class="semaforo-banco-contador" id="semaforoVentaCont">0/50 mes</div>
         </div>
       </div>
-      <div class="input-grupo oculto" id="grupo-pago">
+      <div class="input-grupo" id="grupo-pago">
         <label>PAGO CON</label>
         <input type="number" id="pago" placeholder="0" inputmode="numeric">
       </div>
@@ -590,9 +666,8 @@
         <input type="tel" id="wsp" placeholder="+56912345678" inputmode="tel">
       </div>
       <button id="btnVender" class="btn" onclick="Ventas.ejecutar()">VENDER</button>
-      <!-- NUEVO: Botón cancelar transferencia (oculto por defecto) -->
       <button id="btnCancelarTransfer" class="btn btn-cancelar-transfer oculto" onclick="Ventas.cancelarEsperaTransferencia()">❌ CANCELAR - No llegó la plata</button>
-      <button class="btn btn-cobrar" style="margin-top:10px" onclick="App.irACobrar()">VER COBROS DEL DÍA</button>
+      
       <button class="btn btn-anular" style="margin-top:10px" onclick="Ventas.anular()">ANULAR PEDIDO</button>
       <button class="btn btn-costo" style="margin-top:10px" onclick="Ventas.liquidar()">COSTO $2.000</button>
     </div>
@@ -616,15 +691,6 @@
       <button class="btn btn-anular" style="margin-top:10px" onclick="StockGestion.cerrarDia()">CERRAR DÍA</button>
       <button class="btn" style="margin-top:10px" onclick="StockGestion.verDesglose()">VER DESGLOSE STOCK</button>
       <div id="desglose-stock" class="oculto" style="margin-top:15px"></div>
-    </div>
-
-    <div id="cobrar" class="pantalla">
-      <div class="total-box">
-        <h2>💳 COBROS QR DEL DÍA</h2>
-        <p style="color:#888;font-size:13px;margin-top:8px">Acá ves todas las tarjetas QR generadas hoy</p>
-      </div>
-      <div id="listaCobrosDia"></div>
-      <button class="btn btn-secundario" onclick="App.cambiarTab('vender')">⬅️ VOLVER A VENTA</button>
     </div>
 
     <div id="sii" class="pantalla">
@@ -660,7 +726,8 @@
         <div class="resumen-item"><h3>🚨 SII Total</h3><div class="valor" id="sii-total">0/50</div></div>
         <div class="resumen-item"><h3>🥟 Empanadas</h3><div class="valor" id="total-empanadas">0</div></div>
         <div class="resumen-item"><h3>🍶 Bebidas 591</h3><div class="valor" id="total-591">0</div></div>
-        <div class="resumen-item"><h3>🥫 Latas</h3><div class="valor" id="total-latas">0</div></div>
+        <div class="resumen-item"><h3>🥫 Latas Normales ($1.000)</h3><div class="valor" id="total-latas">0</div></div>
+        <div class="resumen-item"><h3>🥤 Latas Promoción ($500)</h3><div class="valor" id="total-latas-promo">0</div></div>
         <div class="resumen-item"><h3>💧 Cachantun</h3><div class="valor" id="total-cachantun">0</div></div>
         <div class="resumen-item"><h3>🏷️ Costo</h3><div class="valor" id="total-costo">0</div></div>
       </div>
@@ -732,43 +799,15 @@
     </div>
   </div>
 
-  <!-- PANTALLA COMPLETA QR -->
-  <div id="pantallaDatos" class="pantalla-datos oculto">
-    <div class="pantalla-header">
-      <h2>DATOS TRANSFERENCIA</h2>
-      <div class="folio" id="folioGrande"></div>
-    </div>
-    <div id="contenidoDatosView" class="contenido-datos">
-      <div id="tarjetaTransferencia"></div>
-    </div>
-    <div class="pantalla-footer">
-      <div class="footer-botones">
-        <button class="btn-footer btn-footer-copiar" onclick="copiarTodosDatos()">
-          <span>📋</span><span>COPIAR</span>
-        </button>
-        <button class="btn-footer btn-footer-confirmar" id="btnConfirmar" onclick="confirmarTransferencia()">
-          <span>✅</span><span>CONFIRMAR</span>
-        </button>
-        <button class="btn-footer btn-footer-volver" onclick="volverApp()">
-          <span>⬅️</span><span>VOLVER</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
 <script>
 const CLAVE_HASH = 'MTk3MQ==';
 const VERSION_APP = '3.4';
 const FOLIO_PREFIX = 'LWE-';
 let alertaTimeout = null;
 
-// NUEVO v3.4: Variables para modo confirmación transferencia
 let ventaPendienteConfirmacion = null;
 let modoConfirmacionTransferencia = false;
 
-// ============================================
-// NUEVO v3.4: SONIDOS MEJORADOS Y MÁS AUDIBLES
-// ============================================
 const Sonidos = {
   ctx: null,
   init() {
@@ -848,9 +887,6 @@ const Sonidos = {
   }
 };
 
-// ============================================
-// NUEVO v3.4: ANIMACIONES DE VENTA
-// ============================================
 const Animaciones = {
   efectivo(total) {
     Sonidos.play('efectivo');
@@ -1012,10 +1048,9 @@ const Animaciones = {
     
     const esBloqueado = abonosMes.cantidad >= 50 || abonosSem.cantidad >= 100;
     const esPeligro = abonosMes.cantidad >= 45 || abonosSem.cantidad >= 90;
-    const esAlerta = abonosMes.cantidad >= 35 || abonosSem.cantidad >= 70;
     
     const claseBanner = esBloqueado ? '' : esPeligro ? '' : 'banner-sii-amarillo';
-    const colorTitulo = esBloqueado ? '#ff0000' : esPeligro ? '#ff0000' : '#ffaa00';
+    const colorTitulo = esBloqueado ? '#ff3333' : esPeligro ? '#ff0000' : '#ffaa00';
     const icono = esBloqueado ? '⛔' : esPeligro ? '🚨' : '⚠️';
     const titulo = esBloqueado ? 'CUENTA BLOQUEADA' : esPeligro ? '¡PELIGRO SII!' : 'ALERTA SII';
     const mensaje = esBloqueado 
@@ -1027,30 +1062,25 @@ const Animaciones = {
     const porcentaje = Math.min((abonosMes.cantidad / 50) * 100, 100);
     
     const banner = document.createElement('div');
-    banner.className = `banner-sii-peligro ${esPeligro || esBloqueado ? 'shake' : ''} ${claseBanner}`;
+    banner.className = `banner-sii-peligro ${(esPeligro || esBloqueado) ? 'shake' : ''} ${claseBanner}`;
     banner.innerHTML = `
       <div class="icono-sii">${icono}</div>
       <div class="titulo" style="color: ${colorTitulo}">${titulo}</div>
       <div class="detalle">${mensaje}</div>
-      
       <div style="font-size: 13px; color: #fff; margin-bottom: 4px;">
         <b>${cuenta.banco}</b> - ${cuenta.tipo}
       </div>
-      
       <div class="sii-progress-container">
-        <div class="sii-progress-bar ${esPeligro || esBloqueado ? 'peligro' : 'alerta'}" style="width: ${porcentaje}%"></div>
+        <div class="sii-progress-bar ${(esPeligro || esBloqueado) ? 'peligro' : 'alerta'}" style="width: ${porcentaje}%"></div>
       </div>
-      
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; color: #aaa; margin-bottom: 12px;">
         <div>📅 Mes: <span style="color: ${colorTitulo}; font-weight: bold;">${abonosMes.cantidad}/50</span></div>
         <div>📊 Sem: <span style="color: ${colorTitulo}; font-weight: bold;">${abonosSem.cantidad}/100</span></div>
       </div>
-      
       <div style="font-size: 11px; color: #888; margin-bottom: 12px;">
         Monto mes: $${abonosMes.monto.toLocaleString('es-CL')}<br>
         Monto semestre: $${abonosSem.monto.toLocaleString('es-CL')}
       </div>
-      
       <button class="btn-accion" onclick="App.cambiarTab('cuentas'); this.parentElement.remove();">
         IR A CUENTAS BANCARIAS
       </button>
@@ -1137,6 +1167,7 @@ const DB = {
                despuesDeReset;
       });
     return {
+      canvas: ventasMes.length,
       cantidad: ventasMes.length,
       monto: ventasMes.reduce((sum, v) => sum + v.total, 0)
     };
@@ -1198,11 +1229,11 @@ let estado = {
   folioActual: DB.getFolio(),
   limiteAlertaStock: DB.getLimiteAlertaStock(),
   cuentas: [],
-  cobrosDia: []
+  cobrosDia: [],
+  promoLataActiva: false,
+  promoLataAplicada: false
 };
 
-let ventaPendiente = null;
-let esPrueba = false;
 let templateSeleccionado = 'azul';
 
 const Auth = {
@@ -1329,7 +1360,6 @@ const SII = {
         colorTexto = '#ffaa00';
       }
       
-      // NUEVO v3.4: Mostrar banner SII con sonido y vibración
       if (mostrarBanner) {
         const keyBanner = 'sii_banner_' + c.id + '_' + new Date().getHours();
         if (!sessionStorage.getItem(keyBanner)) {
@@ -1432,9 +1462,6 @@ const SII = {
   }
 };
 
-// ============================================
-// NUEVO v3.4: VENTAS MODIFICADO CON CONFIRMACIÓN DE TRANSFERENCIA
-// ============================================
 const Ventas = {
   generarFolio() {
     const folio = FOLIO_PREFIX + String(estado.folioActual).padStart(6, '0');
@@ -1444,12 +1471,47 @@ const Ventas = {
   },
   calcularTotal() {
     let total = 0;
+    let latasPromo = 0;
+    let totalEmpanadas = 0;
     for (let id in estado.carrito) {
       const p = buscarProducto(id);
-      const cant = estado.carrito[id];
-      const precio = estado.liquidacionIds.includes(parseInt(id)) && p.tipo === 'empanada' ? 2000 : p.precio;
-      total += precio * cant;
+      if (p && p.tipo === 'empanada') {
+        totalEmpanadas += estado.carrito[id];
+      }
     }
+    const maxLatasPromo = Math.min(Math.floor(totalEmpanadas / 2), 2);
+
+    for (let id in estado.carrito) {
+      const p = buscarProducto(id);
+      if (p && p.tipo === 'empanada') {
+        const cant = estado.carrito[id];
+        let precio = estado.liquidacionIds.includes(parseInt(id)) ? 2000 : p.precio;
+        total += cant * precio;
+      }
+    }
+
+    for (let id in estado.carrito) {
+      const p = buscarProducto(id);
+      if (p && p.tipo === 'lata') {
+        const cant = estado.carrito[id];
+        if (estado.promoLataAplicada && latasPromo < maxLatasPromo) {
+          const latasEnPromo = Math.min(cant, maxLatasPromo - latasPromo);
+          total += latasEnPromo * 500;
+          total += (cant - latasEnPromo) * p.precio;
+          latasPromo += latasEnPromo;
+        } else {
+          total += cant * p.precio;
+        }
+      }
+    }
+
+    for (let id in estado.carrito) {
+      const p = buscarProducto(id);
+      if (p && (p.tipo === '591' || p.tipo === 'cachantun')) {
+        total += p.precio * estado.carrito[id];
+      }
+    }
+
     return total;
   },
   calcularVuelto(total) {
@@ -1474,7 +1536,6 @@ const Ventas = {
     const grupoPago = document.getElementById('grupo-pago');
     const grupoBanco = document.getElementById('grupo-cuenta-banco');
     
-    // NUEVO v3.4: Si estaba en modo confirmación, limpiar
     if (modoConfirmacionTransferencia) {
       this.limpiarModoConfirmacion();
     }
@@ -1520,12 +1581,7 @@ const Ventas = {
     else if (abonos.cantidad >= 35) div.classList.add('amarillo');
     else div.classList.add('verde');
   },
-  
-  // ============================================
-  // NUEVO v3.4: EJECUTAR CON MODO CONFIRMACIÓN
-  // ============================================
   ejecutar() {
-    // Si estamos en modo confirmación, confirmar la transferencia
     if (modoConfirmacionTransferencia && ventaPendienteConfirmacion) {
       return this.confirmarTransferencia();
     }
@@ -1543,7 +1599,6 @@ const Ventas = {
     const metodo = document.getElementById('metodo-pago').value;
     const total = this.calcularTotal();
     
-    // Validar pago en efectivo
     if (metodo === 'efectivo') {
       const { pago, vuelto } = this.calcularVuelto(total);
       if (pago < total) {
@@ -1552,7 +1607,6 @@ const Ventas = {
       }
     }
 
-    // Validar transferencia
     let bancoId = null, cuenta = null;
     if (metodo === 'transferencia') {
       bancoId = document.getElementById('cuenta-banco').value;
@@ -1574,12 +1628,10 @@ const Ventas = {
       return;
     }
 
-    // SI ES TRANSFERENCIA: MODO ESPERA
     if (metodo === 'transferencia') {
       return this.iniciarEsperaTransferencia(total, bancoId, cuenta, wsp);
     }
 
-    // SI ES EFECTIVO: VENDER DIRECTO CON ANIMACIÓN
     this.procesarVenta({
       metodo: 'efectivo',
       total,
@@ -1589,27 +1641,49 @@ const Ventas = {
       whatsapp: wsp || null
     });
   },
-  
-  // NUEVO v3.4: Procesar venta efectiva (después de confirmación o directo)
   procesarVenta(datos) {
     const metodo = datos.metodo;
     const total = datos.total;
     
-    // Animación según método
     if (metodo === 'efectivo') {
       Animaciones.efectivo(total);
     }
     
-    // Descontar stock
+    let totalEmpanadas = 0;
+    for (let id in estado.carrito) {
+      const p = buscarProducto(id);
+      if (p && p.tipo === 'empanada') totalEmpanadas += estado.carrito[id];
+    }
+    const maxLatasPromo = Math.min(Math.floor(totalEmpanadas / 2), 2);
+    let latasPromoContadas = 0;
+    
+    let carritoDetalladoLatas = {};
+    for (let id in estado.carrito) {
+      const p = buscarProducto(id);
+      if (p && p.tipo === 'lata') {
+        const cant = estado.carrito[id];
+        if (estado.promoLataAplicada && latasPromoContadas < maxLatasPromo) {
+          const latasEnPromo = Math.min(cant, maxLatasPromo - latasPromoContadas);
+          carritoDetalladoLatas[id] = {
+            normal: cant - latasEnPromo,
+            promo: latasEnPromo
+          };
+          latasPromoContadas += latasEnPromo;
+        } else {
+          carritoDetalladoLatas[id] = { normal: cant, promo: 0 };
+        }
+      }
+    }
+
     for (let id in estado.carrito) {
       estado.stockActual[id] = (estado.stockActual[id] || 0) - estado.carrito[id];
     }
     
-    // Crear venta
     const venta = {
       folio: this.generarFolio(),
       vendedor: estado.usuarioActual,
       carrito: JSON.parse(JSON.stringify(estado.carrito)),
+      carritoLatas: carritoDetalladoLatas,
       total: datos.total,
       pago: datos.pago || datos.total,
       vuelto: datos.vuelto || 0,
@@ -1618,7 +1692,8 @@ const Ventas = {
       whatsapp: datos.whatsapp || null,
       fecha: new Date().toISOString(),
       tipo: estado.liquidacionIds.length > 0 ? 'costo' : 'venta',
-      liquidacionIds: [...estado.liquidacionIds]
+      liquidacionIds: [...estado.liquidacionIds],
+      promoLata: estado.promoLataAplicada
     };
     
     estado.ventas.push(venta);
@@ -1633,14 +1708,39 @@ const Ventas = {
     Stock.actualizarTotal();
     Resumen.actualizar();
     SII.render();
-    Cobrar.render();
+    
     UI.scrollToTop();
   },
-  
-  // NUEVO v3.4: Iniciar espera de transferencia
   iniciarEsperaTransferencia(total, bancoId, cuenta, wsp) {
+    let totalEmpanadas = 0;
+    for (let id in estado.carrito) {
+      const p = buscarProducto(id);
+      if (p && p.tipo === 'empanada') totalEmpanadas += estado.carrito[id];
+    }
+    const maxLatasPromo = Math.min(Math.floor(totalEmpanadas / 2), 2);
+    let latasPromoContadas = 0;
+    let carritoDetalladoLatas = {};
+    
+    for (let id in estado.carrito) {
+      const p = buscarProducto(id);
+      if (p && p.tipo === 'lata') {
+        const cant = estado.carrito[id];
+        if (estado.promoLataAplicada && latasPromoContadas < maxLatasPromo) {
+          const latasEnPromo = Math.min(cant, maxLatasPromo - latasPromoContadas);
+          carritoDetalladoLatas[id] = {
+            normal: cant - latasEnPromo,
+            promo: latasEnPromo
+          };
+          latasPromoContadas += latasEnPromo;
+        } else {
+          carritoDetalladoLatas[id] = { normal: cant, promo: 0 };
+        }
+      }
+    }
+
     ventaPendienteConfirmacion = {
       carrito: JSON.parse(JSON.stringify(estado.carrito)),
+      carritoLatas: carritoDetalladoLatas,
       total,
       metodo: 'transferencia',
       bancoId,
@@ -1654,35 +1754,25 @@ const Ventas = {
 
     modoConfirmacionTransferencia = true;
     
-    // Mostrar banner de espera
     const banner = document.getElementById('bannerEsperandoTransfer');
     document.getElementById('montoEsperandoTransfer').textContent = UI.formatearPrecio(total);
     document.getElementById('bancoEsperandoTransfer').textContent = `${cuenta.banco} - ${cuenta.tipo}`;
     banner.classList.remove('oculto');
     
-    // Cambiar botón principal
     const btnVender = document.getElementById('btnVender');
     btnVender.textContent = '✅ CONFIRMAR TRANSFERENCIA RECIBIDA';
     btnVender.className = 'btn btn-confirmar-transfer';
     btnVender.onclick = () => Ventas.confirmarTransferencia();
     
-    // Mostrar botón cancelar
     const btnCancelar = document.getElementById('btnCancelarTransfer');
     btnCancelar.classList.remove('oculto');
     
-    // Bloquear carrito
     this.bloquearCarrito(true);
     
-    // Animación de transferencia
     Animaciones.transferencia(total, cuenta);
-    
-    // Mostrar datos bancarios
     this.mostrarDatosBancarios(cuenta, total);
-    
     UI.scrollToTop();
   },
-  
-  // NUEVO v3.4: Mostrar datos bancarios en modal
   mostrarDatosBancarios(cuenta, total) {
     const userData = getUsuarioData();
     
@@ -1712,7 +1802,6 @@ const Ventas = {
           $${total.toLocaleString('es-CL')}
         </div>
       </div>
-      
       <div style="background: rgba(0,0,0,0.4); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
         <div class="dato-banco-animado" style="font-size: 14px; color: #88ccff; margin: 6px 0;">
           <span style="color: #446688;">Banco:</span> <b style="color: #fff;">${cuenta.banco}</b>
@@ -1734,12 +1823,10 @@ const Ventas = {
           <span style="color: #446688;">Ref:</span> <b style="color: #ff6600;">${ventaPendienteConfirmacion.folioPendiente}</b>
         </div>
       </div>
-      
       <div style="font-size: 12px; color: #6699cc; text-align: center; margin-bottom: 16px;">
         Mostrá esta pantalla al cliente para que transfiera<br>
         <b style="color: #ff6600;">NO CIERRES ESTA PANTALLA</b> hasta confirmar
       </div>
-      
       <button onclick="document.getElementById('modalDatosBanco').remove()" 
         style="width: 100%; padding: 14px; background: #00aaff; color: #000; border: none; 
                border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer;">
@@ -1749,12 +1836,9 @@ const Ventas = {
     
     document.body.appendChild(modal);
   },
-  
-  // NUEVO v3.4: Confirmar transferencia recibida
   confirmarTransferencia() {
     if (!ventaPendienteConfirmacion) return;
     
-    // Verificar que la cuenta no se bloqueó mientras esperaba
     const abonos = DB.getAbonosMes(ventaPendienteConfirmacion.bancoId);
     const cuenta = ventaPendienteConfirmacion.cuenta;
     if (abonos.cantidad >= cuenta.limite) {
@@ -1763,11 +1847,11 @@ const Ventas = {
       return;
     }
 
-    // Procesar la venta definitiva
     const venta = {
       folio: ventaPendienteConfirmacion.folioPendiente,
       vendedor: estado.usuarioActual,
       carrito: ventaPendienteConfirmacion.carrito,
+      carritoLatas: ventaPendienteConfirmacion.carritoLatas,
       total: ventaPendienteConfirmacion.total,
       pago: ventaPendienteConfirmacion.total,
       vuelto: 0,
@@ -1777,26 +1861,21 @@ const Ventas = {
       fecha: new Date().toISOString(),
       tipo: ventaPendienteConfirmacion.tipo,
       liquidacionIds: ventaPendienteConfirmacion.liquidacionIds,
-      confirmadaEn: new Date().toISOString()
+      confirmadaEn: new Date().toISOString(),
+      promoLata: estado.promoLataAplicada
     };
 
-    // Descontar stock
     for (let id in venta.carrito) {
       estado.stockActual[id] = (estado.stockActual[id] || 0) - venta.carrito[id];
     }
 
-    // Guardar venta
     estado.ventas.push(venta);
     DB.setVentas(estado.ventas);
     DB.setStockActual(estado.stockActual);
 
-    // Limpiar modo confirmación
     this.limpiarModoConfirmacion();
-
-    // Animación de confirmación
     Animaciones.transferenciaConfirmada(venta.total);
 
-    // Enviar WhatsApp si hay número
     if (venta.whatsapp) {
       this.mandarWspVenta(venta);
     }
@@ -1807,11 +1886,9 @@ const Ventas = {
     Stock.actualizarTotal();
     Resumen.actualizar();
     SII.render();
-    Cobrar.render();
+    
     UI.scrollToTop();
   },
-  
-  // NUEVO v3.4: Cancelar espera de transferencia
   cancelarEsperaTransferencia() {
     if (!confirm('¿Cancelar esta venta? El cliente no transfirió o canceló.')) return;
     
@@ -1819,34 +1896,25 @@ const Ventas = {
     UI.mostrarAlerta('Venta cancelada. Stock no se movió.', true);
     this.bloquearCarrito(false);
   },
-  
-  // NUEVO v3.4: Limpiar modo confirmación
   limpiarModoConfirmacion() {
     modoConfirmacionTransferencia = false;
     ventaPendienteConfirmacion = null;
     
-    // Ocultar banner
     document.getElementById('bannerEsperandoTransfer').classList.add('oculto');
     
-    // Restaurar botón
     const btnVender = document.getElementById('btnVender');
     btnVender.textContent = 'VENDER';
     btnVender.className = 'btn';
     btnVender.onclick = () => Ventas.ejecutar();
     
-    // Ocultar botón cancelar
     const btnCancelar = document.getElementById('btnCancelarTransfer');
     if (btnCancelar) btnCancelar.classList.add('oculto');
     
-    // Quitar modal si existe
     const modal = document.getElementById('modalDatosBanco');
     if (modal) modal.remove();
     
-    // Desbloquear carrito
     this.bloquearCarrito(false);
   },
-  
-  // NUEVO v3.4: Bloquear/desbloquear carrito
   bloquearCarrito(bloquear) {
     const grid = document.getElementById('productos-grid');
     if (bloquear) {
@@ -1857,7 +1925,61 @@ const Ventas = {
       grid.style.opacity = '';
     }
   },
-  
+  verificarPromoLata() {
+    let totalEmpanadas = 0;
+    for (let id in estado.carrito) {
+      const p = buscarProducto(id);
+      if (p && p.tipo === 'empanada') {
+        totalEmpanadas += estado.carrito[id];
+      }
+    }
+    if (estado.promoLataAplicada) return;
+
+    const latasIds = [3, 12, 4, 5, 7, 9, 10];
+    let hayStockLatas = false;
+    for (let lataId of latasIds) {
+      const stockDisp = (estado.stockActual[lataId] || 0) - (estado.carrito[lataId] || 0);
+      if (stockDisp > 0) {
+        hayStockLatas = true;
+        break;
+      }
+    }
+
+    if (!hayStockLatas) {
+      if (estado.promoLataActiva) {
+        estado.promoLataActiva = false;
+        document.getElementById('bannerPromoLata').classList.add('oculto');
+      }
+      return;
+    }
+
+    if (totalEmpanadas === 2) {
+      if (!estado.promoLataActiva) {
+        estado.promoLataActiva = true;
+        document.getElementById('bannerPromoLata').classList.remove('oculto');
+        Sonidos.play('exito');
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+      }
+    } else {
+      if (estado.promoLataActiva && !estado.promoLataAplicada) {
+        estado.promoLataActiva = false;
+        document.getElementById('bannerPromoLata').classList.add('oculto');
+      }
+    }
+  },
+  aceptarPromoLata() {
+    estado.promoLataAplicada = true;
+    estado.promoLataActiva = false;
+    document.getElementById('bannerPromoLata').classList.add('oculto');
+    Sonidos.play('exito');
+    UI.mostrarAlerta('🥤 Promo activada — selecciona tu lata a $500', true);
+  },
+  cancelarPromoLata() {
+    estado.promoLataActiva = false;
+    document.getElementById('bannerPromoLata').classList.add('oculto');
+    estado.promoLataAplicada = true;
+    Sonidos.play('click');
+  },
   liquidar() {
     if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado'); return; }
     if (Object.keys(estado.carrito).length === 0) { UI.mostrarAlerta('Agrega empanadas al carrito'); return; }
@@ -1875,13 +1997,11 @@ const Ventas = {
     UI.mostrarAlerta('Precio liquidación: $2.000', true);
   },
   anular() {
-    // NUEVO v3.4: Si está en modo confirmación, cancelar
     if (modoConfirmacionTransferencia) {
       this.cancelarEsperaTransferencia();
       return;
     }
-    
-    if (Object.keys(estado.carrito).length === 0) { UI.mostrarAlerta('No hay nada en el carrito'); return; }
+    if (Object.keys(estado.carrito).length === 0) { UI.mostrarAlerta('No hay nada del carrito'); return; }
     if (!confirm('¿Anular pedido?')) return;
     this.limpiar();
     Productos.render();
@@ -1891,14 +2011,16 @@ const Ventas = {
   limpiar() {
     estado.carrito = {};
     estado.liquidacionIds = [];
+    estado.promoLataActiva = false;
+    estado.promoLataAplicada = false;
     document.getElementById('bannerLiquidacion').classList.add('oculto');
+    document.getElementById('bannerPromoLata').classList.add('oculto');
     document.getElementById('headerApp').classList.remove('modo-costo');
     document.getElementById('totalBox').classList.remove('modo-costo-total');
     document.getElementById('pago').value = '';
     document.getElementById('wsp').value = '';
     document.getElementById('metodo-pago').value = 'efectivo';
     
-    // NUEVO v3.4: Limpiar modo confirmación si estaba activo
     if (modoConfirmacionTransferencia) {
       this.limpiarModoConfirmacion();
     }
@@ -1918,7 +2040,7 @@ const Ventas = {
     Productos.render();
     Resumen.actualizar();
     SII.render();
-    Cobrar.render();
+    
     UI.mostrarAlerta('Venta eliminada y stock devuelto', true);
   },
   mandarWspVenta(venta) {
@@ -1926,16 +2048,29 @@ const Ventas = {
     msg += venta.tipo === 'costo' ? ' - LIQUIDACIÓN' : '';
     msg += '%0A%0A*Boleta: ' + venta.folio + '*%0A';
     msg += 'Atendido por: ' + venta.vendedor + '%0A%0A';
+    
     for (let id in venta.carrito) {
       const p = buscarProducto(id);
       const enLiquidacion = venta.liquidacionIds.includes(parseInt(id));
-      const precioUnit = enLiquidacion && p.tipo === 'empanada' ? 2000 : p.precio;
-      msg += venta.carrito[id] + 'x ' + p.nombre + ' - $' + (precioUnit * venta.carrito[id]).toLocaleString('es-CL') + '%0A';
+      
+      if (p.tipo === 'lata' && venta.promoLata && venta.carritoLatas && venta.carritoLatas[id]) {
+        const dLatas = venta.carritoLatas[id];
+        if (dLatas.promo > 0) {
+          msg += dLatas.promo + 'x ' + p.nombre + ' [PROMO LATA] - $' + (dLatas.promo * 500).toLocaleString('es-CL') + '%0A';
+        }
+        if (dLatas.normal > 0) {
+          msg += dLatas.normal + 'x ' + p.nombre + ' - $' + (dLatas.normal * 1000).toLocaleString('es-CL') + '%0A';
+        }
+      } else {
+        let precioUnit = enLiquidacion && p.tipo === 'empanada' ? 2000 : p.precio;
+        msg += venta.carrito[id] + 'x ' + p.nombre + ' - $' + (precioUnit * venta.carrito[id]).toLocaleString('es-CL') + '%0A';
+      }
     }
+    
     msg += '%0A*TOTAL: $' + venta.total.toLocaleString('es-CL') + '*%0A';
     if (venta.bancoId) {
       const c = estado.cuentas.find(cta => cta.id === venta.bancoId);
-      msg += 'Pago: Transferencia ' + c.banco + '%0A';
+      msg += 'Pago: Transferencia ' + (c ? c.banco : '') + '%0A';
     } else {
       msg += 'Pago: Efectivo $' + venta.pago.toLocaleString('es-CL') + '%0A';
     }
@@ -1946,6 +2081,7 @@ const Ventas = {
     window.open('https://wa.me/' + venta.whatsapp.replace(/[^0-9]/g, '') + '?text=' + msg, '_blank');
   }
 };
+
 const Stock = {
   actualizarTotal() {
     const total = Ventas.calcularTotal();
@@ -1989,7 +2125,6 @@ const Stock = {
       banner.textContent = '⚠️ STOCK BAJO: ' + productosBajos.join(', ');
       banner.classList.remove('oculto');
       
-      // NUEVO v3.4: Alerta sonora y vibración para críticos
       if (criticos.length > 0) {
         const keyAlerta = 'stock_critico_' + new Date().getHours() + '_' + new Date().getMinutes();
         if (!sessionStorage.getItem(keyAlerta)) {
@@ -2005,12 +2140,10 @@ const Stock = {
 
 const Productos = {
   agregar(id) {
-    // NUEVO v3.4: No permitir modificar si está en modo confirmación
     if (modoConfirmacionTransferencia) {
       UI.mostrarAlerta('⚠️ Termina la transferencia pendiente primero');
       return;
     }
-    
     if (!estado.diaActivo) { UI.mostrarAlerta('Día cerrado. Carga stock inicial'); return; }
     const stockDisp = (estado.stockActual[id] || 0) - (estado.carrito[id] || 0);
     if (stockDisp <= 0) {
@@ -2022,6 +2155,7 @@ const Productos = {
     estado.carrito[id] = (estado.carrito[id] || 0) + 1;
     this.renderItem(id);
     Stock.actualizarTotal();
+    Ventas.verificarPromoLata();
   },
   quitar(id) {
     if (!estado.carrito[id] || estado.carrito[id] <= 0) return;
@@ -2030,6 +2164,7 @@ const Productos = {
     if (estado.carrito[id] === 0) delete estado.carrito[id];
     this.renderItem(id);
     Stock.actualizarTotal();
+    Ventas.verificarPromoLata();
   },
   renderItem(id) {
     const p = buscarProducto(id);
@@ -2131,7 +2266,6 @@ const StockGestion = {
     estado.carrito = {};
     estado.liquidacionIds = [];
     
-    // NUEVO v3.4: Limpiar modo confirmación si estaba activo
     if (modoConfirmacionTransferencia) {
       Ventas.limpiarModoConfirmacion();
     }
@@ -2142,7 +2276,7 @@ const StockGestion = {
     Resumen.actualizar();
     Productos.render();
     Stock.verificarDiaActivo();
-    Cobrar.render();
+    
     UI.mostrarAlerta('Día cerrado. Historial guardado.', true);
   },
   verDesglose() {
@@ -2174,74 +2308,27 @@ const StockGestion = {
   }
 };
 
-const Cobrar = {
-  render() {
-    const lista = document.getElementById('listaCobrosDia');
-    const cobros = estado.ventas.filter(v => v.metodo === 'transferencia' && v.vendedor === estado.usuarioActual);
-    if (cobros.length === 0) {
-      lista.innerHTML = '<div style="text-align:center;color:#888;padding:20px">Sin cobros con transferencia hoy</div>';
-      return;
-    }
-    lista.innerHTML = '';
-    [...cobros].reverse().forEach(v => {
-      const c = estado.cuentas.find(cta => cta.id === v.bancoId);
-      const div = document.createElement('div');
-      div.className = 'tarjeta-cobro-item';
-      div.innerHTML = `
-        <div class="tarjeta-cobro-header">
-          <div class="tarjeta-cobro-folio">Boleta: ${v.folio}</div>
-          <div class="tarjeta-cobro-monto">${UI.formatearPrecio(v.total)}</div>
-        </div>
-        <div class="tarjeta-cobro-banco">💳 ${c ? c.banco : 'N/A'} - ${c ? c.tipo : ''}</div>
-        <button class="btn-ver-tarjeta" onclick="Cobrar.verTarjeta('${v.folio}')">👁️ VER TARJETA QR</button>
-      `;
-      lista.appendChild(div);
-    });
-  },
-  verTarjeta(folio) {
-    const venta = estado.ventas.find(v => v.folio === folio && v.vendedor === estado.usuarioActual);
-    if (!venta || !venta.bancoId) return;
-    const cuenta = estado.cuentas.find(c => c.id === venta.bancoId);
-    if (!cuenta) return;
-    ventaPendiente = venta;
-    ventaPendiente.cuenta = cuenta;
-    document.getElementById('folioGrande').textContent = folio;
-    const tarjetaDiv = document.getElementById('tarjetaTransferencia');
-    tarjetaDiv.innerHTML = generarTarjetaHTML(cuenta, true, venta.total);
-    setTimeout(() => {
-      const userData = getUsuarioData();
-      const qrData = `RUT:${userData.rut}|Titular:${estado.usuarioActual}|Banco:${cuenta.banco}|Tipo:${cuenta.tipo}|Cuenta:${cuenta.numero}|Monto:${venta.total}|Correo:${userData.correo}`;
-      const qrDiv = document.querySelector(`#qr-tarjeta-${cuenta.id}`);
-      if (qrDiv && qrDiv.innerHTML === '') {
-        new QRCode(qrDiv, {
-          text: qrData,
-          width: 77,
-          height: 77,
-          colorDark: "#000",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.H
-        });
-      }
-    }, 100);
-    document.getElementById('btnConfirmar').style.display = 'none';
-    document.getElementById('pantallaDatos').classList.remove('oculto');
-  }
-};
-
 const Resumen = {
   calcular() {
     const cajaInicial = parseInt(document.getElementById('cajaInicial').value) || DB.getCajaInicial() || 0;
+    let totalLatasPromoCount = 0;
+    let ahorroLatasPromo = 0;
     DB.setCajaInicial(cajaInicial);
     
     const ventasUsuario = estado.ventas.filter(v => v.vendedor === estado.usuarioActual);
     
     let totalDia = 0, totalEfectivo = 0, totalTransfer = 0;
+    
+    let totalCantNormalLatas = 0;
+    let totalCantPromoLatas = 0;
+    
     const desglose = {
       pino: { cant: 0, total: 0 },
       polloQueso: { cant: 0, total: 0 },
       napolitana: { cant: 0, total: 0 },
       bebidas591: { cant: 0, total: 0 },
       latas: { cant: 0, total: 0 },
+      latasPromo: { cant: 0, total: 0 },
       cachantun: { cant: 0, total: 0 },
       costo: { cant: 0, total: 0 }
     };
@@ -2258,35 +2345,60 @@ const Resumen = {
           desgloseBancos[v.bancoId].total += v.total;
         }
       }
+      
       for (let id in v.carrito) {
         const p = buscarProducto(id);
         const cant = v.carrito[id];
         const enLiquidacion = v.liquidacionIds.includes(parseInt(id));
-        const subtotal = enLiquidacion && p.tipo === 'empanada' ? 2000 * cant : p.precio * cant;
-        if (enLiquidacion && p.tipo === 'empanada') {
-          desglose.costo.cant += cant; desglose.costo.total += subtotal;
-        } else if (p.id === 1) {
-          desglose.pino.cant += cant; desglose.pino.total += subtotal;
-        } else if (p.id === 2) {
-          desglose.polloQueso.cant += cant; desglose.polloQueso.total += subtotal;
-        } else if (p.id === 11) {
-          desglose.napolitana.cant += cant; desglose.napolitana.total += subtotal;
-        } else if (p.tipo === '591') {
-          desglose.bebidas591.cant += cant; desglose.bebidas591.total += subtotal;
-        } else if (p.tipo === 'lata') {
-          desglose.latas.cant += cant; desglose.latas.total += subtotal;
-        } else if (p.tipo === 'cachantun') {
-          desglose.cachantun.cant += cant; desglose.cachantun.total += subtotal;
+        
+        if (p.tipo === 'lata') {
+          if (v.promoLata && v.carritoLatas && v.carritoLatas[id]) {
+            const dLatas = v.carritoLatas[id];
+            desglose.latas.cant += dLatas.normal;
+            desglose.latas.total += dLatas.normal * 1000;
+            totalCantNormalLatas += dLatas.normal;
+            
+            desglose.latasPromo.cant += dLatas.promo;
+            desglose.latasPromo.total += dLatas.promo * 500;
+            totalCantPromoLatas += dLatas.promo;
+            
+            totalLatasPromoCount += dLatas.promo;
+            ahorroLatasPromo += dLatas.promo * 500;
+          } else {
+            desglose.latas.cant += cant;
+            desglose.latas.total += cant * 1000;
+            totalCantNormalLatas += cant;
+          }
+        } else {
+          const subtotal = enLiquidacion && p.tipo === 'empanada' ? 2000 * cant : p.precio * cant;
+          if (enLiquidacion && p.tipo === 'empanada') {
+            desglose.costo.cant += cant; desglose.costo.total += subtotal;
+          } else if (p.id === 1) {
+            desglose.pino.cant += cant; desglose.pino.total += subtotal;
+          } else if (p.id === 2) {
+            desglose.polloQueso.cant += cant; desglose.polloQueso.total += subtotal;
+          } else if (p.id === 11) {
+            desglose.napolitana.cant += cant; desglose.napolitana.total += subtotal;
+          } else if (p.tipo === '591') {
+            desglose.bebidas591.cant += cant; desglose.bebidas591.total += subtotal;
+          } else if (p.tipo === 'cachantun') {
+            desglose.cachantun.cant += cant; desglose.cachantun.total += subtotal;
+          }
         }
       }
     });
+
     return {
       cajaInicial, totalDia, totalEfectivo, totalTransfer,
       totalCaja: cajaInicial + totalEfectivo,
       numVentas: ventasUsuario.length,
       desglose,
       desgloseBancos,
-      ventasUsuario
+      ventasUsuario,
+      totalLatasPromo: totalLatasPromoCount,
+      ahorroLatasPromo,
+      totalCantNormalLatas,
+      totalCantPromoLatas
     };
   },
   actualizar() {
@@ -2331,7 +2443,10 @@ const Resumen = {
       'Napolitana: ' + datos.desglose.napolitana.cant +
       '</span>';
     document.getElementById('total-591').textContent = datos.desglose.bebidas591.cant + ' und - ' + UI.formatearPrecio(datos.desglose.bebidas591.total);
-    document.getElementById('total-latas').textContent = datos.desglose.latas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.latas.total);
+    
+    document.getElementById('total-latas').textContent = datos.totalCantNormalLatas + ' und - ' + UI.formatearPrecio(datos.desglose.latas.total);
+    document.getElementById('total-latas-promo').textContent = datos.totalCantPromoLatas + ' und - ' + UI.formatearPrecio(datos.desglose.latasPromo.total);
+    
     document.getElementById('total-cachantun').textContent = datos.desglose.cachantun.cant + ' und - ' + UI.formatearPrecio(datos.desglose.cachantun.total);
     document.getElementById('total-costo').textContent = datos.desglose.costo.cant + ' und - ' + UI.formatearPrecio(datos.desglose.costo.total);
     
@@ -2344,6 +2459,19 @@ const Resumen = {
       if (datos.desglose.napolitana.cant > 0) htmlDesglose += '<div style="margin:5px 0">🥟 <b>Napolitana:</b> ' + datos.desglose.napolitana.cant + ' unidades</div>';
       htmlDesglose += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #000"><b>TOTAL:</b> ' + totalEmp + ' empanadas</div>';
     }
+
+    if (datos.totalCantPromoLatas > 0 || datos.totalCantNormalLatas > 0) {
+      htmlDesglose += '<div style="margin-top:15px;padding-top:10px;border-top:2px solid #aa00ff">';
+      htmlDesglose += '<div style="color:#aa00ff;font-weight:bold;margin-bottom:8px;">🥤 DETALLE LATAS</div>';
+      htmlDesglose += '<div style="font-size:12px;color:#888;margin:3px 0;">• Latas Normales ($1.000): ' + datos.totalCantNormalLatas + ' und</div>';
+      htmlDesglose += '<div style="font-size:12px;color:#00ff00;margin:3px 0;">• Latas Promo ($500): ' + datos.totalCantPromoLatas + ' und</div>';
+      if (datos.totalLatasPromo > 0) {
+        htmlDesglose += '<div style="font-size:13px;color:#aa00ff;margin-top:8px;font-weight:bold;">🥤 ' + datos.totalLatasPromo + ' latas en promoción cobradas</div>';
+        htmlDesglose += '<div style="font-size:12px;color:#00ff00;">Ahorro total entregado: ' + UI.formatearPrecio(datos.ahorroLatasPromo) + '</div>';
+      }
+      htmlDesglose += '</div>';
+    }
+
     document.getElementById('r-desglose').innerHTML = htmlDesglose;
     
     let htmlBancos = '';
@@ -2376,10 +2504,26 @@ const Resumen = {
         const banco = v.bancoId ? estado.cuentas.find(c => c.id === v.bancoId)?.banco : '';
         const div = document.createElement('div');
         div.className = 'historial-item ' + (v.tipo === 'costo' ? 'costo' : '');
+
+        let latasNormales = 0;
+        let latasPromo = 0;
+        for (let pid in v.carrito) {
+          const prod = buscarProducto(pid);
+          if (prod && prod.tipo === 'lata') {
+            if (v.promoLata && v.carritoLatas && v.carritoLatas[pid]) {
+              latasPromo += v.carritoLatas[pid].promo;
+              latasNormales += v.carritoLatas[pid].normal;
+            } else {
+              latasNormales += v.carrito[pid];
+            }
+          }
+        }
         div.innerHTML = '<div class="folio">Boleta: ' + v.folio + '</div>' +
                         '<div class="vendedor">Atendido por: ' + v.vendedor + '</div>' +
                         '<div class="fecha">' + new Date(v.fecha).toLocaleString('es-CL') + '</div>' +
                         '<div><b>' + items + '</b></div>' +
+                        (latasPromo > 0 ? '<div style="color:#00ff00;font-size:11px;margin:2px 0;">🥤 ' + latasPromo + ' lata(s) en promo cobrada(s) a $500</div>' : '') +
+                        (latasNormales > 0 ? '<div style="color:#888;font-size:11px;margin:2px 0;"> canasta: ' + latasNormales + ' lata(s) a precio normal $1.000</div>' : '') +
                         '<div class="metodo">Total: ' + UI.formatearPrecio(v.total) + ' - ' + (v.metodo === 'transferencia' ? 'Transfer ' + banco : 'Efectivo') + '</div>' +
                         (v.whatsapp ? '<div class="wsp">WSP: ' + v.whatsapp + '</div>' : '') +
                         '<button class="btn-eliminar" onclick="Ventas.eliminar(' + idx + ')">ELIMINAR VENTA</button>';
@@ -2408,20 +2552,73 @@ const Resumen = {
     });
     msg += '🚨 MONITOR SII: ' + totalAbonos + '/50 abonos - ' + UI.formatearPrecio(totalMontoAbonos) + '%0A%0A';
     
-    msg += '📦 DESGLOSE POR PRODUCTO:%0A';
-    const totalEmp = datos.desglose.pino.cant + datos.desglose.polloQueso.cant + datos.desglose.napolitana.cant;
-    const totalEmp$ = datos.desglose.pino.total + datos.desglose.polloQueso.total + datos.desglose.napolitana.total;
-    msg += '├ 🥟 Empanadas: ' + totalEmp + ' und - ' + UI.formatearPrecio(totalEmp$) + '%0A';
-    if (datos.desglose.pino.cant > 0) msg += '│ ├ Pino: ' + datos.desglose.pino.cant + '%0A';
-    if (datos.desglose.polloQueso.cant > 0) msg += '│ ├ Pollo-Queso: ' + datos.desglose.polloQueso.cant + '%0A';
-    if (datos.desglose.napolitana.cant > 0) msg += '│ └ Napolitana: ' + datos.desglose.napolitana.cant + '%0A';
-    msg += '├ 🍶 Bebidas 591: ' + datos.desglose.bebidas591.cant + ' und - ' + UI.formatearPrecio(datos.desglose.bebidas591.total) + '%0A';
-    msg += '├ 🥫 Latas: ' + datos.desglose.latas.cant + ' und - ' + UI.formatearPrecio(datos.desglose.latas.total) + '%0A';
-    msg += '└ 💧 Cachantun: ' + datos.desglose.cachantun.cant + ' und - ' + UI.formatearPrecio(datos.desglose.cachantun.total) + '%0A%0A';
+    msg += '📦 DESGLOSE COMPLETO POR PRODUCTO:%0A';
     
-    if (datos.desglose.costo.cant > 0) {
-      msg += '🏷️ LIQUIDACIÓN: ' + datos.desglose.costo.cant + ' und - ' + UI.formatearPrecio(datos.desglose.costo.total) + '%0A%0A';
+    let conteoProductos = {};
+    let montosProductos = {};
+    let conteoLatasPromoPorMarca = {};
+    let cantTotalPromociones = 0;
+    
+    PRODUCTOS.forEach(p => {
+      conteoProductos[p.id] = 0;
+      montosProductos[p.id] = 0;
+      if (p.tipo === 'lata') {
+        conteoLatasPromoPorMarca[p.id] = 0;
+      }
+    });
+    
+    let totalCostoCant = 0;
+    let totalCostoMonto = 0;
+
+    datos.ventasUsuario.forEach(v => {
+      for (let id in v.carrito) {
+        const p = buscarProducto(id);
+        const cant = v.carrito[id];
+        const enLiquidacion = v.liquidacionIds.includes(parseInt(id));
+        
+        if (enLiquidacion && p.tipo === 'empanada') {
+          totalCostoCant += cant;
+          totalCostoMonto += cant * 2000;
+        } else if (p.tipo === 'lata') {
+          if (v.promoLata && v.carritoLatas && v.carritoLatas[id]) {
+            const dLatas = v.carritoLatas[id];
+            conteoProductos[id] += dLatas.normal;
+            montosProductos[id] += dLatas.normal * 1000;
+            
+            conteoLatasPromoPorMarca[id] += dLatas.promo;
+            cantTotalPromociones += dLatas.promo;
+          } else {
+            conteoProductos[id] += cant;
+            montosProductos[id] += cant * 1000;
+          }
+        } else {
+          conteoProductos[id] += cant;
+          montosProductos[id] += cant * p.precio;
+        }
+      }
+    });
+
+    PRODUCTOS.forEach(p => {
+      msg += '├ ' + p.icono + ' ' + p.nombre + ': ' + conteoProductos[p.id] + ' und - ' + UI.formatearPrecio(montosProductos[p.id]) + '%0A';
+    });
+    
+    msg += '├ 🏷️ Costo (Liquidación): ' + totalCostoCant + ' und - ' + UI.formatearPrecio(totalCostoMonto) + '%0A%0A';
+    
+    msg += '🥤 DETALLE EXCLUSIVO PROMO LATA:%0A';
+    msg += '├ N° Promociones vendidas: ' + cantTotalPromociones + '%0A';
+    
+    let tieneLatasPromo = false;
+    for (let id in conteoLatasPromoPorMarca) {
+      if (conteoLatasPromoPorMarca[id] > 0) {
+        const p = buscarProducto(id);
+        msg += '│ ├ ' + p.nombre + ': ' + conteoLatasPromoPorMarca[id] + ' und a $500 c/u%0A';
+        tieneLatasPromo = true;
+      }
     }
+    if (!tieneLatasPromo) {
+      msg += '│ ├ Ninguna lata vendida en promo hoy.%0A';
+    }
+    msg += '└ Total Ahorro entregado: ' + UI.formatearPrecio(datos.ahorroLatasPromo) + '%0A%0A';
     
     if (Object.keys(datos.desgloseBancos).length > 0) {
       msg += '💳 DESGLOSE POR BANCO:%0A';
@@ -2438,17 +2635,30 @@ const Resumen = {
   },
   cierreCaja() {
     const datos = this.calcular();
-    let csv = 'Folio,Fecha,Hora,Vendedor,Monto,Metodo,Banco,Producto,Cantidad,Precio Unit,Subtotal\n';
+    let csv = 'Folio,Fecha,Hora,Vendedor,Monto,Metodo,Banco,Producto,Cantidad,Precio Unit,Subtotal,Promo Lata\n';
     datos.ventasUsuario.forEach(v => {
       const fecha = new Date(v.fecha);
+      const promoLataFlag = v.promoLata ? 'SI' : 'NO';
+
       for (let id in v.carrito) {
         const p = buscarProducto(id);
         const cant = v.carrito[id];
         const enLiquidacion = v.liquidacionIds.includes(parseInt(id));
-        const precioUnit = enLiquidacion && p.tipo === 'empanada' ? 2000 : p.precio;
-        const subtotal = precioUnit * cant;
         const banco = v.bancoId ? (estado.cuentas.find(c => c.id === v.bancoId) ? estado.cuentas.find(c => c.id === v.bancoId).banco : v.bancoId) : '';
-        csv += `"${v.folio}","${fecha.toLocaleDateString('es-CL')}","${fecha.toLocaleTimeString('es-CL')}","${v.vendedor}",${v.total},"${v.metodo}","${banco}","${p.nombre}",${cant},${precioUnit},${subtotal}\n`;
+
+        if (p.tipo === 'lata' && v.promoLata && v.carritoLatas && v.carritoLatas[id]) {
+          const dLatas = v.carritoLatas[id];
+          if (dLatas.promo > 0) {
+            csv += `"${v.folio}","${fecha.toLocaleDateString('es-CL')}","${fecha.toLocaleTimeString('es-CL')}","${v.vendedor}",${v.total},"${v.metodo}","${banco}","${p.nombre}",${dLatas.promo},500,${dLatas.promo * 500},"SI"\n`;
+          }
+          if (dLatas.normal > 0) {
+            csv += `"${v.folio}","${fecha.toLocaleDateString('es-CL')}","${fecha.toLocaleTimeString('es-CL')}","${v.vendedor}",${v.total},"${v.metodo}","${banco}","${p.nombre}",${dLatas.normal},1000,${dLatas.normal * 1000},"NO"\n`;
+          }
+        } else {
+          let precioUnit = enLiquidacion && p.tipo === 'empanada' ? 2000 : p.precio;
+          const subtotal = precioUnit * cant;
+          csv += `"${v.folio}","${fecha.toLocaleDateString('es-CL')}","${fecha.toLocaleTimeString('es-CL')}","${v.vendedor}",${v.total},"${v.metodo}","${banco}","${p.nombre}",${cant},${precioUnit},${subtotal},"${promoLataFlag}"\n`;
+        }
       }
     });
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -2463,7 +2673,6 @@ const Resumen = {
 
 const App = {
   cambiarTab(tab) {
-    // NUEVO v3.4: No permitir cambiar tab si está en modo confirmación
     if (modoConfirmacionTransferencia && tab !== 'vender') {
       UI.mostrarAlerta('⚠️ Termina la transferencia pendiente antes de cambiar de pestaña');
       return;
@@ -2471,7 +2680,8 @@ const App = {
     
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
     document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-    document.querySelector(`[onclick="App.cambiarTab('${tab}')"]`).classList.add('activo');
+    const tabEl = document.querySelector(`[onclick="App.cambiarTab('${tab}')"]`);
+    if (tabEl) tabEl.classList.add('activo');
     document.getElementById(tab).classList.add('activa');
     if (tab === 'stock') {
       StockGestion.render();
@@ -2483,16 +2693,12 @@ const App = {
       SII.render();
     } else if (tab === 'cuentas') {
       renderCuentas();
-    } else if (tab === 'cobrar') {
-      Cobrar.render();
     } else if (tab === 'vender') {
-      Ventas.cambiarMetodo();
+      setTimeout(() => Ventas.cambiarMetodo(), 50);
     }
     UI.scrollToTop();
   },
-  irACobrar() {
-    this.cambiarTab('cobrar');
-  },
+
   init() {
     if (!Auth.verificar()) return;
     
@@ -2506,7 +2712,7 @@ const App = {
     Resumen.actualizar();
     SII.render();
     renderCuentas();
-    Cobrar.render();
+    
     document.getElementById('pago').addEventListener('input', Stock.actualizarTotal);
     document.getElementById('metodo-pago').addEventListener('change', Ventas.cambiarMetodo);
     document.getElementById('cajaInicial').addEventListener('input', () => {
@@ -2526,13 +2732,10 @@ const App = {
       if (e.key === 'Escape') Ventas.anular();
     });
     
-    // NUEVO v3.4: Botón para activar notificaciones
     this.crearBotonNotificaciones();
-    
     console.log('🥟 Los Weones QR PRO v' + VERSION_APP + ' iniciado - Usuario: ' + estado.usuarioActual);
   },
   
-  // NUEVO v3.4: Botón flotante para notificaciones
   crearBotonNotificaciones() {
     const btnNotif = document.createElement('button');
     btnNotif.id = 'btnActivarNotif';
@@ -2697,37 +2900,21 @@ function descargarTarjeta(id) {
   alert('📸 Pa descargar la tarjeta usá captura de pantalla por ahora perrin. Próxima versión te la genero como imagen.');
 }
 
-function copiarTodosDatos() {
-  if (!ventaPendiente) return;
-  const c = ventaPendiente.cuenta;
-  const userData = getUsuarioData();
-  const texto = `RUT: ${userData.rut}
-Titular: ${estado.usuarioActual}
-Banco: ${c.banco}
-Tipo: ${c.tipo}
-N° Cuenta: ${c.numero}
-Monto: $${ventaPendiente.total.toLocaleString('es-CL')}
-Ref: ${ventaPendiente.folio}
-Correo: ${userData.correo}`;
-  navigator.clipboard.writeText(texto).then(() => {
-    alert('✅ Datos copiados');
-  });
-}
-
-function confirmarTransferencia() {
-  if (!ventaPendiente) return;
-  UI.mostrarAlerta('✅ Transferencia confirmada', true);
-  volverApp();
-}
-
-function volverApp() {
-  document.getElementById('pantallaDatos').classList.add('oculto');
-  ventaPendiente = null;
-}
-
-window.onload = () => { if (Auth.verificar()) App.init(); };
+window.onload = () => { 
+  if (Auth.verificar()) {
+    App.init();
+    setTimeout(() => {
+      if (typeof Ventas !== 'undefined' && Ventas.cambiarMetodo) {
+        Ventas.cambiarMetodo();
+      }
+    }, 200);
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof Ventas !== 'undefined' && Ventas.cambiarMetodo) {
+        Ventas.cambiarMetodo();
+      }
+    });
+  }
+};
 </script>
 </body>
 </html>
-
-
